@@ -55,6 +55,13 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 		</dependency>
 
+		<!-- 工具类 -->
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+			<version>5.4.3</version>
+		</dependency>
+
 		<!-- 核心模块 -->
 		<dependency>
 			<groupId>com.wt</groupId>

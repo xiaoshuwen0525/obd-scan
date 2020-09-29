@@ -1,4 +1,8 @@
 package com.ruoyi.web.sms;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSON;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -28,8 +32,13 @@ public class SendSms {
 	        request.setSysAction("SendSms");
 	        request.putQueryParameter("RegionId", "cn-hangzhou");
 	        request.putQueryParameter("PhoneNumbers", "15360886162");
-	        request.putQueryParameter("SignName", "潮州电信OBD核查");
+	        request.putQueryParameter("SignName", "潮州基站发电");
 	        request.putQueryParameter("TemplateCode", "SMS_203672656");
+	        
+	        Map<String,Object> param = new HashMap<String, Object>();
+	        param.put("code", "1111");
+	        //# ${code}的赋值，json格式
+	        request.putQueryParameter("TemplateParam", JSON.toJSONString(param));
 	        try {
 	            CommonResponse response = client.getCommonResponse(request);
 	            System.out.println(response.getData());

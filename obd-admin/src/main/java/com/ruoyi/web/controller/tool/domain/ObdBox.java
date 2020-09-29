@@ -1,13 +1,15 @@
 package com.ruoyi.web.controller.tool.domain;
 
-import java.util.Date;
-import lombok.Data;
+
+import com.ruoyi.common.annotation.Excel;
+
                                     
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-import com.wt.framework.aspectj.lang.annotation.Excel;
-import com.wt.framework.web.domain.BaseEntity;
-import lombok.EqualsAndHashCode;
+
+import java.util.Date;
+
 
 /**
  * (ObdBox)实体类
@@ -17,8 +19,7 @@ import lombok.EqualsAndHashCode;
  */
  
 @Data
-@EqualsAndHashCode(callSuper = true) 
-public class ObdBox extends BaseEntity {
+public class ObdBox  {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,5 +57,5 @@ public class ObdBox extends BaseEntity {
         @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
         @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
         private Date createTime;
-    
+
 }

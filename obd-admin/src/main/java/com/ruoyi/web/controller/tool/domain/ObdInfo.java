@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.tool.domain;
 
+import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
             /**
  * (ObdInfo)实体类
@@ -9,8 +10,7 @@ import lombok.Data;
  */
  
 @Data
-@EqualsAndHashCode(callSuper = true) 
-public class ObdInfo extends BaseEntity {
+public class ObdInfo {
 
     private static final long serialVersionUID = 1L;
 

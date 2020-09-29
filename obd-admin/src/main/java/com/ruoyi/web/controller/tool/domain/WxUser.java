@@ -1,13 +1,13 @@
 package com.ruoyi.web.controller.tool.domain;
 
 import java.util.Date;
+
+import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
                         
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
-import com.wt.framework.aspectj.lang.annotation.Excel;
-import com.wt.framework.web.domain.BaseEntity;
-import lombok.EqualsAndHashCode;
+
 
 /**
  * (WxUser)实体类
@@ -17,8 +17,7 @@ import lombok.EqualsAndHashCode;
  */
  
 @Data
-@EqualsAndHashCode(callSuper = true) 
-public class WxUser extends BaseEntity {
+public class WxUser  {
 
     private static final long serialVersionUID = 1L;
 

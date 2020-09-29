@@ -54,9 +54,6 @@ public class WxUserServiceImpl implements IWxUserService {
     /** 新增WxUser对象 */
     @Override
     public int insert(WxUser wxUser) {
-        Date date = new Date();
-        wxUser.setCreateTime(date);
-        wxUser.setCreateTime(date);
         return wxUserMapper.insert(wxUser);
     }
 
@@ -69,7 +66,6 @@ public class WxUserServiceImpl implements IWxUserService {
     /** 更新WxUser对象 */
     @Override
     public int update(WxUser wxUser) {
-        wxUser.setCreateTime(new Date());
         return wxUserMapper.update(wxUser);
     }
 

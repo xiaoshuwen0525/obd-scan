@@ -54,9 +54,6 @@ public class ObdPortInfoServiceImpl implements IObdPortInfoService {
     /** 新增ObdPortInfo对象 */
     @Override
     public int insert(ObdPortInfo obdPortInfo) {
-        Date date = new Date();
-        obdPortInfo.setCreateTime(date);
-        obdPortInfo.setCreateTime(date);
         return obdPortInfoMapper.insert(obdPortInfo);
     }
 
@@ -69,7 +66,6 @@ public class ObdPortInfoServiceImpl implements IObdPortInfoService {
     /** 更新ObdPortInfo对象 */
     @Override
     public int update(ObdPortInfo obdPortInfo) {
-        obdPortInfo.setCreateTime(new Date());
         return obdPortInfoMapper.update(obdPortInfo);
     }
 

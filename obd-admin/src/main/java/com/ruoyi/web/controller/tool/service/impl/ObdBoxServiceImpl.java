@@ -54,9 +54,6 @@ public class ObdBoxServiceImpl implements IObdBoxService {
     /** 新增ObdBox对象 */
     @Override
     public int insert(ObdBox obdBox) {
-        Date date = new Date();
-        obdBox.setCreateTime(date);
-        obdBox.setCreateTime(date);
         return obdBoxMapper.insert(obdBox);
     }
 
@@ -69,7 +66,6 @@ public class ObdBoxServiceImpl implements IObdBoxService {
     /** 更新ObdBox对象 */
     @Override
     public int update(ObdBox obdBox) {
-        obdBox.setCreateTime(new Date());
         return obdBoxMapper.update(obdBox);
     }
 

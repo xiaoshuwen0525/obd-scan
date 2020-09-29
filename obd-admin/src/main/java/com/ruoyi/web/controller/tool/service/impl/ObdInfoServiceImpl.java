@@ -54,9 +54,6 @@ public class ObdInfoServiceImpl implements IObdInfoService {
     /** 新增ObdInfo对象 */
     @Override
     public int insert(ObdInfo obdInfo) {
-        Date date = new Date();
-        obdInfo.setCreateTime(date);
-        obdInfo.setCreateTime(date);
         return obdInfoMapper.insert(obdInfo);
     }
 
@@ -69,7 +66,6 @@ public class ObdInfoServiceImpl implements IObdInfoService {
     /** 更新ObdInfo对象 */
     @Override
     public int update(ObdInfo obdInfo) {
-        obdInfo.setCreateTime(new Date());
         return obdInfoMapper.update(obdInfo);
     }
 

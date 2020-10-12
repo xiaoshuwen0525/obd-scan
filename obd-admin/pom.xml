@@ -76,6 +76,12 @@
 			<version>4.1.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.wt</groupId>
+			<artifactId>obd-upload</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+
 		<!-- 代码生成 -->
 		<dependency>
 			<groupId>com.wt</groupId>
@@ -86,6 +92,11 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.wt</groupId>
+			<artifactId>obd-upload</artifactId>
 		</dependency>
 
 

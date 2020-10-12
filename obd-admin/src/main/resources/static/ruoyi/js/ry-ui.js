@@ -51,7 +51,7 @@ var table = {
                     firstLoad: true,
                     showFooter: false,
                     search: false,
-                    showSearch: true,
+                    showSearch: false,
                     showPageGo: false,
                     showRefresh: true,
                     showColumns: true,
@@ -846,7 +846,7 @@ var table = {
                     width = 800;
                 }
                 if ($.common.isEmpty(height)) {
-                    height = ($(window).height() - 50);
+                    height = ($(window).height()-50);
                 }
                 if ($.common.isEmpty(callback)) {
                     callback = function (index, layero) {
@@ -1274,6 +1274,21 @@ var table = {
                     $.modal.open("修改" + table.options.modalName, url);
                 } else {
                     $.modal.open("修改" + table.options.modalName, $.operate.editUrl(id));
+                }
+            },
+            // 查看OBD相关详细信息
+            queryOBD: function (id) {
+                table.set();
+                if ($.common.isEmpty(id) && table.options.type == table_type.bootstrapTreeTable) {
+                    var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+                    if ($.common.isEmpty(row)) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    var url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
+                    $.modal.open(table.options.modalName + "详情", url);
+                } else {
+                    $.modal.open(table.options.modalName + "详情", $.operate.editUrl(id));
                 }
             },
             // 修改信息，以tab页展现

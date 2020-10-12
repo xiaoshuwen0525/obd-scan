@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.upload.mapper.QueryInfoMapper">
+
+    <resultMap type="com.ruoyi.upload.domain.ViewObd" id="ViewObdResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="boxStatus" column="box_status" jdbcType="INTEGER"/>
+        <result property="exceptionType" column="exception_type" jdbcType="INTEGER"/>
+        <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="infoId" column="info_id" jdbcType="INTEGER"/>
+        <result property="infoStatus" column="info_status" jdbcType="INTEGER"/>
+        <result property="portId" column="port_id" jdbcType="INTEGER"/>
+        <result property="portSer" column="port_ser" jdbcType="INTEGER"/>
+        <result property="portCode" column="port_code" jdbcType="VARCHAR"/>
+        <result property="portStatus" column="port_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--通过实体不为空的属性作为筛选条件查询单个-->
+    <select id="queryInfo" resultMap="ViewObdResultMap" parameterType="com.ruoyi.upload.domain.ViewObd">
+        SELECT * FROM view_obd
+    </select>
+
+    <select id="queryInfoByJobId" resultMap="ViewObdResultMap" parameterType="com.ruoyi.upload.domain.ViewObd">
+        SELECT * FROM view_obd where job_number = #{jobNumber,jdbcType=VARCHAR}
+    </select>
+
+    <select id="queryInfoForBox" resultMap="ViewObdResultMap" parameterType="com.ruoyi.upload.domain.ViewObd">
+        SELECT * FROM view_obd where job_number = #{param1}
+        AND box_code = #{param2}
+    </select>
+
+    <select id="queryInfoForObd" resultMap="ViewObdResultMap" parameterType="com.ruoyi.upload.domain.ViewObd">
+        SELECT * FROM view_obd where job_number = #{param1}
+        AND box_code = #{param2}
+        AND info_id = #{param3}
+    </select>
+
+    <select id="queryInfoForPort" resultMap="ViewObdResultMap" parameterType="com.ruoyi.upload.domain.ViewObd">
+        SELECT * FROM view_obd where job_number = #{param1}
+        AND box_code = #{param2}
+        AND info_id = #{param3}
+        AND port_id = #{param4}
+    </select>
+
+</mapper>

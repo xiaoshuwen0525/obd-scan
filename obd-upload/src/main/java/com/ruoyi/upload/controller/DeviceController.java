@@ -2,16 +2,17 @@ package com.ruoyi.upload.controller;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.upload.domain.ViewObd;
-import com.ruoyi.upload.service.impl.QueryInfoServiceImpl;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.upload.domain.ObdBoxVO;
+import com.ruoyi.upload.domain.ObdInfoVO;
+import com.ruoyi.upload.domain.ObdPortInfoVO;
+import com.ruoyi.upload.service.impl.UploadServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
 public class DeviceController extends BaseController {
 
     @Autowired
-    private QueryInfoServiceImpl queryInfoService;
+    private UploadServiceImpl uploadService;
 
     private String prefix = "device/chassis";
 
@@ -41,11 +42,24 @@ public class DeviceController extends BaseController {
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list() {
-        startPage();
-        ViewObd viewObd = new ViewObd();
-        viewObd.setJobNumber("80001");
-        List<ViewObd> viewObds = queryInfoService.queryInfoByJobId(viewObd);
-        return getDataTable(viewObds);
+        //获取当前登录用户相关信息的两种方式
+        //Subject subject = SecurityUtils.getSubject();
+        //SysUser principal = (SysUser) subject.getPrincipal();
+        String loginName = null;
+        try {
+            loginName = ShiroUtils.getSysUser().getLoginName();
+        } catch (Exception ignored) {
+        }
+        List<ObdBoxVO> obdBoxVOS = null;
+        //如果当前登录用户是管理员，则查询所有机箱信息
+        if ("admin".equals(loginName)){
+            startPage();
+            obdBoxVOS = uploadService.obdBoxByJobNumber(null);
+        }else{
+            //如果不是管理员，PC端页面则不显示任何信息。
+            return getDataTable(null);
+        }
+        return getDataTable(obdBoxVOS);
     }
 
     @RequiresPermissions("device:chassis:obd:view")
@@ -68,15 +82,8 @@ public class DeviceController extends BaseController {
     @ResponseBody
     public TableDataInfo queryObdList(@PathVariable("id") String id) {
         startPage();
-        ArrayList<HashMap<String, Object>> list = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("number", i);
-            map.put("id", i + 800000000);
-            map.put("status", "正常");
-            list.add(map);
-        }
-        return getDataTable(list);
+        List<ObdInfoVO> obdInfoVOS = uploadService.infoByBoxId(id);
+        return getDataTable(obdInfoVOS);
     }
 
     @RequiresPermissions("device:chassis:obd:port:view")
@@ -94,15 +101,8 @@ public class DeviceController extends BaseController {
     @ResponseBody
     public TableDataInfo portList(@PathVariable("id") String id) {
         startPage();
-        ArrayList<HashMap<String, Object>> list = new ArrayList<>();
-        for (int i = 1; i <= 8; i++) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("number", i);
-            map.put("id", i + 700000000);
-            map.put("status", "正常");
-            list.add(map);
-        }
-        return getDataTable(list);
+        List<ObdPortInfoVO> obdPortInfoVOS = uploadService.portByObdId(id);
+        return getDataTable(obdPortInfoVOS);
     }
 
 }

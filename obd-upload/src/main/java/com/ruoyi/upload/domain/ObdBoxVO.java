@@ -22,7 +22,7 @@ public class ObdBoxVO {
 
     private static final long serialVersionUID = 1L;
 
-        private String seq;
+        private Integer seq;
 
         private Integer id;
     

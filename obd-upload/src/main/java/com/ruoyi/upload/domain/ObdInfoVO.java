@@ -17,7 +17,7 @@ public class ObdInfoVO {
 
     private static final long serialVersionUID = 1L;
 
-    private String seq;
+    private Integer seq;
 
     /**
      * ${column.comment}

@@ -255,6 +255,7 @@ public class ShiroConfig
         // 退出 logout地址，shiro去清除session
         filterChainDefinitionMap.put("/logout", "logout");
         // 不需要拦截的访问
+        filterChainDefinitionMap.put("/upload/**", "anon,captchaValidate");
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
         filterChainDefinitionMap.put("/rpa/**", "anon,captchaValidate");
         // 系统权限列表

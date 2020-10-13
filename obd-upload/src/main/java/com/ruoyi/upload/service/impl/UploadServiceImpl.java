@@ -10,6 +10,7 @@ import com.ruoyi.upload.mapper.UploadMapper;
 import com.ruoyi.upload.service.IUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -28,16 +29,20 @@ public class UploadServiceImpl implements IUploadService {
     private UploadMapper uploadMapper;
 
     @Override
+    @Transactional
     public AjaxResult uploadInformation(Obd obd) {
+        System.out.println(obd.toString());
         int boxId  = 0;
-        String jobNumber = obd.getJobNumber();
         if(uploadMapper.countByBoxCode(obd.getBoxCode()) == 0){
-            boxId = uploadMapper.insertObdBox(getObdBox(obd));
+            ObdBox obdBox = getObdBox(obd);
+            uploadMapper.insertObdBox(obdBox);
+            boxId = obdBox.getId();
         }
         Map<String,Integer> info = new HashMap<String, Integer>(20);
         for (String obdInfo:obd.getObdList()){
-           int  infoId =  uploadMapper.insertObdInfo(getObdInfo(boxId));
-           info.put(obdInfo,infoId);
+           ObdInfo info1 =  getObdInfo(boxId);
+           uploadMapper.insertObdInfo(info1);
+           info.put(obdInfo,info1.getId());
         }
         for (ObdPost obdPost : obd.getPostList()){
             uploadMapper.insertPort(getPortInfo(obdPost.getPortSer(),obdPost.getPortCode(),info.get(obdPost.getMarking())));
@@ -50,11 +55,17 @@ public class UploadServiceImpl implements IUploadService {
                 obdInfo1.setStatus(1);
                 uploadMapper.updateObdInfo(obdInfo1);
                 ObdBox obdBox = new ObdBox();
+                obdBox.setId(boxId);
                 obdBox.setExceptionType(2);
                 obdBox.setExceptionInfo("存在端口识别异常");
+                uploadMapper.updateObdBox(obdBox);
+            }else {
+                ObdInfo obdInfo1 = new ObdInfo();
+                obdInfo1.setId(info.get(obdInfo));
+                obdInfo1.setStatus(0);
+                uploadMapper.updateObdInfo(obdInfo1);
             }
         }
-
         return AjaxResult.success();
     }
 
@@ -91,34 +102,58 @@ public class UploadServiceImpl implements IUploadService {
         List<ObdBoxVO> list = uploadMapper.selectBoxByJobNumber(JobNumber);
         for (ObdBoxVO obdBox:list){
             obdBox.setStatus(changeStatus(obdBox.getStatus()));
+            if("1".equals(obdBox.getExceptionType())){
+                obdBox.setExceptionType("盒子异常");
+            }else{
+                obdBox.setExceptionType("obd异常");
+            }
         }
-
         return list;
     }
 
     @Override
-    public List<ObdInfoVO> InfoByJobNumberAndBoxId(String boxId, String jobNumber) {
-        return uploadMapper.selectInfoByJobNumberAndBoxId(jobNumber,boxId);
+    public List<ObdInfoVO> infoByBoxId(String boxId) {
+        List<ObdInfoVO> list = uploadMapper.selectInfoByBoxId(boxId);
+        for (ObdInfoVO obdInfo:list){
+            obdInfo.setStatus(changeStatus(obdInfo.getStatus()));
+        }
+        return list;
     }
 
     @Override
     public List<ObdPortInfoVO> portByObdId(String obdId) {
-        return uploadMapper.selectPortByObdId(obdId);
+        List<ObdPortInfoVO> list = uploadMapper.selectPortByObdId(obdId);
+        for (ObdPortInfoVO port:list){
+            port.setStatus(changeStatus(port.getStatus()));
+        }
+        return list;
     }
 
     @Override
-    public List<ObdBoxVO> selectBoxById(String id) {
-        return uploadMapper.selectBoxById(id);
+    public ObdBoxVO selectBoxById(String id) {
+        String one = "1";
+        ObdBoxVO obdBox = uploadMapper.selectBoxById(id);
+        obdBox.setStatus(changeStatus(obdBox.getStatus()));
+        if(one.equals(obdBox.getExceptionType())){
+            obdBox.setExceptionType("盒子异常");
+        }else{
+            obdBox.setExceptionType("obd异常");
+        }
+        return obdBox;
     }
 
     @Override
-    public List<ObdInfoVO> selectInfoById(String id) {
-        return uploadMapper.selectInfoById(id);
+    public ObdInfoVO selectInfoById(String id) {
+        ObdInfoVO obdInfo = uploadMapper.selectInfoById(id);
+        obdInfo.setStatus(changeStatus(obdInfo.getStatus()));
+        return obdInfo;
     }
 
     @Override
-    public List<ObdPortInfoVO> selectPortById(String id) {
-        return uploadMapper.selectPortById(id);
+    public ObdPortInfoVO selectPortById(String id) {
+        ObdPortInfoVO obdPort = uploadMapper.selectPortById(id);
+        obdPort.setStatus(obdPort.getStatus());
+        return obdPort;
     }
 
     @Override
@@ -136,6 +171,30 @@ public class UploadServiceImpl implements IUploadService {
         return uploadMapper.updateObdInfo(obdInfo);
     }
 
+    @Override
+    public List<ObdBoxVO> selectObdByJobNumber(String jobNumber) {
+        List<ObdBoxVO> obdBoxList = uploadMapper.selectBoxByJobNumber(jobNumber);
+        for (ObdBoxVO obdBox:obdBoxList){
+            List<ObdInfoVO> obdInfoList = uploadMapper.selectInfoByBoxId(obdBox.getId().toString());
+            for (ObdInfoVO obdInfo:obdInfoList){
+                List<ObdPortInfoVO> obdPortInfoList = uploadMapper.selectPortByObdId(obdInfo.getId().toString());
+                obdInfo.setStatus(changeStatus(obdInfo.getStatus()));
+                for (ObdPortInfoVO obdPortInfo:obdPortInfoList){
+                    obdPortInfo.setStatus(changeStatus(obdPortInfo.getStatus()));
+                }
+                obdInfo.setObdPortInfoVOList(obdPortInfoList);
+            }
+            obdBox.setStatus(changeStatus(obdBox.getStatus()));
+            obdBox.setObdInfoVOList(obdInfoList);
+            if("1".equals(obdBox.getExceptionType())){
+                obdBox.setExceptionType("盒子异常");
+            }else{
+                obdBox.setExceptionType("obd异常");
+            }
+        }
+        return obdBoxList;
+    }
+
 
     /**
      * 获得 obdBox 实体类
@@ -148,9 +207,9 @@ public class UploadServiceImpl implements IUploadService {
         obdBox.setBoxCode(obd.getBoxCode());
         obdBox.setJobNumber(obd.getJobNumber());
         if(obd.getBoxCode()!=null && !"".equals(obd.getBoxCode())){
-            obdBox.setStatus(1);
-        }else{
             obdBox.setStatus(0);
+        }else{
+            obdBox.setStatus(1);
         }
         obdBox.setExceptionType(obd.getExceptionType());
         obdBox.setExceptionInfo(obd.getExceptionInfo());

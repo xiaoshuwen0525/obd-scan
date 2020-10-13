@@ -47,12 +47,11 @@ public interface IUploadService
     public List<ObdBoxVO> obdBoxByJobNumber(String jobNumber);
 
     /**
-     * 根据盒子id和工号查询
+     * 根据盒子id查询
      * @param boxId
-     * @param jobNumber
      * @return
      */
-    public List<ObdInfoVO> InfoByJobNumberAndBoxId(String boxId,String jobNumber);
+    public List<ObdInfoVO> infoByBoxId(String boxId);
 
     /**
      * 根据obdId查询端口
@@ -66,14 +65,14 @@ public interface IUploadService
      * @param id 工号
      * @return AjaxResult
      */
-    List<ObdBoxVO> selectBoxById(String  id);
+    ObdBoxVO selectBoxById(String  id);
 
     /**
      * 根据ID查询obd
      * @param id
      * @return AjaxResult
      */
-    List<ObdInfoVO> selectInfoById(String  id);
+    ObdInfoVO selectInfoById(String  id);
 
 
     /**
@@ -81,7 +80,7 @@ public interface IUploadService
      * @param id id
      * @return AjaxResult
      */
-    List<ObdPortInfoVO> selectPortById(String  id);
+    ObdPortInfoVO selectPortById(String  id);
 
     /**
      * 更新obdPortInfo
@@ -105,4 +104,11 @@ public interface IUploadService
      * @return int  id
      */
     int  updateObdInfo(ObdInfo obdInfo);
+
+    /**
+     * 根据工号获取obd信息（树状）
+     * @param jobNumber
+     * @return int  id
+     */
+    List<ObdBoxVO>  selectObdByJobNumber(String jobNumber);
 }

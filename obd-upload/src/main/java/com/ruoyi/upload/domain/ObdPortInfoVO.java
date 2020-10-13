@@ -40,7 +40,7 @@ public class ObdPortInfoVO {
     /**
      * 数据状态0：正常1：异常
      */
-    private Integer status;
+    private String status;
 
     /**
      * 图片路径

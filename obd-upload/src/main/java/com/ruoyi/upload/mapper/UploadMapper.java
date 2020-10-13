@@ -84,11 +84,10 @@ public interface UploadMapper {
 
     /**
      * 根据盒子唯一ID和工号查询obd
-     * @param jobNumber 工号
      * @param  boxId  盒子唯一id
      * @return AjaxResult
      */
-    List<ObdInfoVO> selectInfoByJobNumberAndBoxId(@Param("jobNumber") String  jobNumber, @Param("boxId") String  boxId);
+    List<ObdInfoVO> selectInfoByBoxId(@Param("boxId") String  boxId);
 
 
     /**
@@ -104,14 +103,14 @@ public interface UploadMapper {
      * @param id 工号
      * @return AjaxResult
      */
-    List<ObdBoxVO> selectBoxById(@Param("Id") String  id);
+    ObdBoxVO selectBoxById(@Param("Id") String  id);
 
     /**
      * 根据ID查询obd
      * @param id
      * @return AjaxResult
      */
-    List<ObdInfoVO> selectInfoById(@Param("id") String  id);
+    ObdInfoVO selectInfoById(@Param("id") String  id);
 
 
     /**
@@ -119,7 +118,7 @@ public interface UploadMapper {
      * @param id id
      * @return AjaxResult
      */
-    List<ObdPortInfoVO> selectPortById(@Param("id") String  id);
+    ObdPortInfoVO selectPortById(@Param("id") String  id);
 
 
 

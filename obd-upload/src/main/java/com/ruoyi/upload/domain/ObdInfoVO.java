@@ -32,7 +32,7 @@ public class ObdInfoVO {
     /**
      * 数据状态0：正常1：异常
      */
-    private Integer status;
+    private String status;
 
     private List<ObdPortInfoVO> obdPortInfoVOList;
 

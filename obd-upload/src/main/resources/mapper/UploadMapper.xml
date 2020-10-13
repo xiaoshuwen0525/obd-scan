@@ -139,12 +139,9 @@
     </update>
 
     <!--新增实体属性不为null的列-->
-    <insert id="insertObdBox" keyProperty="id" useGeneratedKeys="true" parameterType="com.ruoyi.upload.domain.ObdBox">
+    <insert id="insertObdBox"  parameterType="com.ruoyi.upload.domain.ObdBox" useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
         insert into obd_box
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="boxCode != null and boxCode != ''">
                 box_code,
             </if>
@@ -168,9 +165,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="boxCode != null and boxCode != ''">
                 #{boxCode,jdbcType=VARCHAR},
             </if>
@@ -196,12 +190,9 @@
     </insert>
 
     <!--新增实体属性不为null的列-->
-    <insert id="insertObdInfo" keyProperty="id" useGeneratedKeys="true" parameterType="com.ruoyi.upload.domain.ObdInfo">
+    <insert id="insertObdInfo"  parameterType="com.ruoyi.upload.domain.ObdInfo"  keyColumn="id" useGeneratedKeys="true" keyProperty="id" >
         insert into obd_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="boxId != null">
                 box_id,
             </if>
@@ -210,9 +201,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="boxId != null">
                 #{boxId,jdbcType=INTEGER},
             </if>
@@ -223,12 +211,9 @@
     </insert>
 
     <!--新增实体属性不为null的列-->
-    <insert id="insertPort" keyProperty="id" useGeneratedKeys="true" parameterType="com.ruoyi.upload.domain.ObdPortInfo">
+    <insert id="insertPort" parameterType="com.ruoyi.upload.domain.ObdPortInfo" keyColumn="id" useGeneratedKeys="true" keyProperty="id" >
         insert into obd_port_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="obdId != null">
                 obd_id,
             </if>
@@ -246,9 +231,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="obdId != null">
                 #{obdId,jdbcType=INTEGER},
             </if>
@@ -267,7 +249,7 @@
         </trim>
     </insert>
 
-    <!--通过Id查询单个-->
+    <!--通过工号查询盒子列表-->
     <select id="selectBoxByJobNumber" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         SELECT
         (@num := @num + 1) as num,
@@ -281,8 +263,8 @@
         </where>
     </select>
 
-    <!--通过Id查询单个-->
-    <select id="selectInfoByJobNumberAndBoxId" resultMap="ObdInfoVOMap" >
+    <!--通过盒子id查询obd列表-->
+    <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
         i.id,i.box_id,i.status
@@ -290,16 +272,13 @@
         INNER  JOIN obd_box b on  b.id = i.box_id,
         (select @num := 0) row_number
         <where>
-            <if test="jobNumber != null and jobNumber != ''">
-                and b.job_number = #{jobNumber,jdbcType=VARCHAR}
-            </if>
             <if test="boxId != null and boxId != ''">
                 and i.box_id = #{boxId,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
 
-    <!--通过Id查询单个-->
+    <!--通过ObdId查询端口列表-->
     <select id="selectPortByObdId" resultMap="ObdPortInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
@@ -313,7 +292,7 @@
         </where>
     </select>
 
-    <!--通过Id查询单个-->
+    <!--通过机房Id查询单个-->
     <select id="selectBoxById" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         SELECT
         (@num := @num + 1) as num,
@@ -327,7 +306,7 @@
         </where>
     </select>
 
-    <!--通过Id查询单个-->
+    <!--通过obdID查询单个-->
     <select id="selectInfoById" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
@@ -341,7 +320,7 @@
         </where>
     </select>
 
-    <!--通过Id查询单个-->
+    <!--通过端口Id查询单个-->
     <select id="selectPortById" resultMap="ObdPortInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,

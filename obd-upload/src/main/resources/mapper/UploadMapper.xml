@@ -282,7 +282,7 @@
     </select>
 
     <!--通过Id查询单个-->
-    <select id="selectInfoByJobNumber" resultMap="ObdInfoVOMap" >
+    <select id="selectInfoByJobNumberAndBoxId" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
         i.id,i.box_id,i.status
@@ -300,10 +300,10 @@
     </select>
 
     <!--通过Id查询单个-->
-    <select id="selectPortByJobNumber" resultMap="ObdPortInfoVOMap" >
+    <select id="selectPortByObdId" resultMap="ObdPortInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
-        id,obd_id,port_ser,phone_code,status,img_url
+        id,obd_id,port_ser,port_code,status,img_url
         FROM obd_port_info ,
         (select @num := 0) row_number
         <where>
@@ -345,7 +345,7 @@
     <select id="selectPortById" resultMap="ObdPortInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
-        id,obd_id,port_ser,phone_code,status,img_url
+        id,obd_id,port_ser,port_code,status,img_url
         FROM obd_port_info ,
         (select @num := 0) row_number
         <where>

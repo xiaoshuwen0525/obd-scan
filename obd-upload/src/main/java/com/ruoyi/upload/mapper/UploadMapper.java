@@ -88,7 +88,7 @@ public interface UploadMapper {
      * @param  boxId  盒子唯一id
      * @return AjaxResult
      */
-    List<ObdInfoVO> selectInfoByJobNumber(@Param("jobNumber") String  jobNumber, @Param("boxId") String  boxId);
+    List<ObdInfoVO> selectInfoByJobNumberAndBoxId(@Param("jobNumber") String  jobNumber, @Param("boxId") String  boxId);
 
 
     /**
@@ -96,7 +96,7 @@ public interface UploadMapper {
      * @param obdId obdId
      * @return AjaxResult
      */
-    List<ObdPortInfoVO> selectPortByJobNumber(@Param("obdId") String  obdId);
+    List<ObdPortInfoVO> selectPortByObdId(@Param("obdId") String  obdId);
 
 
     /**

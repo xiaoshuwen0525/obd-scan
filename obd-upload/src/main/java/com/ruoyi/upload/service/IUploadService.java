@@ -52,14 +52,14 @@ public interface IUploadService
      * @param jobNumber
      * @return
      */
-    public List<ObdInfoVO> obdInfoByJobNumber(String boxId,String jobNumber);
+    public List<ObdInfoVO> InfoByJobNumberAndBoxId(String boxId,String jobNumber);
 
     /**
      * 根据obdId查询端口
      * @param obdId
      * @return
      */
-    public List<ObdPortInfoVO> obdPortByJobNumber(String obdId);
+    public List<ObdPortInfoVO> portByObdId(String obdId);
 
     /**
      * 根据id查询obd盒子

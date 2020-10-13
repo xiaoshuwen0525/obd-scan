@@ -77,19 +77,19 @@ public class UploadController extends BaseController
         return AjaxResult.success(uploadService.obdBoxByJobNumber(jobNumber));
     }
 
-    @GetMapping("/obdInfoByJobNumber")
+    @GetMapping("/InfoByJobNumberAndBoxId")
     @ResponseBody
-    public AjaxResult obdInfoByJobNumber(@RequestParam(value = "jobNumber") String jobNumber,@RequestParam(value = "boxId") String boxId)
+    public AjaxResult InfoByJobNumberAndBoxId(@RequestParam(value = "jobNumber") String jobNumber,@RequestParam(value = "boxId") String boxId)
     {
-        return AjaxResult.success(uploadService.obdInfoByJobNumber(boxId,jobNumber));
+        return AjaxResult.success(uploadService.InfoByJobNumberAndBoxId(boxId,jobNumber));
     }
 
 
-    @GetMapping("/obdPortByJobNumber")
+    @GetMapping("/portByObdId")
     @ResponseBody
     public AjaxResult obdPortByJobNumber(@RequestParam(value = "obdId") String obdId)
     {
-        return AjaxResult.success(uploadService.obdPortByJobNumber(obdId));
+        return AjaxResult.success(uploadService.portByObdId(obdId));
     }
 
 

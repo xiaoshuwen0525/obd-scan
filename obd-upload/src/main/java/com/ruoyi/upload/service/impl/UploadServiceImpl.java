@@ -49,6 +49,9 @@ public class UploadServiceImpl implements IUploadService {
                 obdInfo1.setId(info.get(obdInfo));
                 obdInfo1.setStatus(1);
                 uploadMapper.updateObdInfo(obdInfo1);
+                ObdBox obdBox = new ObdBox();
+                obdBox.setExceptionType(2);
+                obdBox.setExceptionInfo("存在端口识别异常");
             }
         }
 
@@ -85,17 +88,22 @@ public class UploadServiceImpl implements IUploadService {
 
     @Override
     public List<ObdBoxVO> obdBoxByJobNumber(String JobNumber) {
-        return uploadMapper.selectBoxByJobNumber(JobNumber);
+        List<ObdBoxVO> list = uploadMapper.selectBoxByJobNumber(JobNumber);
+        for (ObdBoxVO obdBox:list){
+            obdBox.setStatus(changeStatus(obdBox.getStatus()));
+        }
+
+        return list;
     }
 
     @Override
-    public List<ObdInfoVO> obdInfoByJobNumber(String boxId, String jobNumber) {
-        return uploadMapper.selectInfoByJobNumber(jobNumber,boxId);
+    public List<ObdInfoVO> InfoByJobNumberAndBoxId(String boxId, String jobNumber) {
+        return uploadMapper.selectInfoByJobNumberAndBoxId(jobNumber,boxId);
     }
 
     @Override
-    public List<ObdPortInfoVO> obdPortByJobNumber(String obdId) {
-        return uploadMapper.selectPortByJobNumber(obdId);
+    public List<ObdPortInfoVO> portByObdId(String obdId) {
+        return uploadMapper.selectPortByObdId(obdId);
     }
 
     @Override
@@ -148,6 +156,24 @@ public class UploadServiceImpl implements IUploadService {
         obdBox.setExceptionInfo(obd.getExceptionInfo());
         return obdBox;
     }
+
+
+    /**
+     * 将status改文字
+     * @param status 值
+     * @return 异常状态文字
+     */
+    private String changeStatus(String status){
+        String zero = "0";
+       if(status.equals(zero)){
+           return "正常";
+       }else {
+           return "异常";
+       }
+
+    }
+
+
 
     /**
      * 获得 ObdInfo 实体类

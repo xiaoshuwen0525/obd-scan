@@ -29,15 +29,14 @@ public class DeviceController extends BaseController {
 
     private String prefix = "device/chassis";
 
+    /** 跳转机箱页面 */
     @RequiresPermissions("device:chassis:view")
     @GetMapping()
     public String chassis() {
         return prefix + "/chassis";
     }
 
-    /**
-     * 查询机箱列表
-     */
+    /** 管理员用户查询所有机箱列表 */
     @RequiresPermissions("device:chassis:list")
     @PostMapping("/list")
     @ResponseBody
@@ -52,31 +51,31 @@ public class DeviceController extends BaseController {
         }
         List<ObdBoxVO> obdBoxVOS = null;
         //如果当前登录用户是管理员，则查询所有机箱信息
-        if ("admin".equals(loginName)){
+        if ("admin".equals(loginName)) {
             startPage();
             obdBoxVOS = uploadService.obdBoxByJobNumber(null);
-        }else{
+        } else {
             //如果不是管理员，PC端页面则不显示任何信息。
             return getDataTable(null);
         }
         return getDataTable(obdBoxVOS);
     }
 
-    @RequiresPermissions("device:chassis:obd:view")
+    /** 跳转OBD页面 */
+    @GetMapping("/obd")
+    public String obd() {
+        return prefix + "/obd";
+    }
+
+    /** 跳转ODB页面并携带当前点击的机箱ID */
+    @RequiresPermissions("device:chassis:obd")
     @GetMapping("/obd/{id}")
     public String obdList(@PathVariable("id") String id, ModelMap mmap) {
         mmap.put("id", id);
         return prefix + "/obd";
     }
 
-    @GetMapping("/obd")
-    public String obd() {
-        return prefix + "/obd";
-    }
-
-    /**
-     * 查询OBD列表
-     */
+    /** 根据机箱唯一ID查询端口列表 */
     @RequiresPermissions("device:chassis:obd:list")
     @PostMapping("/obd/list/{id}")
     @ResponseBody
@@ -86,16 +85,23 @@ public class DeviceController extends BaseController {
         return getDataTable(obdInfoVOS);
     }
 
-    @RequiresPermissions("device:chassis:obd:port:view")
+    /** 跳转端口页面 */
+    @GetMapping("/obd/port")
+    public String port() {
+        return prefix + "/port";
+    }
+
+    /**
+     * 跳转端口页面并携带当前点击的OBD唯一ID
+     */
+    @RequiresPermissions("device:chassis:obd:port")
     @GetMapping("/obd/port/{id}")
     public String port(@PathVariable("id") String id, ModelMap mmap) {
         mmap.put("id", id);
         return prefix + "/port";
     }
 
-    /**
-     * 查询端口列表
-     */
+    /** 根据obd唯一ID查询端口列表 */
     @RequiresPermissions("device:chassis:obd:port:list")
     @PostMapping("/obd/port/list/{id}")
     @ResponseBody

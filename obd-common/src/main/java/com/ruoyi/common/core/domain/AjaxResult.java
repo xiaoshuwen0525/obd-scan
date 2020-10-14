@@ -1,8 +1,8 @@
 package com.ruoyi.common.core.domain;
 
-import java.util.HashMap;
 import com.ruoyi.common.utils.StringUtils;
-import org.springframework.http.HttpStatus;
+
+import java.util.HashMap;
 
 /**
  * 操作消息提醒
@@ -28,7 +28,9 @@ public class AjaxResult extends HashMap<String, Object>
     public enum Type
     {
         /** 成功 */
-        SUCCESS(200),
+        SUCCESS(0),
+        /** 自定义成功 */
+        SUCCESSOBD(200),
         /** 警告 */
         WARN(301),
         /** 错误 */
@@ -99,6 +101,10 @@ public class AjaxResult extends HashMap<String, Object>
             super.put(DATA_TAG, data);
         }
     }
+    public static AjaxResult success(String code, String msg,Object data)
+    {
+        return new AjaxResult(code, msg, data);
+    }
 
     /**
      * 返回成功消息
@@ -118,6 +124,16 @@ public class AjaxResult extends HashMap<String, Object>
     public static AjaxResult success(Object data)
     {
         return AjaxResult.success("操作成功", data);
+    }
+
+    /**
+     * 自定义--返回成功数据
+     *
+     * @return 成功消息
+     */
+    public static AjaxResult successOBD(Object data)
+    {
+        return AjaxResult.successOBD("操作成功", data);
     }
 
     /**
@@ -141,6 +157,11 @@ public class AjaxResult extends HashMap<String, Object>
     public static AjaxResult success(String msg, Object data)
     {
         return new AjaxResult(Type.SUCCESS, msg, data);
+    }
+
+    public static AjaxResult successOBD(String msg, Object data)
+    {
+        return new AjaxResult(Type.SUCCESSOBD, msg, data);
     }
 
     /**
@@ -200,10 +221,6 @@ public class AjaxResult extends HashMap<String, Object>
     }
 
 
-    public static AjaxResult success(String code, String msg,Object data)
-    {
-        return new AjaxResult(code, msg, data);
-    }
 
     /**
      * 返回上传的路径

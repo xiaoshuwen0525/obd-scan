@@ -183,12 +183,6 @@
 				<version>${wt.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>com.wt</groupId>
-				<artifactId>obd-upload</artifactId>
-				<version>${wt.version}</version>
-			</dependency>
-			
 			<!-- 核心模块-->
 			<dependency>
 				<groupId>com.wt</groupId>
@@ -227,7 +221,6 @@
 		<module>obd-quartz</module>
 		<module>obd-generator</module>
         <module>obd-common</module>
-        <module>obd-upload</module>
     </modules>
     <packaging>pom</packaging>
 

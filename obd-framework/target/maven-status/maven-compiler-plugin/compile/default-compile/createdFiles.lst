@@ -10,7 +10,6 @@ com\ruoyi\framework\config\ShiroConfig.class
 com\ruoyi\framework\manager\factory\AsyncFactory$1.class
 com\ruoyi\framework\shiro\web\session\SpringSessionValidationScheduler$1.class
 com\ruoyi\framework\shiro\web\filter\space\RidSpaceConfiguration.class
-com\ruoyi\framework\aspectj\AutoAllotOrderAspect.class
 com\ruoyi\framework\manager\factory\AsyncFactory.class
 com\ruoyi\framework\manager\factory\AsyncFactory$3.class
 com\ruoyi\framework\config\FilterConfig.class

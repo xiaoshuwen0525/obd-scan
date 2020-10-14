@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="obd-generator" />
+        <module name="obd-upload" />
+        <module name="obd-framework" />
+        <module name="obd-admin" />
+        <module name="obd-quartz" />
+        <module name="obd-system" />
+        <module name="obd-common" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="obd" target="1.8" />
+      <module name="obd-admin" target="1.8" />
+      <module name="obd-common" target="1.8" />
+      <module name="obd-framework" target="1.8" />
+      <module name="obd-generator" target="1.8" />
+      <module name="obd-quartz" target="1.8" />
+      <module name="obd-system" target="1.8" />
+      <module name="obd-upload" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

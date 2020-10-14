@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/obd.iml" filepath="$PROJECT_DIR$/obd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/obd-admin/obd-admin.iml" filepath="$PROJECT_DIR$/obd-admin/obd-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/obd-common/obd-common.iml" filepath="$PROJECT_DIR$/obd-common/obd-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/obd-framework/obd-framework.iml" filepath="$PROJECT_DIR$/obd-framework/obd-framework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/obd-generator/obd-generator.iml" filepath="$PROJECT_DIR$/obd-generator/obd-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/obd-quartz/obd-quartz.iml" filepath="$PROJECT_DIR$/obd-quartz/obd-quartz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/obd-system/obd-system.iml" filepath="$PROJECT_DIR$/obd-system/obd-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/obd-upload/obd-upload.iml" filepath="$PROJECT_DIR$/obd-upload/obd-upload.iml" />
+    </modules>
+  </component>
+</project>

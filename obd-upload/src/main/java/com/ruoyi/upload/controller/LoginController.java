@@ -18,7 +18,7 @@ import java.text.ParseException;
  *
  */
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/login/mobile")
 public class LoginController extends BaseController {
     @Autowired
     private LoginService loginService;

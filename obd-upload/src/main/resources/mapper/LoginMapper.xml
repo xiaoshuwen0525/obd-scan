@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.upload.mapper.LoginMapper">
+    <resultMap type="com.ruoyi.upload.domain.WxUser" id="wxUserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="wxOpenId" column="wx_open_id" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <resultMap type="com.ruoyi.upload.domain.PhoneCode" id="phoneCodeMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="authCode" column="auth_code" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <!-- 添加手机号验证码 -->
+    <insert id="insertPhoneAuthCode" parameterType="com.ruoyi.upload.domain.PhoneCode">
+        insert into phone_code (
+        <if test="phone != null and phone != ''">phone,</if>
+        <if test="authCode != null and authCode != ''">auth_code</if>
+        ) values (
+        <if test="phone != null and phone != ''">#{phone},</if>
+        <if test="authCode != null and authCode != ''">#{authCode}</if>
+        )
+    </insert>
+
+    <!-- 登陆  判断openid是否存在 -->
+    <select id="selectOpenId" resultMap="wxUserMap">
+        select wx_open_id,job_number,phone
+        from wx_user
+        where wx_open_id=#{openId}
+    </select>
+
+    <!-- 查询最后一个验证码 -->
+    <select id="selectAuthCode" resultMap="phoneCodeMap">
+        select auth_code,create_time from phone_code where id=(select MAX(id) from phone_code )
+        /*SELECT auth_code FROM phone_code
+        ORDER BY id DESC
+        LIMIT 0,1*/
+    </select>
+
+    <!-- 添加用户 -->
+    <insert id="insertUser" parameterType="com.ruoyi.upload.domain.WxUser">
+        insert into wx_user (
+        <if test="phone != null and phone != ''">phone,</if>
+        <if test="jobNumber != null and jobNumber != ''">job_number,</if>
+        <if test="wxOpenId != null and wxOpenId != ''">wx_open_id</if>
+        ) values (
+        <if test="phone != null and phone != ''">#{phone},</if>
+        <if test="jobNumber != null and jobNumber != ''">#{jobNumber},</if>
+        <if test="wxOpenId != null and wxOpenId != ''">#{wxOpenId}</if>
+        )
+    </insert>
+
+    <!-- 判断手机号是否存在 -->
+    <select id="selectPhone" resultMap="wxUserMap">
+        select phone from wx_user  where phone=#{phone}
+    </select>
+
+    <!-- 解绑 修改手机号 -->
+    <update id="updateUnbind" parameterType="java.lang.String">
+        update wx_user
+        set phone=#{phone}
+        where wx_open_id=#{openId}
+    </update>
+
+    <update id="unbind" parameterType="java.lang.String">
+        update wx_user
+        set phone=null
+        where wx_open_id=#{openId}
+    </update>
+</mapper> 

@@ -2,6 +2,7 @@ package com.ruoyi.common.core.domain;
 
 import java.util.HashMap;
 import com.ruoyi.common.utils.StringUtils;
+import org.springframework.http.HttpStatus;
 
 /**
  * 操作消息提醒
@@ -27,7 +28,7 @@ public class AjaxResult extends HashMap<String, Object>
     public enum Type
     {
         /** 成功 */
-        SUCCESS(0),
+        SUCCESS(200),
         /** 警告 */
         WARN(301),
         /** 错误 */
@@ -74,6 +75,24 @@ public class AjaxResult extends HashMap<String, Object>
     public AjaxResult(Type type, String msg, Object data)
     {
         super.put(CODE_TAG, type.value);
+        super.put(MSG_TAG, msg);
+        if (StringUtils.isNotNull(data))
+        {
+            super.put(DATA_TAG, data);
+        }
+    }
+
+    /**
+     * 初始化一个新创建的 AjaxResult 对象
+     *
+     * @param code 状态码
+     * @param msg 返回内容
+     * @param data 数据对象
+     */
+    public AjaxResult(String code, String msg, Object data)
+    {
+
+        super.put(CODE_TAG, code);
         super.put(MSG_TAG, msg);
         if (StringUtils.isNotNull(data))
         {
@@ -181,6 +200,10 @@ public class AjaxResult extends HashMap<String, Object>
     }
 
 
+    public static AjaxResult success(String code, String msg,Object data)
+    {
+        return new AjaxResult(code, msg, data);
+    }
 
     /**
      * 返回上传的路径

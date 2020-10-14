@@ -3,19 +3,24 @@ package com.ruoyi.upload.controller;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.UUID;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 
 
-import com.ruoyi.upload.domain.Obd;
-import com.ruoyi.upload.domain.ObdBox;
-import com.ruoyi.upload.domain.ObdInfo;
-import com.ruoyi.upload.domain.ObdPortInfo;
+
+import com.ruoyi.upload.domain.*;
 import com.ruoyi.upload.service.IUploadService;
 import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 图片上传
@@ -30,11 +35,10 @@ public class UploadController extends BaseController
     @Autowired
     private IUploadService uploadService;
 
-
     @ApiOperation(value = "上传信息")
     @PostMapping("/uploadInformation")
     @ResponseBody
-    public AjaxResult uploadInformation(@RequestBody Obd obd)
+    public AjaxResult uploadInformation(ObdVO obd)
     {
         return uploadService.uploadInformation(obd);
     }
@@ -135,11 +139,27 @@ public class UploadController extends BaseController
         return AjaxResult.success(uploadService.updateObdPort(obdPortInfo));
     }
 
-
+    @ApiOperation(value = "根据工号查询分页")
     @GetMapping("/selectObdByJobNumber")
     @ResponseBody
-    public AjaxResult selectObdByJobNumber(@RequestParam(value = "jobNumber") String jobNumber)
+    public AjaxResult selectObdByJobNumber(@RequestParam(value = "jobNumber") String jobNumber,@RequestParam(value = "pageNum") Integer pageNum,@RequestParam(value = "pageSize") Integer pageSize)
     {
-        return AjaxResult.success(uploadService.selectObdByJobNumber(jobNumber));
+        return AjaxResult.success(uploadService.selectObdByJobNumber(jobNumber,pageNum,pageSize));
+    }
+
+    @ApiOperation(value = "根据id查询obd整个")
+    @GetMapping("/selectObdById")
+    @ResponseBody
+    public AjaxResult selectObdById(@RequestParam(value = "id") int id)
+    {
+        return AjaxResult.success(uploadService.selectObdById(id));
+    }
+
+    @ApiOperation(value = "更新obd")
+    @PostMapping("/updateObd")
+    @ResponseBody
+    public AjaxResult updateObd(UpdateObd obd)
+    {
+        return AjaxResult.success(uploadService.updateObd(obd));
     }
 }

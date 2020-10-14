@@ -103,7 +103,7 @@ public interface UploadMapper {
      * @param id 工号
      * @return AjaxResult
      */
-    ObdBoxVO selectBoxById(@Param("Id") String  id);
+    ObdBoxVO selectBoxById(@Param("id") String  id);
 
     /**
      * 根据ID查询obd

@@ -23,6 +23,31 @@ public class LoginController extends BaseController {
     @Autowired
     private LoginService loginService;
 
+
+    @PostMapping("/visitorLogin")
+    public AjaxResult visitorLogin(String code){
+        /*if(code == null || code == ""){
+            return AjaxResult.success("105","code不能为空",null);
+        }*/
+        System.out.println( System.currentTimeMillis());
+        //获取openid
+        /*String openId = null;
+        try {
+            openId = GetOpenIdUtil.getOpenId(code);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        String openId = loginService.visitorLogin(code);
+
+        if(openId == null || openId == ""){
+            return AjaxResult.success("105","openId不能为空",openId);
+        }else{
+            return AjaxResult.successOBD(openId);
+        }*/
+        return null;
+    }
+
+
     /**
      * 登陆
      * @param code
@@ -31,9 +56,19 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/selectOpenid")
     @ResponseBody
-    public AjaxResult selectOpenid(String code) throws IOException {
+    public AjaxResult selectOpenid(String code) {
+
+        if(code == null || code == ""){
+            return AjaxResult.success("105","code不能为空",null);
+        }
+
         //获取openid
-        String openId = GetOpenIdUtil.getOpenId(code);
+        String openId = null;
+        try {
+            openId = GetOpenIdUtil.getOpenId(code);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         AjaxResult ajaxResult = loginService.selectOpenId(openId);
         return ajaxResult;
@@ -50,9 +85,14 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/bindingSuccess")
     @ResponseBody
-    public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode) throws ParseException {
+    public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode)  {
 
-        AjaxResult ajaxResult = loginService.insertUser(jobNumber, phone, openId, authCode);
+        AjaxResult ajaxResult = null;
+        try {
+            ajaxResult = loginService.insertUser(jobNumber, phone, openId, authCode);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return ajaxResult;
     }
@@ -65,6 +105,9 @@ public class LoginController extends BaseController {
      */
     @GetMapping("/getAuthCode")
     public AjaxResult getAuthCode(String phone){
+        if(phone == null || phone == ""){
+            return AjaxResult.success("105","手机号不能为空",null);
+        }
 
         Integer authCode = (int)((Math.random()*9+1)*1000);
         PhoneCode phoneCode = new PhoneCode();
@@ -82,9 +125,14 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/updateUnbind")
     @ResponseBody
-    public AjaxResult updateUnbind(String openId,String phone,Integer authCode) throws ParseException {
-
-        return loginService.updateUnbind(openId,phone,authCode);
+    public AjaxResult updateUnbind(String openId,String phone,Integer authCode) {
+        AjaxResult ajaxResult = null;
+        try {
+            ajaxResult = loginService.updateUnbind(openId, phone, authCode);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return ajaxResult;
     }
 
     @PostMapping("/unbind")

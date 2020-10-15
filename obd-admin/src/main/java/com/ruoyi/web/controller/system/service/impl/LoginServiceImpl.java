@@ -25,13 +25,22 @@ public class LoginServiceImpl implements LoginService {
     private LoginMapper loginMapper;
 
 
+    @Override
+    public String visitorLogin(String openId) {
+        /*WxUser wxUser = new WxUser();
+        wxUser.setWxOpenId(openId);
+        loginMapper.insertOpenId(wxUser);*/
+
+        return openId;
+    }
+
     /**
      * 登陆
      * @param openId
      * @return
      */
     @Override
-    public AjaxResult selectOpenId(String openId) { ;
+    public AjaxResult selectOpenId(String openId) {
         WxUser wxUser = loginMapper.selectOpenId(openId);
 
         if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && wxUser.getPhone() != null ){

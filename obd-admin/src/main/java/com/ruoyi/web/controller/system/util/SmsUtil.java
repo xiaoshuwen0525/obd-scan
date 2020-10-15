@@ -24,7 +24,7 @@ public class SmsUtil {
         request.setSysAction("SendSms");
         request.putQueryParameter("RegionId", "cn-hangzhou");
         request.putQueryParameter("PhoneNumbers", phone);
-        request.putQueryParameter("SignName", "潮州基站发电");
+        request.putQueryParameter("SignName", "重要客户");
         request.putQueryParameter("TemplateCode", "SMS_203672656");
         request.putQueryParameter("TemplateParam", "{\"code\":\"" + authCode + "\"}");
 

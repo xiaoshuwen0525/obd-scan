@@ -24,13 +24,14 @@ public class SmsUtil {
         request.setSysAction("SendSms");
         request.putQueryParameter("RegionId", "cn-hangzhou");
         request.putQueryParameter("PhoneNumbers", phone);
-        request.putQueryParameter("SignName", "重要客户");
+//        request.putQueryParameter("SignName", "重要客户");
+        request.putQueryParameter("SignName", "OBD核查");
         request.putQueryParameter("TemplateCode", "SMS_203672656");
         request.putQueryParameter("TemplateParam", "{\"code\":\"" + authCode + "\"}");
 
         try {
             CommonResponse response = client.getCommonResponse(request);
-//            System.out.println(response.getData());
+            System.out.println(response.getData());
         } catch (ClientException e) {
             e.printStackTrace();
         }

@@ -41,9 +41,6 @@ public class DeviceController extends BaseController {
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list() {
-        //获取当前登录用户相关信息的两种方式
-        //Subject subject = SecurityUtils.getSubject();
-        //SysUser principal = (SysUser) subject.getPrincipal();
         String loginName = null;
         try {
             loginName = ShiroUtils.getSysUser().getLoginName();
@@ -80,8 +77,12 @@ public class DeviceController extends BaseController {
     @PostMapping("/obd/list/{id}")
     @ResponseBody
     public TableDataInfo queryObdList(@PathVariable("id") String id) {
-        startPage();
-        List<ObdInfoVO> obdInfoVOS = uploadService.infoByBoxId(id);
+        List<ObdInfoVO> obdInfoVOS = null;
+        try {
+            startPage();
+            obdInfoVOS = uploadService.infoByBoxId(id);
+        } catch (Exception ignored) {
+        }
         return getDataTable(obdInfoVOS);
     }
 
@@ -106,8 +107,12 @@ public class DeviceController extends BaseController {
     @PostMapping("/obd/port/list/{id}")
     @ResponseBody
     public TableDataInfo portList(@PathVariable("id") String id) {
-        startPage();
-        List<ObdPortInfoVO> obdPortInfoVOS = uploadService.portByObdId(id);
+        List<ObdPortInfoVO> obdPortInfoVOS = null;
+        try {
+            startPage();
+            obdPortInfoVOS = uploadService.portByObdId(id);
+        } catch (Exception ignored) {
+        }
         return getDataTable(obdPortInfoVOS);
     }
 

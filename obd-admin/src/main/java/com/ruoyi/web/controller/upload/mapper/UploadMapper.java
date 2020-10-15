@@ -33,6 +33,21 @@ public interface UploadMapper {
     int countByBoxCode(@Param("boxCode") String boxCode);
 
     /**
+     * 根据工号查询obd盒子
+     * @param jobNumber 工号
+     * @return AjaxResult
+     */
+    List<ObdBoxVO> pageByJobNumber(@Param("jobNumber") String  jobNumber);
+
+
+    /**
+     * 根据工号查询个数
+     * @param jobNumber 工号
+     * @return int  id
+     */
+    int countByJobNumber(@Param("jobNumber") String jobNumber);
+
+    /**
      * 新增obdInfo对象
      * @param obdInfo 实体类
      * @return int  id

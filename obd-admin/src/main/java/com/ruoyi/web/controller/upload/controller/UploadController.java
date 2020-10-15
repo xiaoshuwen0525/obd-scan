@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.upload.controller;
 
 
+import cn.hutool.json.JSONUtil;
+import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.controller.upload.domain.*;
@@ -9,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 图片上传
@@ -23,12 +27,31 @@ public class UploadController extends BaseController
     @Autowired
     private IUploadService uploadService;
 
+
+    @ApiOperation(value = "上传信息")
+    @PostMapping("/uploadInformations")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult uploadInformations(@RequestBody String obd)
+    {
+        ObdsVO obdsVO = JSONUtil.toBean(obd, ObdsVO.class);
+        try {
+            uploadService.uploadInformations(obdsVO);
+        } catch (Exception e) {
+            return AjaxResult.error("上传失败");
+        }
+        return AjaxResult.successOBD("上传成功");
+    }
+
+
+
     @ApiOperation(value = "上传信息")
     @PostMapping("/uploadInformation")
     @ResponseBody
-    public AjaxResult uploadInformation(ObdVO obd)
+    @RepeatSubmit
+    public AjaxResult uploadInformation(ObdVO obdVO)
     {
-        return uploadService.uploadInformation(obd);
+        return uploadService.uploadInformation(obdVO);
     }
 
     @ApiOperation(value = "上传盒子")
@@ -36,7 +59,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult uploadObdBox(@RequestBody ObdBox obdBox)
     {
-        return AjaxResult.success(uploadService.uploadObdBox(obdBox));
+        return AjaxResult.successOBD(uploadService.uploadObdBox(obdBox));
     }
 
     @ApiOperation(value = "上传obd")
@@ -44,7 +67,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult uploadObdInfo(@RequestBody ObdInfo obdInfo)
     {
-        return AjaxResult.success(uploadService.uploadObdInfo(obdInfo));
+        return AjaxResult.successOBD(uploadService.uploadObdInfo(obdInfo));
     }
 
     @ApiOperation(value = "上传端口")
@@ -52,7 +75,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult uploadObdPost(@RequestBody ObdPortInfo obdPortInfo)
     {
-        return AjaxResult.success(uploadService.uploadObdPost(obdPortInfo));
+        return AjaxResult.successOBD(uploadService.uploadObdPost(obdPortInfo));
     }
 
     @ApiOperation(value = "根据工号查询obd盒子列表")
@@ -60,7 +83,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult obdBoxByJobNumber(@RequestParam(value = "jobNumber") String jobNumber)
     {
-        return AjaxResult.success(uploadService.obdBoxByJobNumber(jobNumber));
+        return AjaxResult.successOBD(uploadService.obdBoxByJobNumber(jobNumber));
     }
 
     @ApiOperation(value = "根据盒子Id查询obd列表")
@@ -68,7 +91,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult infoByJobNumberAndBoxId(@RequestParam(value = "boxId") String boxId)
     {
-        return AjaxResult.success(uploadService.infoByBoxId(boxId));
+        return AjaxResult.successOBD(uploadService.infoByBoxId(boxId));
     }
 
     @ApiOperation(value = "根据obdId查询obd列表")
@@ -76,7 +99,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult obdPortByJobNumber(@RequestParam(value = "obdId") String obdId)
     {
-        return AjaxResult.success(uploadService.portByObdId(obdId));
+        return AjaxResult.successOBD(uploadService.portByObdId(obdId));
     }
 
     @ApiOperation(value = "根据盒子Id查询单个盒子信息")
@@ -84,7 +107,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult selectBoxById(@RequestParam(value = "id") String id)
     {
-        return AjaxResult.success(uploadService.selectBoxById(id));
+        return AjaxResult.successOBD(uploadService.selectBoxById(id));
     }
 
     @ApiOperation(value = "根据obdId查询单个obd信息")
@@ -92,7 +115,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult selectInfoById(@RequestParam(value = "id") String id)
     {
-        return AjaxResult.success(uploadService.selectInfoById(id));
+        return AjaxResult.successOBD(uploadService.selectInfoById(id));
     }
 
     @ApiOperation(value = "根据postId查询单个端口信息")
@@ -100,7 +123,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult selectPortById(@RequestParam(value = "id") String id)
     {
-        return AjaxResult.success(uploadService.selectPortById(id));
+        return AjaxResult.successOBD(uploadService.selectPortById(id));
     }
 
     @ApiOperation(value = "修改obd盒子")
@@ -108,7 +131,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult updateObdBox(ObdBox obdBox)
     {
-        return AjaxResult.success(uploadService.updateObdBox(obdBox));
+        return AjaxResult.successOBD(uploadService.updateObdBox(obdBox));
     }
 
     @ApiOperation(value = "修改obd")
@@ -116,7 +139,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult updateObdInfo(ObdInfo obdInfo)
     {
-        return AjaxResult.success(uploadService.updateObdInfo(obdInfo));
+        return AjaxResult.successOBD(uploadService.updateObdInfo(obdInfo));
     }
 
     @ApiOperation(value = "修改端口")
@@ -124,7 +147,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult updateObdPort(ObdPortInfo obdPortInfo)
     {
-        return AjaxResult.success(uploadService.updateObdPort(obdPortInfo));
+        return AjaxResult.successOBD(uploadService.updateObdPort(obdPortInfo));
     }
 
     @ApiOperation(value = "根据工号查询分页")
@@ -132,7 +155,7 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult selectObdByJobNumber(@RequestParam(value = "jobNumber") String jobNumber,@RequestParam(value = "pageNum") Integer pageNum,@RequestParam(value = "pageSize") Integer pageSize)
     {
-        return AjaxResult.success(uploadService.selectObdByJobNumber(jobNumber,pageNum,pageSize));
+        return AjaxResult.successOBD(uploadService.selectObdByJobNumber(jobNumber,pageNum,pageSize));
     }
 
     @ApiOperation(value = "根据id查询obd整个")
@@ -140,14 +163,25 @@ public class UploadController extends BaseController
     @ResponseBody
     public AjaxResult selectObdById(@RequestParam(value = "id") int id)
     {
-        return AjaxResult.success(uploadService.selectObdById(id));
+        return AjaxResult.successOBD(uploadService.selectObdById(id));
     }
 
     @ApiOperation(value = "更新obd")
     @PostMapping("/updateObd")
     @ResponseBody
-    public AjaxResult updateObd(UpdateObd obd)
+    @RepeatSubmit
+    public AjaxResult updateObd(String obdInfoVOList,String boxCode,Integer boxId)
     {
-        return AjaxResult.success(uploadService.updateObd(obd));
+        System.out.println(obdInfoVOList);
+        System.out.println(boxCode);
+        System.out.println(boxId);
+        ObdBoxVO obdBoxVO = new ObdBoxVO();
+        obdBoxVO.setBoxCode(boxCode.substring(1,boxCode.length()-1));
+        obdBoxVO.setId(boxId);
+        ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
+        obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
+        return uploadService.updateObd(obdBoxVO);
     }
+
+
 }

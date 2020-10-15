@@ -4,6 +4,8 @@ package com.ruoyi.web.controller.upload.domain;
 
 import lombok.Data;
 
+import java.util.List;
+
 
 /**
  * (Obd)实体类
@@ -20,11 +22,11 @@ public class UpdateObd {
         /** 盒子串码 */
         private String boxCode;
 
-        /** 工号 */
-        private String id;
+        /** id */
+        private Integer id;
 
         /** 端口 */
-        private String portList;
+        private List<ObdPortInfo> portList;
 
 
 

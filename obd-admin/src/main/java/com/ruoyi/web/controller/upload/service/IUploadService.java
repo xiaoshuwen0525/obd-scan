@@ -18,6 +18,13 @@ public interface IUploadService
      AjaxResult uploadInformation(ObdVO obd);
 
     /**
+     * 上传信息
+     * @param obd 实体类
+     * @return AjaxResult
+     */
+    AjaxResult uploadInformations(ObdsVO obd);
+
+    /**
      * 上传obd盒子
      * @param obdBox 实体类
      * @return 盒子id
@@ -126,6 +133,6 @@ public interface IUploadService
      * @param obd
      * @return int  id
      */
-    AjaxResult updateObd(UpdateObd obd);
+    AjaxResult updateObd(ObdBoxVO obdBoxVO);
 
 }

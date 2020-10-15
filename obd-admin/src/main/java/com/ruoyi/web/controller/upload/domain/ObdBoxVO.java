@@ -48,7 +48,7 @@ public class ObdBoxVO {
         @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
         private Date createTime;
 
-        private  List<ObdInfoVO> obdInfoVOList;
+        private List<ObdInfoVO> obdInfoVOList;
 
 
 

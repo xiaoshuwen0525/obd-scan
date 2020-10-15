@@ -1,12 +1,13 @@
 package com.ruoyi.framework.interceptor.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import org.springframework.stereotype.Component;
 import com.ruoyi.common.json.JSON;
 import com.ruoyi.framework.interceptor.RepeatSubmitInterceptor;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 判断请求url和数据是否和上一次相同， 
@@ -28,7 +29,7 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
      * 
      * 两次相同参数的请求，如果间隔时间大于该参数，系统不会认定为重复提交的数据
      */
-    private int intervalTime = 10;
+    private int intervalTime = 2;
 
     public void setIntervalTime(int intervalTime)
     {

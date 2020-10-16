@@ -3563,7 +3563,9 @@ table.table-mail tr td {
 }
 
 .gray-bg {
-    background-color: #f3f3f4
+    /*background-color: #f3f3f4*/
+    background: url("/img/background.jpg");
+    background-size: 100% 100%;
 }
 
 .white-bg {

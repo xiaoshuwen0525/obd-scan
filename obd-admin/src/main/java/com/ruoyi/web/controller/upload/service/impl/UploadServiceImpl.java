@@ -60,6 +60,7 @@ public class UploadServiceImpl implements IUploadService {
                 if (obd.getBoxCode() != null) {
                     obdBox.setStatus(0);
                 } else {
+                    obdBox.setBoxCode("");
                     obdBox.setStatus(1);
                     obdBox.setExceptionType(1);
                     obdBox.setExceptionInfo("盒子二维码识别不出");
@@ -85,6 +86,7 @@ public class UploadServiceImpl implements IUploadService {
                                 port.setStatus(0);
                             } else {
                                 port.setStatus(1);
+                                port.setPortCode("");
                             }
                             if (!"".equals(port.getPortCode()) && isNumber(port.getPortCode())) {
                                 uploadMapper.insertPort(port);

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 /**
  * @author:
@@ -45,6 +46,7 @@ public class UploadServiceImpl implements IUploadService {
     @Transactional
     public AjaxResult uploadInformation(ObdVO obd) {
         System.out.println(obd.toString());
+        String msg = "";
         lock.lock();
         try {
             //建机箱
@@ -65,13 +67,9 @@ public class UploadServiceImpl implements IUploadService {
                 uploadMapper.insertObdBox(obdBox);
                 boxId = obdBox.getId();
             }
-            JSONArray parse = JSONUtil.parseArray(obd.getPortList());
-            Iterator<Object> it = parse.iterator();
-            while (it.hasNext()){
-                //string 转对象
-                Object next = it.next();
-                ObjectMapper objectMapper = new ObjectMapper();
-                InfoVO infoVO = objectMapper.convertValue(next, InfoVO.class);
+
+            InfoListVO InfoListVO = JSONUtil.toBean("{infoVOList:" + obd.getPortList() + "}", InfoListVO.class);
+            for(InfoVO infoVO:InfoListVO.getInfoVOList()){
                 //建obd
                 if (getObdFlag(infoVO.getPortData())) {
                     ObdInfo obdInfo = new ObdInfo();
@@ -88,7 +86,7 @@ public class UploadServiceImpl implements IUploadService {
                             } else {
                                 port.setStatus(1);
                             }
-                            if (!"".equals(port.getPortCode())) {
+                            if (!"".equals(port.getPortCode()) && isNumber(port.getPortCode())) {
                                 uploadMapper.insertPort(port);
                             }
                         }
@@ -106,7 +104,7 @@ public class UploadServiceImpl implements IUploadService {
         }finally {
             lock.unlock();
         }
-        return AjaxResult.successOBD("操作成功",1);
+        return AjaxResult.successOBD(msg);
     }
 
     @Override
@@ -161,7 +159,7 @@ public class UploadServiceImpl implements IUploadService {
                         obdInfo.setStatus(1);
                         uploadMapper.updateObdInfo(obdInfo);
                         obdBox.setExceptionType(2);
-                        obdBox.setExceptionInfo("存在端口识别异常");
+                        obdBox.setExceptionInfo(obdBox.getExceptionInfo()+" "+"存在端口识别异常");
                         uploadMapper.updateObdBox(obdBox);
                     }
                 }
@@ -342,7 +340,7 @@ public class UploadServiceImpl implements IUploadService {
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()){
                     if(obdPortInfo.getPortCode()!=null){
                         if(obdPortInfo.getId()>0){
-                            if(!"".equals(obdPortInfo.getPortCode())){
+                            if(!"".equals(obdPortInfo.getPortCode()) && isNumber(obdPortInfo.getPortCode())){
                                 ObdPortInfo portInfo = new ObdPortInfo();
                                 portInfo.setId(obdPortInfo.getId());
                                 portInfo.setPortCode(obdPortInfo.getPortCode());
@@ -350,7 +348,7 @@ public class UploadServiceImpl implements IUploadService {
                                 uploadMapper.updateObdPort(portInfo);
                             }
                         }
-                        if(obdPortInfo.getId() == 0){
+                        if(obdPortInfo.getId() == 0 && isNumber(obdPortInfo.getPortCode()) ) {
                             ObdPortInfo portInfo = new ObdPortInfo();
                             portInfo.setId(obdPortInfo.getId());
                             portInfo.setPortCode(obdPortInfo.getPortCode());
@@ -549,6 +547,20 @@ public class UploadServiceImpl implements IUploadService {
         return path.replace("\\", "/");
     }
 
-
+    /**
+     * 验证是否为18位数字
+     * @param string
+     * @return boolean
+     */
+    private boolean isNumber(String string) {
+        if(string.length() != 18){
+            return false;
+        }
+        if (string == null){
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^[0-9]*[1-9][0-9]*$");
+        return pattern.matcher(string).matches();
+    }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 图片上传
@@ -51,7 +52,16 @@ public class UploadController extends BaseController
     @RepeatSubmit
     public AjaxResult uploadInformation(ObdVO obdVO)
     {
-        return uploadService.uploadInformation(obdVO);
+        if(!isNumber(obdVO.getBoxCode())){
+            return AjaxResult.error("boxCode不是标准en值");
+        }
+        AjaxResult ajaxResult;
+        try {
+            ajaxResult = uploadService.uploadInformation(obdVO);
+        } catch (Exception e) {
+            return AjaxResult.error("上传失败");
+        }
+        return ajaxResult;
     }
 
     @ApiOperation(value = "上传盒子")
@@ -176,12 +186,32 @@ public class UploadController extends BaseController
         System.out.println(boxCode);
         System.out.println(boxId);
         ObdBoxVO obdBoxVO = new ObdBoxVO();
+        if(!isNumber(boxCode.substring(1,boxCode.length()-1))){
+            return AjaxResult.error("boxCode不是标准en值");
+        }
         obdBoxVO.setBoxCode(boxCode.substring(1,boxCode.length()-1));
         obdBoxVO.setId(boxId);
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
         obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
-        return uploadService.updateObd(obdBoxVO);
+        AjaxResult ajaxResult;
+        try {
+             ajaxResult = uploadService.updateObd(obdBoxVO);
+        } catch (Exception e) {
+            return AjaxResult.error("更新失败");
+        }
+        return ajaxResult;
     }
 
+
+    private boolean isNumber(String string) {
+        if(string.length() != 18){
+            return false;
+        }
+        if (string == null){
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^[0-9]*[1-9][0-9]*$");
+        return pattern.matcher(string).matches();
+    }
 
 }

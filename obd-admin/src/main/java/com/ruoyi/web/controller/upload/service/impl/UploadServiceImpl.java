@@ -59,43 +59,12 @@ public class UploadServiceImpl implements IUploadService {
                     obdBox.setStatus(0);
                 } else {
                     obdBox.setStatus(1);
+                    obdBox.setExceptionType(1);
+                    obdBox.setExceptionInfo("盒子二维码识别不出");
                 }
                 uploadMapper.insertObdBox(obdBox);
                 boxId = obdBox.getId();
             }
-//            List<InfoVO> infoVOList = JSONUtil.toBean(obd.getPortList(), ObdsVO.class).getPortList();
-//            for (InfoVO info : infoVOList) {
-//                //建obd
-//                if (getObdFlag(info.getPortData())) {
-//                    ObdInfo obdInfo = new ObdInfo();
-//                    obdInfo.setBoxId(boxId);
-//                    obdInfo.setStatus(0);
-//                    uploadMapper.insertObdInfo(obdInfo);
-//                    int obdId = obdInfo.getId();
-//                    for (ObdPortInfo port : info.getPortData()) {
-//                        //存端口
-//                        port.setObdId(obdId);
-//                        if (port.getPortSer() != null ) {
-//                            if (port.getPortCode() != null) {
-//                                port.setStatus(0);
-//                            } else {
-//                                port.setStatus(1);
-//                            }
-//                            if (!"".equals(port.getPortCode())) {
-//                                uploadMapper.insertPort(port);
-//                            }
-//                        }
-//
-//                    }
-//                    if (uploadMapper.countByPortStatus(obdId) > 0) {
-//                        obdInfo.setStatus(1);
-//                        uploadMapper.updateObdInfo(obdInfo);
-//                        obdBox.setExceptionType(2);
-//                        obdBox.setExceptionInfo("存在端口识别异常");
-//                        uploadMapper.updateObdBox(obdBox);
-//                    }
-//                }
-//            }
             JSONArray parse = JSONUtil.parseArray(obd.getPortList());
             Iterator<Object> it = parse.iterator();
             while (it.hasNext()){
@@ -129,7 +98,7 @@ public class UploadServiceImpl implements IUploadService {
                         obdInfo.setStatus(1);
                         uploadMapper.updateObdInfo(obdInfo);
                         obdBox.setExceptionType(2);
-                        obdBox.setExceptionInfo("存在端口识别异常");
+                        obdBox.setExceptionInfo(obdBox.getExceptionInfo()+" "+"存在端口识别异常");
                         uploadMapper.updateObdBox(obdBox);
                     }
                 }
@@ -158,6 +127,8 @@ public class UploadServiceImpl implements IUploadService {
                     obdBox.setStatus(0);
                 } else {
                     obdBox.setStatus(1);
+                    obdBox.setExceptionType(1);
+                    obdBox.setExceptionInfo("盒子二维码识别不出");
                 }
                 uploadMapper.insertObdBox(obdBox);
                 boxId = obdBox.getId();

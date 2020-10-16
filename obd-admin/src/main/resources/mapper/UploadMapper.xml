@@ -165,7 +165,7 @@
     <insert id="insertObdBox"  parameterType="com.ruoyi.web.controller.upload.domain.ObdBox" useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
         insert into obd_box
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="boxCode != null and boxCode != ''">
+            <if test="boxCode != null ">
                 box_code,
             </if>
             <if test="imgUrl != null and imgUrl != ''">
@@ -188,7 +188,7 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="boxCode != null and boxCode != ''">
+            <if test="boxCode != null ">
                 #{boxCode,jdbcType=VARCHAR},
             </if>
             <if test="imgUrl != null and imgUrl != ''">
@@ -243,7 +243,7 @@
             <if test="portSer != null">
                 port_ser,
             </if>
-            <if test="portCode != null and portCode != ''">
+            <if test="portCode != null ">
                 port_code,
             </if>
             <if test="status != null">
@@ -260,7 +260,7 @@
             <if test="portSer != null">
                 #{portSer,jdbcType=INTEGER},
             </if>
-            <if test="portCode != null and portCode != ''">
+            <if test="portCode != null ">
                 #{portCode,jdbcType=VARCHAR},
             </if>
             <if test="status != null">

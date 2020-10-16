@@ -52,7 +52,11 @@ public class UploadController extends BaseController
     @RepeatSubmit
     public AjaxResult uploadInformation(ObdVO obdVO)
     {
-        if(!isNumber(obdVO.getBoxCode())){
+        if(obdVO.getBoxCode()!=null){
+            if(!isNumber(obdVO.getBoxCode()) ){
+                return AjaxResult.error("boxCode不是标准en值");
+            }
+        }else {
             return AjaxResult.error("boxCode不是标准en值");
         }
         AjaxResult ajaxResult;
@@ -186,9 +190,16 @@ public class UploadController extends BaseController
         System.out.println(boxCode);
         System.out.println(boxId);
         ObdBoxVO obdBoxVO = new ObdBoxVO();
-        if(!isNumber(boxCode.substring(1,boxCode.length()-1))){
+        int length = 17;
+        if(boxCode.length()< length ){
             return AjaxResult.error("boxCode不是标准en值");
         }
+        if(boxCode != null){
+            if(!isNumber(boxCode.substring(1,boxCode.length()-1))){
+                return AjaxResult.error("boxCode不是标准en值");
+            }
+        }
+
         obdBoxVO.setBoxCode(boxCode.substring(1,boxCode.length()-1));
         obdBoxVO.setId(boxId);
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
@@ -204,7 +215,8 @@ public class UploadController extends BaseController
 
 
     private boolean isNumber(String string) {
-        if(string.length() != 18){
+        int i = 18;
+        if(string.length() != i){
             return false;
         }
         if (string == null){

@@ -88,8 +88,10 @@ public class UploadServiceImpl implements IUploadService {
                                 port.setStatus(1);
                                 port.setPortCode("");
                             }
-                            if (!"".equals(port.getPortCode()) && isNumber(port.getPortCode())) {
-                                uploadMapper.insertPort(port);
+                            if(port.getPortCode()!=null){
+                                if (!"".equals(port.getPortCode()) && isNumber(port.getPortCode())) {
+                                    uploadMapper.insertPort(port);
+                                }
                             }
                         }
 
@@ -279,21 +281,26 @@ public class UploadServiceImpl implements IUploadService {
     @Override
     public PageInfo<ObdBoxVO> selectObdByJobNumber(String jobNumber, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum,pageSize);
-        List<ObdBoxVO> obdBoxList = uploadMapper.pageByJobNumber(jobNumber);
-        for (ObdBoxVO obdBox:obdBoxList){
-            obdBox.setStatus(changeStatus(obdBox.getStatus()));
-            if("1".equals(obdBox.getExceptionType())){
-                obdBox.setExceptionType("盒子异常");
-            }else{
-                obdBox.setExceptionType("obd异常");
+        if(jobNumber!=null && "".equals(jobNumber)){
+            List<ObdBoxVO> obdBoxList = uploadMapper.pageByJobNumber(jobNumber);
+            for (ObdBoxVO obdBox:obdBoxList){
+                obdBox.setStatus(changeStatus(obdBox.getStatus()));
+                if("1".equals(obdBox.getExceptionType())){
+                    obdBox.setExceptionType("盒子异常");
+                }else{
+                    obdBox.setExceptionType("obd异常");
+                }
             }
+            int totalPage = uploadMapper.countByJobNumber(jobNumber);
+            if(pageNum>totalPage){
+                return null;
+            }
+            PageInfo<ObdBoxVO> pageInfo = new PageInfo<ObdBoxVO>(obdBoxList);
+            return pageInfo;
+        }else {
+            return  null;
         }
-        int totalPage = uploadMapper.countByJobNumber(jobNumber);
-        if(pageNum>totalPage){
-            return null;
-        }
-        PageInfo<ObdBoxVO> pageInfo = new PageInfo<ObdBoxVO>(obdBoxList);
-        return pageInfo;
+
     }
 
     @Override

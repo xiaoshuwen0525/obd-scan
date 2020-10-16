@@ -1,7 +1,6 @@
 package com.ruoyi.web.controller.system.controller;
 
 
-import com.mchange.lang.IntegerUtils;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
@@ -9,10 +8,13 @@ import com.ruoyi.web.controller.system.domain.PhoneCode;
 import com.ruoyi.web.controller.system.service.LoginService;
 import com.ruoyi.web.controller.system.util.GetOpenIdUtil;
 import com.ruoyi.web.controller.system.util.SmsUtil;
-import org.apache.catalina.util.RequestUtil;
+import com.ruoyi.web.controller.upload.utils.RequestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -26,13 +28,7 @@ public class LoginController extends BaseController {
     @Autowired
     private LoginService loginService;
 
-
-    @PostMapping("/visitorLogin")
-    public AjaxResult visitorLogin(String code){
-
-        return null;
-    }
-
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     /**
      * 登陆
@@ -42,9 +38,8 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/selectOpenid")
     @ResponseBody
-    public AjaxResult selectOpenid(String code) {
-
-
+    public AjaxResult selectOpenid(String code, HttpServletRequest request) throws IOException {
+        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(code)){
             return AjaxResult.success("105","code不能为空",null);
         }
@@ -72,7 +67,8 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/bindingSuccess")
     @ResponseBody
-    public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode) {
+    public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode, HttpServletRequest request) throws IOException {
+        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
         if(authCode == null){
             return AjaxResult.success("105","参数不能为空",null);
         }
@@ -97,8 +93,8 @@ public class LoginController extends BaseController {
      * @throws
      */
     @GetMapping("/getAuthCode")
-    public AjaxResult getAuthCode(String phone){
-
+    public AjaxResult getAuthCode(String phone, HttpServletRequest request) throws IOException {
+        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(phone)){
             return AjaxResult.success("105","手机号不能为空",null);
         }
@@ -119,7 +115,8 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/updateUnbind")
     @ResponseBody
-    public AjaxResult updateUnbind(String openId,String phone,Integer authCode) {
+    public AjaxResult updateUnbind(String openId,String phone,Integer authCode, HttpServletRequest request) throws IOException {
+        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
         if(authCode == null){
             return AjaxResult.success("105","参数不能为空",null);
         }
@@ -137,7 +134,8 @@ public class LoginController extends BaseController {
     }
 
     @PostMapping("/unbind")
-    public AjaxResult unbind(String openId){
+    public AjaxResult unbind(String openId, HttpServletRequest request) throws IOException {
+        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(openId)){
             return AjaxResult.success("105","openId不能为空",null);
         }

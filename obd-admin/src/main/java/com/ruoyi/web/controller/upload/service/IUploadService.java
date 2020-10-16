@@ -17,12 +17,6 @@ public interface IUploadService
      */
      AjaxResult uploadInformation(ObdVO obd);
 
-    /**
-     * 上传信息
-     * @param obd 实体类
-     * @return AjaxResult
-     */
-    AjaxResult uploadInformations(ObdsVO obd);
 
     /**
      * 上传obd盒子

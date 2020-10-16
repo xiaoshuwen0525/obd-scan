@@ -125,6 +125,7 @@
                 and job_number = #{jobNumber,jdbcType=VARCHAR}
             </if>
         </where>
+        order by create_time DESC
     </select>
 
     <!--通过工号查询个数-->

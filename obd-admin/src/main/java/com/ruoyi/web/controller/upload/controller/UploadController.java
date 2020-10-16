@@ -80,21 +80,31 @@ public class UploadController extends BaseController {
     @RepeatSubmit
     public AjaxResult updateObd(String obdInfoVOList, String boxCode, Integer boxId, HttpServletRequest request) throws IOException {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
+        log.info("参数 boxCode:"+boxCode+",boxId:"+boxId);
         ObdBoxVO obdBoxVO = new ObdBoxVO();
         int length = 17;
+        int length1 = 20;
         if (boxCode.length() < length) {
             return AjaxResult.error("boxCode不是标准en值");
         }
-        if (boxCode != null) {
-            if (!isNumber(boxCode.substring(1, boxCode.length() - 1))) {
-                return AjaxResult.error("boxCode不是标准en值");
-            }
-        }
 
+        if (boxCode != null) {
+            if(boxCode.length()>=length1){
+                if (!isNumber(boxCode.substring(1, boxCode.length() - 1))) {
+                    return AjaxResult.error("boxCode不是标准en值");
+                }
+            }else {
+                if (!isNumber(boxCode)){
+                    return AjaxResult.error("boxCode不是标准en值");
+                }
+            }
+
+        }
         obdBoxVO.setBoxCode(boxCode.substring(1, boxCode.length() - 1));
         obdBoxVO.setId(boxId);
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
         obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
+        log.info("参数 obdInfoListVO:"+obdInfoListVO.toString());
         AjaxResult ajaxResult;
         try {
             ajaxResult = uploadService.updateObd(obdBoxVO);

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -219,7 +220,11 @@ public class UploadServiceImpl implements IUploadService {
       PageHelper.startPage(pageNum,pageSize);
       List<ObdBoxVO> obdBoxList = uploadMapper.pageByJobNumber(jobNumber);
       for (ObdBoxVO obdBox:obdBoxList){
-        obdBox.setStatus(changeStatus(obdBox.getStatus()));
+        if("1".equals(obdBox.getStatus())){
+          obdBox.setStatus("异常");
+        }else {
+          obdBox.setStatus("正常");
+        }
         if("1".equals(obdBox.getExceptionType())){
           obdBox.setExceptionType("盒子异常");
         }else if("2".equals(obdBox.getExceptionType())){
@@ -246,15 +251,28 @@ public class UploadServiceImpl implements IUploadService {
     String one = "1";
     String two = "2";
     ObdBoxVO obdBoxVO = uploadMapper.selectBoxById(Integer.toString(id));
+    if(obdBoxVO.getStatus().equals(one)){
+      obdBoxVO.setStatus("异常");
+    }else {
+      obdBoxVO.setStatus("正常");
+    }
     if(obdBoxVO.getId()>0){
       List<ObdInfoVO> obdInfoList = uploadMapper.selectInfoByBoxId(obdBoxVO.getId().toString());
       for (ObdInfoVO obdInfo : obdInfoList) {
-        List<ObdPortInfoVO> obdPortInfoList = uploadMapper.selectPortByObdId(obdInfo.getId().toString());
-        obdInfo.setStatus(changeStatus(obdInfo.getStatus()));
-        for (ObdPortInfoVO obdPortInfo : obdPortInfoList) {
-          obdPortInfo.setStatus(changeStatus(obdPortInfo.getStatus()));
+        List<ObdPortInfoVO> obdPortList = getPortList(uploadMapper.selectPortByObdId(obdInfo.getId().toString()));
+        if(obdInfo.getStatus().equals(one)){
+          obdInfo.setStatus("异常");
+        }else {
+          obdInfo.setStatus("正常");
         }
-        obdInfo.setObdPortInfoVOList(obdPortInfoList);
+        for (ObdPortInfoVO obdPortInfo : obdPortList) {
+          if(obdPortInfo.getStatus().equals(one)){
+            obdPortInfo.setStatus("异常");
+          }else {
+            obdPortInfo.setStatus("正常");
+          }
+        }
+        obdInfo.setObdPortInfoVOList(obdPortList);
       }
       obdBoxVO.setStatus(changeStatus(obdBoxVO.getStatus()));
       obdBoxVO.setObdInfoVOList(obdInfoList);
@@ -284,52 +302,58 @@ public class UploadServiceImpl implements IUploadService {
         }else {
           obdBox.setStatus(1);
         }
+        obdBox.setCreateTime(new Date());
         uploadMapper.updateObdBox(obdBox);
       }
       for (ObdInfoVO obdInfoVO: obdBoxVO.getObdInfoVOList()){
         for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()){
-          if(obdPortInfo.getPortCode()!=null){
-            if(obdPortInfo.getId()>0){
-              if(!"".equals(obdPortInfo.getPortCode()) && isNumber(obdPortInfo.getPortCode())){
+          ObdPortInfoVO obdPort = obdPortInfo;
+          if(obdPort.getPortCode()!=null && obdPort.getId()!=null){
+              if(obdPort.getId()>0){
+                if(!"".equals(obdPort.getPortCode()) && isNumber(obdPort.getPortCode())){
+                  ObdPortInfo portInfo = new ObdPortInfo();
+                  portInfo.setId(obdPort.getId());
+                  portInfo.setPortCode(obdPort.getPortCode());
+                  portInfo.setStatus(0);
+                  uploadMapper.updateObdPort(portInfo);
+                }
+              }
+              if(obdPort.getId() == 0 && isNumber(obdPort.getPortCode()) ) {
                 ObdPortInfo portInfo = new ObdPortInfo();
-                portInfo.setId(obdPortInfo.getId());
-                portInfo.setPortCode(obdPortInfo.getPortCode());
-                portInfo.setStatus(0);
-                uploadMapper.updateObdPort(portInfo);
+                portInfo.setId(obdPort.getId());
+                portInfo.setPortCode(obdPort.getPortCode());
+                portInfo.setPortSer(obdPort.getPortSer());
+                portInfo.setObdId(obdInfoVO.getId());
+                if (!"".equals(obdPort.getPortCode())){
+                  portInfo.setStatus(0);
+                }else {
+                  portInfo.setStatus(1);
+                }
+                uploadMapper.insertPort(portInfo);
               }
-            }
-            if(obdPortInfo.getId() == 0 && isNumber(obdPortInfo.getPortCode()) ) {
-              ObdPortInfo portInfo = new ObdPortInfo();
-              portInfo.setId(obdPortInfo.getId());
-              portInfo.setPortCode(obdPortInfo.getPortCode());
-              if (!"".equals(obdPortInfo.getPortCode())){
-                portInfo.setStatus(0);
-              }else {
-                portInfo.setStatus(1);
-              }
-              uploadMapper.insertPort(portInfo);
-            }
           }
-          if(uploadMapper.countByPortStatus(obdPortInfo.getObdId())>0){
-            ObdInfo obdInfo = new ObdInfo();
-            obdInfo.setId(obdPortInfo.getObdId());
-            obdInfo.setStatus(1);
-            uploadMapper.updateObdInfo(obdInfo);
-            ObdBox obdBox1 = new ObdBox();
-            obdBox1.setId((obdBoxVO.getId()));
-            obdBox1.setExceptionType(2);
-            obdBox1.setExceptionInfo("存在端口识别异常");
-            uploadMapper.updateObdBox(obdBox1);
-          }else {
-            ObdInfo obdInfo1 = new ObdInfo();
-            obdInfo1.setId(obdPortInfo.getId());
-            obdInfo1.setStatus(0);
-            uploadMapper.updateObdInfo(obdInfo1);
-            ObdBox obdBox1 = new ObdBox();
-            obdBox1.setId((obdBoxVO.getId()));
-            obdBox1.setExceptionType(0);
-            obdBox1.setExceptionInfo("");
-            uploadMapper.updateObdBox(obdBox1);
+          if(obdPort.getObdId()!=null){
+            if(uploadMapper.countByPortStatus(obdPort.getObdId())>0){
+              ObdInfo obdInfo = new ObdInfo();
+              obdInfo.setId(obdPort.getObdId());
+              obdInfo.setStatus(1);
+              uploadMapper.updateObdInfo(obdInfo);
+              ObdBox obdBox1 = new ObdBox();
+              obdBox1.setId((obdBoxVO.getId()));
+              obdBox1.setExceptionType(2);
+              obdBox1.setExceptionInfo("存在端口识别异常");
+              uploadMapper.updateObdBox(obdBox1);
+            }else {
+              ObdInfo obdInfo1 = new ObdInfo();
+              obdInfo1.setId(obdPort.getId());
+              obdInfo1.setStatus(0);
+              uploadMapper.updateObdInfo(obdInfo1);
+              ObdBox obdBox1 = new ObdBox();
+              obdBox1.setId((obdBoxVO.getId()));
+              obdBox1.setExceptionType(0);
+              obdBox1.setExceptionInfo("");
+              uploadMapper.updateObdBox(obdBox1);
+            }
           }
         }
       }
@@ -341,6 +365,32 @@ public class UploadServiceImpl implements IUploadService {
     return AjaxResult.successOBD("操作成功");
   }
 
+  /**
+   * 获得端口列表
+   * @param list 前端全部数据
+   * @return ObdBox 实体类
+   */
+  private List<ObdPortInfoVO> getPortList (List<ObdPortInfoVO> list){
+    List<ObdPortInfoVO> obdPortInfos = new ArrayList<ObdPortInfoVO>();
+    for (int i = 0; i < 8 ; i++){
+      ObdPortInfoVO obdPortInfo = new ObdPortInfoVO();
+      int poreSer = i+1;
+      obdPortInfo.setPortSer(poreSer);
+      obdPortInfo.setStatus("0");
+      obdPortInfo.setId(0);
+      obdPortInfo.setPortCode("");
+      for (ObdPortInfoVO obdPort:list){
+        if(obdPort.getPortSer() == poreSer){
+          obdPortInfo.setId(obdPort.getId());
+          obdPortInfo.setPortCode(obdPort.getPortCode());
+          obdPortInfo.setStatus(obdPort.getStatus().toString());
+          obdPortInfo.setObdId(obdPort.getObdId());
+        }
+      }
+      obdPortInfos.add(obdPortInfo);
+    }
+    return obdPortInfos;
+  }
 
   /**
    * 判断端口是否为空
@@ -407,12 +457,14 @@ public class UploadServiceImpl implements IUploadService {
    */
   private String changeStatus(String status){
     String zero = "0";
-    if(status.equals(zero)){
-      return "正常";
-    }else {
-      return "异常";
+    if(status!=null && "".equals(status)){
+      if(status.equals(zero)){
+        return "正常";
+      }else {
+        return "异常";
+      }
     }
-
+    return status;
   }
 
 

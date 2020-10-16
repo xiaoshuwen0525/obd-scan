@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.upload.domain.*;
 import com.ruoyi.web.controller.upload.mapper.UploadMapper;
 import com.ruoyi.web.controller.upload.service.IUploadService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.yaml.snakeyaml.events.Event;
+import oshi.util.StringUtil;
 
 import java.io.File;
 import java.util.Date;
@@ -280,15 +282,17 @@ public class UploadServiceImpl implements IUploadService {
 
     @Override
     public PageInfo<ObdBoxVO> selectObdByJobNumber(String jobNumber, Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum,pageSize);
-        if(jobNumber!=null && "".equals(jobNumber)){
+        if(StringUtils.isNotBlank(jobNumber)){
+            PageHelper.startPage(pageNum,pageSize);
             List<ObdBoxVO> obdBoxList = uploadMapper.pageByJobNumber(jobNumber);
             for (ObdBoxVO obdBox:obdBoxList){
                 obdBox.setStatus(changeStatus(obdBox.getStatus()));
                 if("1".equals(obdBox.getExceptionType())){
                     obdBox.setExceptionType("盒子异常");
-                }else{
+                }else if("2".equals(obdBox.getExceptionType())){
                     obdBox.setExceptionType("obd异常");
+                }else {
+                    obdBox.setExceptionType("正常");
                 }
             }
             int totalPage = uploadMapper.countByJobNumber(jobNumber);
@@ -306,6 +310,7 @@ public class UploadServiceImpl implements IUploadService {
     @Override
     public ObdBoxVO selectObdById(int id) {
         String one = "1";
+        String two = "2";
         ObdBoxVO obdBoxVO = uploadMapper.selectBoxById(Integer.toString(id));
         if(obdBoxVO.getId()>0){
             List<ObdInfoVO> obdInfoList = uploadMapper.selectInfoByBoxId(obdBoxVO.getId().toString());
@@ -321,8 +326,10 @@ public class UploadServiceImpl implements IUploadService {
             obdBoxVO.setObdInfoVOList(obdInfoList);
             if (one.equals(obdBoxVO.getExceptionType())) {
                 obdBoxVO.setExceptionType("盒子异常");
-            } else {
+            } else if (two.equals(obdBoxVO.getExceptionType())) {
                 obdBoxVO.setExceptionType("obd异常");
+            }else {
+                obdBoxVO.setExceptionType("正常");
             }
         }
         return obdBoxVO;

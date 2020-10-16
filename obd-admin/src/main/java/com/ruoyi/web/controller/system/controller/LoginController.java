@@ -39,7 +39,7 @@ public class LoginController extends BaseController {
     @PostMapping("/selectOpenid")
     @ResponseBody
     public AjaxResult selectOpenid(String code, HttpServletRequest request) throws IOException {
-        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
+        log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+ RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(code)){
             return AjaxResult.success("105","code不能为空",null);
         }
@@ -68,7 +68,7 @@ public class LoginController extends BaseController {
     @PostMapping("/bindingSuccess")
     @ResponseBody
     public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode, HttpServletRequest request) throws IOException {
-        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
+        log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(authCode == null){
             return AjaxResult.success("105","参数不能为空",null);
         }
@@ -94,7 +94,7 @@ public class LoginController extends BaseController {
      */
     @GetMapping("/getAuthCode")
     public AjaxResult getAuthCode(String phone, HttpServletRequest request) throws IOException {
-        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
+        log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(phone)){
             return AjaxResult.success("105","手机号不能为空",null);
         }
@@ -116,7 +116,7 @@ public class LoginController extends BaseController {
     @PostMapping("/updateUnbind")
     @ResponseBody
     public AjaxResult updateUnbind(String openId,String phone,Integer authCode, HttpServletRequest request) throws IOException {
-        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
+        log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(authCode == null){
             return AjaxResult.success("105","参数不能为空",null);
         }
@@ -135,7 +135,7 @@ public class LoginController extends BaseController {
 
     @PostMapping("/unbind")
     public AjaxResult unbind(String openId, HttpServletRequest request) throws IOException {
-        log.info("成功进入【"+request.getRequestURI()+"】接口---参数： "+ RequestUtil.getRequestBody(request));
+        log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(openId)){
             return AjaxResult.success("105","openId不能为空",null);
         }

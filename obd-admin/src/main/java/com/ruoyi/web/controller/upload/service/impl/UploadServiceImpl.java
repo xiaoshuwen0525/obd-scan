@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 /**
@@ -34,16 +33,16 @@ public class UploadServiceImpl implements IUploadService {
   @Autowired
   private UploadMapper uploadMapper;
 
-  private ReentrantLock lock = new ReentrantLock();
+  //private ReentrantLock lock = new ReentrantLock();
 
   private final  int portCount = 8;
 
   @Override
   @Transactional
   public AjaxResult uploadInformation(ObdVO obd) {
-    System.out.println(obd.toString());
+    System.out.println("uploadInformation serivce");
     String msg = "";
-    lock.lock();
+    //lock.lock();
     try {
       //建机箱
       int boxId = 0;
@@ -101,16 +100,18 @@ public class UploadServiceImpl implements IUploadService {
           }
         }
       }
-    }finally {
+    }catch (Exception e){
+      e.printStackTrace();
+    }/*finally {
       lock.unlock();
-    }
+    }*/
     return AjaxResult.successOBD(msg);
   }
 
   @Override
   @Transactional
   public AjaxResult uploadInformations(ObdsVO obd) {
-    lock.lock();
+    //lock.lock();
     try {
       System.out.println(obd.toString());
       //建机箱
@@ -164,9 +165,11 @@ public class UploadServiceImpl implements IUploadService {
           }
         }
       }
-    } finally {
+    }catch (Exception e){
+      e.printStackTrace();
+    } /*finally {
       lock.unlock();
-    }
+    }*/
     return AjaxResult.successOBD("操作成功", 1);
   }
 
@@ -294,6 +297,7 @@ public class UploadServiceImpl implements IUploadService {
         return null;
       }
       PageInfo<ObdBoxVO> pageInfo = new PageInfo<ObdBoxVO>(obdBoxList);
+      System.out.println("service selectObdByJobNumber pageInfo :"+pageInfo);
       return pageInfo;
     }else {
       return  null;
@@ -333,7 +337,7 @@ public class UploadServiceImpl implements IUploadService {
   @Transactional
   public AjaxResult updateObd(ObdBoxVO obdBoxVO) {
     System.out.println(obdBoxVO.toString());
-    lock.lock();
+    //lock.lock();
     try {
       if(!"".equals(obdBoxVO.getBoxCode()) && obdBoxVO.getBoxCode()!=null && obdBoxVO.getId()>0){
         ObdBox obdBox = new ObdBox();
@@ -393,9 +397,11 @@ public class UploadServiceImpl implements IUploadService {
           }
         }
       }
-    }finally {
+    }catch (Exception e){
+      e.printStackTrace();
+    }/*finally {
       lock.unlock();
-    }
+    }*/
     return AjaxResult.successOBD("操作成功");
   }
 

@@ -1,12 +1,15 @@
 package com.ruoyi.web.controller.system.controller;
 
 
+import com.mchange.lang.IntegerUtils;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.system.domain.PhoneCode;
 import com.ruoyi.web.controller.system.service.LoginService;
 import com.ruoyi.web.controller.system.util.GetOpenIdUtil;
 import com.ruoyi.web.controller.system.util.SmsUtil;
+import org.apache.catalina.util.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,24 +29,7 @@ public class LoginController extends BaseController {
 
     @PostMapping("/visitorLogin")
     public AjaxResult visitorLogin(String code){
-        /*if(code == null || code == ""){
-            return AjaxResult.success("105","code不能为空",null);
-        }*/
-        System.out.println( System.currentTimeMillis());
-        //获取openid
-        /*String openId = null;
-        try {
-            openId = GetOpenIdUtil.getOpenId(code);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        String openId = loginService.visitorLogin(code);
 
-        if(openId == null || openId == ""){
-            return AjaxResult.success("105","openId不能为空",openId);
-        }else{
-            return AjaxResult.successOBD(openId);
-        }*/
         return null;
     }
 
@@ -58,7 +44,8 @@ public class LoginController extends BaseController {
     @ResponseBody
     public AjaxResult selectOpenid(String code) {
 
-        if(code == null || code == ""){
+
+        if(StringUtils.isBlank(code)){
             return AjaxResult.success("105","code不能为空",null);
         }
 
@@ -85,7 +72,13 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/bindingSuccess")
     @ResponseBody
-    public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode)  {
+    public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode) {
+        if(authCode == null){
+            return AjaxResult.success("105","参数不能为空",null);
+        }
+        if(StringUtils.isBlank(openId) || StringUtils.isBlank(jobNumber) || StringUtils.isBlank(phone)){
+            return AjaxResult.success("105","参数不能为空",null);
+        }
 
         AjaxResult ajaxResult = null;
         try {
@@ -105,7 +98,8 @@ public class LoginController extends BaseController {
      */
     @GetMapping("/getAuthCode")
     public AjaxResult getAuthCode(String phone){
-        if(phone == null || phone == ""){
+
+        if(StringUtils.isBlank(phone)){
             return AjaxResult.success("105","手机号不能为空",null);
         }
 
@@ -126,6 +120,13 @@ public class LoginController extends BaseController {
     @PostMapping("/updateUnbind")
     @ResponseBody
     public AjaxResult updateUnbind(String openId,String phone,Integer authCode) {
+        if(authCode == null){
+            return AjaxResult.success("105","参数不能为空",null);
+        }
+        if(StringUtils.isBlank(openId) || StringUtils.isBlank(phone)){
+            return AjaxResult.success("105","参数不能为空",null);
+        }
+
         AjaxResult ajaxResult = null;
         try {
             ajaxResult = loginService.updateUnbind(openId, phone, authCode);
@@ -137,6 +138,10 @@ public class LoginController extends BaseController {
 
     @PostMapping("/unbind")
     public AjaxResult unbind(String openId){
+        if(StringUtils.isBlank(openId)){
+            return AjaxResult.success("105","openId不能为空",null);
+        }
+
         int unbind = loginService.unbind(openId);
         return AjaxResult.success(unbind);
     }

@@ -64,9 +64,13 @@ public class LoginServiceImpl implements LoginService {
         PhoneCode phoneCode = loginMapper.selectAuthCode();
         //判断手机号是否存在
         WxUser wxUser1 = loginMapper.selectPhone(phone);
-
         if(wxUser1!=null && wxUser1.getPhone().equals(phone)){
             return AjaxResult.success("104","手机号已绑定,不能重复绑定",null);
+        }
+        //判断工号是否存在
+        WxUser wxUser2 = loginMapper.selectJobNumber(jobNumber);
+        if(wxUser2!=null && wxUser2.getJobNumber().equals(jobNumber)){
+            return AjaxResult.success("104","工号不能重复",null);
         }
 
         //判断验证码是否超时  超过5分钟

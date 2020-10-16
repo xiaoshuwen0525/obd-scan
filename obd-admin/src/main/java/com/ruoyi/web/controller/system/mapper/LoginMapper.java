@@ -46,8 +46,13 @@ public interface LoginMapper {
      * 判断手机号
      * @return
      */
-//    public List<WxUser> selectPhone();
     public WxUser selectPhone(String phone);
+
+    /**
+     * 判断工号
+     * @return
+     */
+    public WxUser selectJobNumber(String jobNumber);
 
     /**
      * 解绑

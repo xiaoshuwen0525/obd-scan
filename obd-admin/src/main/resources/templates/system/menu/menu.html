@@ -49,6 +49,7 @@
 	<script th:inline="javascript">
 		var addFlag = [[${@permission.hasPermi('system:menu:add')}]];
 		var editFlag = [[${@permission.hasPermi('system:menu:edit')}]];
+		var editFlag = [[${@permission.hasPermi('system:menu:searchedit')}]];
 		var removeFlag = [[${@permission.hasPermi('system:menu:remove')}]];
 		var datas = [[${@dict.getType('sys_show_hide')}]];
 		var prefix = ctx + "system/menu";

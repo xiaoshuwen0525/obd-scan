@@ -29,6 +29,7 @@
         <result property="seq" column="num" jdbcType="INTEGER"/>
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
     </resultMap>
 
@@ -291,7 +292,7 @@
     <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
-        i.id,i.box_id,i.status
+        i.id,i.box_id,i.status,b.box_code
         FROM obd_info i
         INNER  JOIN obd_box b on  b.id = i.box_id,
         (select @num := 0) row_number

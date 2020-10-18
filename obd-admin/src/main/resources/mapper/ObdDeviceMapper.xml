@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.obd.mapper.ObdDeviceMapper">
+
+
+    <resultMap type="com.ruoyi.web.controller.upload.domain.ObdBoxVO" id="ObdBoxVOMap">
+        <result property="seq" column="num" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="exceptionType" column="exception_type" jdbcType="VARCHAR"/>
+        <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.ruoyi.web.controller.system.domain.WxUser" id="wxUserMap">
+        <result property="seq" column="num" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="wxOpenId" column="wx_open_id" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.ruoyi.web.controller.upload.domain.ObdInfoVO" id="ObdInfoVOMap">
+        <result property="seq" column="num" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxId" column="box_id" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.ruoyi.web.controller.upload.domain.ObdPortInfoVO" id="ObdPortInfoVOMap">
+        <result property="seq" column="num" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="obdId" column="obd_id" jdbcType="INTEGER"/>
+        <result property="portSer" column="port_ser" jdbcType="INTEGER"/>
+        <result property="portCode" column="port_code" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--通过boxCode唯一ID查询-->
+    <select id="boxSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
+        select (@num := @num + 1) as num,
+        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+         from obd_box, (select @num := 0) row_number
+        where box_code = #{boxCode,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过jobNumber唯一ID查询-->
+    <select id="jobNumberSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
+        select (@num := @num + 1) as num,
+        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+         from obd_box, (select @num := 0) row_number
+        where job_number = #{jobNumber,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过phone唯一ID查询-->
+    <select id="phoneSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
+        select (@num := @num + 1) as num,
+        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+         from obd_box, (select @num := 0) row_number
+        where job_number = (SELECT job_number from wx_user where phone = #{phone,jdbcType=VARCHAR})
+    </select>
+
+    <!--查询微信员工手机号信息-->
+    <select id="queryWechatInfo" resultMap="wxUserMap">
+        select (@num := @num + 1) as num,
+        id,job_number,wx_open_id,phone,create_time
+        from wx_user, (select @num := 0) row_number
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                and job_number = #{jobNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="wxOpenId != null and wxOpenId != ''">
+                and wx_open_id = #{wxOpenId,jdbcType=VARCHAR}
+            </if>
+            <if test="phone != null  and phone != ''">
+                and phone = #{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </where>
+    </select>
+
+
+    <!--查询所有-->
+    <select id="allSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
+        select (@num := @num + 1) as num,
+        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+         from obd_box, (select @num := 0) row_number
+    </select>
+
+    <!--绑定手机-->
+    <update id="bindPhone">
+        UPDATE wx_user a SET phone = #{phone} WHERE a.job_number = #{jobNumber}
+    </update>
+
+    <!--解绑手机号码-->
+    <update id="unBindPhone">
+        UPDATE wx_user a set phone = null WHERE a.id = #{id}
+    </update>
+
+    <!--条件查询-->
+    <select id="searchByCondition" resultMap="ObdBoxVOMap">
+        select (@num := @num + 1) as num,
+        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        from obd_box, (select @num := 0) row_number
+        <where>
+            <if test="jobNumber != null and jobNumber != ''">
+                and job_number = #{jobNumber}
+            </if>
+            <if test="phone != null and phone != ''">
+                and job_number = (select job_number from wx_user where phone = #{phone})
+            </if>
+            <if test="boxCode != null and boxCode != ''">
+                and box_code = #{boxCode}
+            </if>
+            <choose>
+                <when test="status == ''">
+                    and 1 = 1
+                </when>
+                <when test="status == 0">
+                    and status = 0 and exception_type = 0
+                </when>
+                <when test="status == 1">
+                    and status = 1 or exception_type != 0
+                </when>
+            </choose>
+        </where>
+    </select>
+
+
+</mapper>

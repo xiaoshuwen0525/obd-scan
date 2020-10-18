@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('obdUser')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="user-form">
+                <input type="hidden" id="deptId" name="deptId">
+                <input type="hidden" id="parentId" name="parentId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            员工号：<input type="text" name="jobNumber"/>
+                        </li>
+                        <li>
+                            手机号：<input type="text" name="phone"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "device/chassis";
+    var sendUrl = prefix + "/unBindPhoneInteface?id="
+
+    $(function() {
+        var options = {
+            // url: prefix + "/list",
+            url: prefix + "/queryWechatInfo",
+            modalName: "用户",
+            columns: [
+                {
+                    field : 'seq',
+                    title : '序号'
+                },
+                {
+                    field: 'jobNumber',
+                    title: '员工编号',
+                },
+                {
+                    field: 'phone',
+                    title: '手机号',
+                },
+                {
+                    field: 'wxOpenId',
+                    title: '微信识别码',
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.get(sendUrl+\'' + row.id + '\')"><i class="fa fa-edit"></i>解绑手机号</a> ');
+                        return actions.join('');
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

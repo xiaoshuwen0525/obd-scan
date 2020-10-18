@@ -142,12 +142,14 @@ public class UploadServiceImpl implements IUploadService {
   public List<ObdBoxVO> obdBoxByJobNumber(String JobNumber) {
     List<ObdBoxVO> list = uploadMapper.selectBoxByJobNumber(JobNumber);
     for (ObdBoxVO obdBox:list){
-      obdBox.setStatus(changeStatus(obdBox.getStatus()));
       if("1".equals(obdBox.getExceptionType())){
+        obdBox.setStatus(changeStatus("1"));
         obdBox.setExceptionType("盒子异常");
       }else if ("2".equals(obdBox.getExceptionType())){
+        obdBox.setStatus(changeStatus("1"));
         obdBox.setExceptionType("obd异常");
       }else {
+        obdBox.setStatus(changeStatus("0"));
         obdBox.setExceptionType("正常");
       }
     }
@@ -457,7 +459,7 @@ public class UploadServiceImpl implements IUploadService {
    */
   private String changeStatus(String status){
     String zero = "0";
-    if(status!=null && "".equals(status)){
+    if(status!=null && !"".equals(status)){
       if(status.equals(zero)){
         return "正常";
       }else {

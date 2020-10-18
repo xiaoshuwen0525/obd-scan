@@ -1291,6 +1291,36 @@ var table = {
                     $.modal.open(table.options.modalName + "详情", $.operate.editUrl(id));
                 }
             },
+            // 绑定手机
+            bindPhone: function (id) {
+                table.set();
+                if ($.common.isEmpty(id) && table.options.type == table_type.bootstrapTreeTable) {
+                    var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+                    if ($.common.isEmpty(row)) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    var url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
+                    $.modal.open(table.options.modalName + "详情", url);
+                } else {
+                    $.modal.open(table.options.modalName + "详情", $.operate.editUrl(id));
+                }
+            },
+            // 解绑手机
+            unBindPhone: function (id) {
+                table.set();
+                if ($.common.isEmpty(id) && table.options.type == table_type.bootstrapTreeTable) {
+                    var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+                    if ($.common.isEmpty(row)) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    var url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
+                    $.modal.open(url);
+                } else {
+                    $.modal.open($.operate.editUrl(id));
+                }
+            },
             // 修改信息，以tab页展现
             editTab: function (id) {
                 table.set();

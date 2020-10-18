@@ -21,6 +21,7 @@ public class WxUser {
     private String phone;
     /** 创建时间 */
     private Date createTime;
-
+    /**前端序号展示 */
+    private Integer seq;
 
 }

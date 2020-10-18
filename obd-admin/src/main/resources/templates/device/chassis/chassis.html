@@ -6,6 +6,34 @@
 <body class="gray-bg">
     <div class="container-div">
 		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<input type="hidden" id="deptId" name="deptId">
+					<input type="hidden" id="parentId" name="parentId">
+					<div class="select-list">
+						<ul>
+							<li>
+								员工号：<input type="text" name="jobNumber"/>
+							</li>
+							<li>
+								手机号：<input type="text" name="phone"/>
+							</li>
+							<li>
+								机箱串码：<input type="text" name="boxCode"/>
+							</li>
+							<li>
+								机箱状态：<select name="status" th:with="type=${@dict.getType('obd_error_type')}">
+								<option value="">所有</option>
+								<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+							</select>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
 	        <div class="col-sm-12 select-table table-striped">
 	            <table id="bootstrap-table"></table>
 	        </div>
@@ -18,8 +46,10 @@
 
         $(function() {
             var options = {
-                url: prefix + "/list",
-                updateUrl: prefix + "/obd/{id}",
+                // url: prefix + "/list",
+				url: prefix + "/searchByCondition",
+				updateUrl: prefix + "/obd/{id}",
+				searchUrl:prefix + "/searchByCondition",
                 modalName: "机箱",
                 columns: [
 				{

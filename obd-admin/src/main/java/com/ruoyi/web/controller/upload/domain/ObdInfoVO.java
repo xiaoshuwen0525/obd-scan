@@ -29,6 +29,11 @@ public class ObdInfoVO {
     private Integer boxId;
 
     /**
+     * 机箱串码
+     */
+    private String boxCode;
+
+    /**
      * 数据状态0：正常1：异常
      */
     private String status;

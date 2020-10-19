@@ -132,6 +132,9 @@ public class DeviceController extends BaseController {
         return getDataTable(obdPortInfoVOS);
     }
 
+    /**
+     * 条件查询
+     */
     @PostMapping("/searchByCondition")
     @ResponseBody
     public TableDataInfo searchByCondition(String jobNumber, String phone, String boxCode, String status) {
@@ -145,31 +148,10 @@ public class DeviceController extends BaseController {
         return getDataTable(obdBoxVOS);
     }
 
-    @GetMapping("/bindPhoneInteface")
-    @RepeatSubmit
-    @ResponseBody
-    public AjaxResult bindPhone(String jobNumber, String phone) {
-        if (StringUtils.isBlank(jobNumber) && StringUtils.isBlank(phone)) {
-            return AjaxResult.warn("请求参数不正确");
-        }
-        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
-        Pattern pattern = Pattern.compile(regex);
-        if (!pattern.matcher(phone).matches()) {
-            return AjaxResult.warn("手机号格式不正确");
-        }
 
-        String s = "绑定失败";
-        lock.lock();
-        try {
-            s = obdDeviceService.bindPhone(jobNumber, phone);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return AjaxResult.success(s);
-    }
-
+    /**
+     * 手机号解绑接口
+     */
     @GetMapping("/unBindPhoneInteface")
     @RepeatSubmit
     @ResponseBody
@@ -189,27 +171,51 @@ public class DeviceController extends BaseController {
         return AjaxResult.success(s);
     }
 
+    /**
+     * 给前端页面传值
+     */
     @GetMapping("/bindPhone/{id}")
     public String bindPhoneId(@PathVariable("id") String id, ModelMap mmap) {
         mmap.put("id", id);
+        List<WxUser> wxUsers = null;
+        try {
+            wxUsers = obdDeviceService.queryWechatInfo(null, null, id);
+            mmap.put("jobNumber", wxUsers.get(0).getJobNumber());
+            mmap.put("phone", wxUsers.get(0).getPhone());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return prefix + "/bindPhone";
     }
 
     /**
-     * 根据机箱唯一ID查询端口列表
+     * 绑定新的手机号码
      */
-    @PostMapping("/bindPhone/bind/{id}")
+    @PostMapping("/bindPhone/bind")
     @ResponseBody
-    public AjaxResult bindPhoneList(@PathVariable("id") String id) {
-        List<WxUser> wxUsers = null;
-        try {
-            wxUsers = obdDeviceService.queryWechatInfo(null, null, id);
-        } catch (Exception e) {
-            return AjaxResult.warn("未能查询到对应信息");
+    public AjaxResult bindPhoneList(String jobNumber, String phone, String newPhone) {
+        if (phone.equals(newPhone)){
+            return AjaxResult.warn("新的手机号码与原手机号码一致");
         }
-        return AjaxResult.success(wxUsers);
+        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
+        Pattern pattern = Pattern.compile(regex);
+        if (!pattern.matcher(newPhone).matches()) {
+            return AjaxResult.warn("新手机号格式不正确");
+        }
+        int phoneNumberExist = obdDeviceService.isPhoneNumberExist(newPhone);
+        if (phoneNumberExist > 0){
+            return AjaxResult.warn("所填新手机号码已被使用");
+        }
+        int i = obdDeviceService.bindPhone(jobNumber, phone, newPhone);
+        if (i == 0) {
+            return AjaxResult.warn("绑定失败");
+        }
+        return AjaxResult.success("绑定成功");
     }
 
+    /**
+     * 条件查询微信用户信息
+     */
     @PostMapping("/queryWechatInfo")
     @ResponseBody
     public TableDataInfo queryWechatInfo(String jobNumber, String phone, String id) {

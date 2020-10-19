@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('手机号绑定')"/>
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-obdUser-update">
+			<input type="hidden" id="id" th:value="${id}">
+			<div class="form-group">
+				<label class="col-sm-3 control-label">员工编号：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="jobNumber" id="jobNumber" th:value="${jobNumber}"  readonly="true">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">原手机号码：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="phone" id="phone" th:value="${phone}" readonly="true">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">新手机号码：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="newPhone" id="newPhone" required>
+				</div>
+			</div>
+		</form>
+	</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+	var prefix = ctx + "device/chassis";
+
+	function submitHandler() {
+		if ($.validate.form()) {
+			$.operate.save(prefix + "/bindPhone/bind", $('#form-obdUser-update').serialize());
+		}
+	}
+
+</script>
+</body>
+</html>

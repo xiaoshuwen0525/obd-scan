@@ -31,9 +31,14 @@ public interface ObdDeviceMapper {
     List<ObdBoxVO> allSearch();
 
     /**
+     * 查询指定手机号是否存在
+     * */
+    WxUser isPhoneNumberExist(String newPhone);
+
+    /**
      * 绑定手机号码
      * */
-    int bindPhone(@Param("jobNumber") String jobNumber, @Param("phone")String phone);
+    int bindPhone(@Param("jobNumber") String jobNumber, @Param("phone")String phone, @Param("newPhone")String newPhone);
 
     /**
      * 解绑手机号码

@@ -2,7 +2,6 @@ package com.ruoyi.web.controller.obd.service;
 
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -28,15 +27,23 @@ public interface IObdDeviceService {
      * */
     List<ObdBoxVO> allSearch();
 
+
+    /**
+     * 指定手机是否存在
+     *
+     * @return*/
+    int isPhoneNumberExist(String newPhone);
+
     /**
      * 绑定手机号码
-     * */
-    String bindPhone(@Param("jobNumber") String jobNumber, @Param("phone")String phone);
+     *
+     * @return*/
+    int bindPhone(String jobNumber, String phone, String newPhone);
 
     /**
      * 解绑手机号码
      * */
-    String unBindPhone(@Param("jobNumber") String jobNumber);
+    String unBindPhone(String jobNumber);
 
     /**
      * 查询微信用户相关信息

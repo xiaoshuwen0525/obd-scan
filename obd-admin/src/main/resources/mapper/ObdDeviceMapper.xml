@@ -97,9 +97,23 @@
          from obd_box, (select @num := 0) row_number
     </select>
 
+    <!--查询指定手机号码-->
+    <select id="isPhoneNumberExist" resultMap="wxUserMap" parameterType="java.lang.String">
+        select phone
+         from wx_user where phone = #{phone}
+    </select>
+
     <!--绑定手机-->
     <update id="bindPhone">
-        UPDATE wx_user a SET phone = #{phone} WHERE a.job_number = #{jobNumber}
+        UPDATE wx_user SET phone = #{newPhone}
+        <where>
+        <if test="jobNumber != null and jobNumber != ''">
+            and job_number = #{jobNumber}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone = #{phone}
+        </if>
+        </where>
     </update>
 
     <!--解绑手机号码-->

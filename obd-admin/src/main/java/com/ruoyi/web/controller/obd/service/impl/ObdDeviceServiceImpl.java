@@ -52,15 +52,24 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     }
 
     @Override
+    public int isPhoneNumberExist(String newPhone) {
+        WxUser wxUser = obdDeviceMapper.isPhoneNumberExist(newPhone);
+        if (wxUser != null){
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
     @Transactional
-    public String bindPhone(String jobNumber, String phone) {
+    public int bindPhone(String jobNumber, String phone, String newPhone) {
         int i = 0;
         try {
-            i = obdDeviceMapper.bindPhone(jobNumber, phone);
+            i = obdDeviceMapper.bindPhone(jobNumber, phone, newPhone);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return i != 0 ? "绑定成功" : "绑定失败";
+        return i;
     }
 
     @Override

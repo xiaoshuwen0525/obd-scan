@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoginMapper {
 
-    public int insertOpenId(WxUser wxUser);
+
 
     /**
      * 查询openid是否存在

@@ -41,15 +41,15 @@ public class LoginController extends BaseController {
     public AjaxResult selectOpenid(String code, HttpServletRequest request) throws IOException {
         log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+ RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(code)){
-            return AjaxResult.success("105","code不能为空",null);
+            return AjaxResult.success("104","code不能为空",null);
         }
 
         //获取openid
         String openId = null;
         try {
             openId = GetOpenIdUtil.getOpenId(code);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return AjaxResult.error("登陆失败");
         }
 
         AjaxResult ajaxResult = loginService.selectOpenId(openId);
@@ -70,10 +70,10 @@ public class LoginController extends BaseController {
     public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode, HttpServletRequest request) throws IOException {
         log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(authCode == null){
-            return AjaxResult.success("105","参数不能为空",null);
+            return AjaxResult.success("104","参数不能为空",null);
         }
         if(StringUtils.isBlank(openId) || StringUtils.isBlank(jobNumber) || StringUtils.isBlank(phone)){
-            return AjaxResult.success("105","参数不能为空",null);
+            return AjaxResult.success("104","参数不能为空",null);
         }
 
         AjaxResult ajaxResult = null;
@@ -96,7 +96,7 @@ public class LoginController extends BaseController {
     public AjaxResult getAuthCode(String phone, HttpServletRequest request) throws IOException {
         log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(phone)){
-            return AjaxResult.success("105","手机号不能为空",null);
+            return AjaxResult.success("104","手机号不能为空",null);
         }
 
         Integer authCode = (int)((Math.random()*9+1)*1000);
@@ -118,10 +118,10 @@ public class LoginController extends BaseController {
     public AjaxResult updateUnbind(String openId,String phone,Integer authCode, HttpServletRequest request) throws IOException {
         log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(authCode == null){
-            return AjaxResult.success("105","参数不能为空",null);
+            return AjaxResult.success("104","参数不能为空",null);
         }
         if(StringUtils.isBlank(openId) || StringUtils.isBlank(phone)){
-            return AjaxResult.success("105","参数不能为空",null);
+            return AjaxResult.success("104","参数不能为空",null);
         }
 
         AjaxResult ajaxResult = null;
@@ -137,7 +137,7 @@ public class LoginController extends BaseController {
     public AjaxResult unbind(String openId, HttpServletRequest request) throws IOException {
         log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
         if(StringUtils.isBlank(openId)){
-            return AjaxResult.success("105","openId不能为空",null);
+            return AjaxResult.success("104","openId不能为空",null);
         }
 
         int unbind = loginService.unbind(openId);

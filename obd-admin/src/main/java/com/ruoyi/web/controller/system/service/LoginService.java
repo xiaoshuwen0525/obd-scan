@@ -12,7 +12,6 @@ import java.text.ParseException;
  */
 public interface LoginService {
 
-    public String visitorLogin(String openId);
     /**
      * 登陆
      * @param openId

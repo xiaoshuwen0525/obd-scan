@@ -16,10 +16,6 @@
         <result property="createTime" column="create_time" />
     </resultMap>
 
-    <insert id="insertOpenId" parameterType="com.ruoyi.web.controller.system.domain.WxUser">
-
-    </insert>
-
     <!-- 添加手机号验证码 -->
     <insert id="insertPhoneAuthCode" parameterType="com.ruoyi.web.controller.system.domain.PhoneCode">
         insert into phone_code (

@@ -25,15 +25,6 @@ public class LoginServiceImpl implements LoginService {
     private LoginMapper loginMapper;
 
 
-    @Override
-    public String visitorLogin(String openId) {
-        /*WxUser wxUser = new WxUser();
-        wxUser.setWxOpenId(openId);
-        loginMapper.insertOpenId(wxUser);*/
-
-        return openId;
-    }
-
     /**
      * 登陆
      * @param openId
@@ -88,7 +79,7 @@ public class LoginServiceImpl implements LoginService {
         boolean effectiveDate = isEffectiveDate(nowTime, startTime, endTime);
         if (!effectiveDate) {
             //System.out.println("当前时间不在范围内");
-            return AjaxResult.success("104","验证码已超时，请重新获取",null);
+            return AjaxResult.success("104","验证码已超时",null);
         }
 
         //判断验证码是否正确
@@ -100,7 +91,7 @@ public class LoginServiceImpl implements LoginService {
             loginMapper.insertUser(wxUser);
             return AjaxResult.successOBD(wxUser);
         }else{
-            return AjaxResult.success("104","验证码不对,请重新输入",null);
+            return AjaxResult.success("104","验证码错误",null);
         }
     }
 
@@ -147,7 +138,7 @@ public class LoginServiceImpl implements LoginService {
         boolean effectiveDate = isEffectiveDate(nowTime, startTime, endTime);
         if (!effectiveDate) {
             //System.out.println("当前时间不在范围内");
-            return AjaxResult.success("104","验证码已超时，请重新获取",null);
+            return AjaxResult.success("104","验证码已超时",null);
         }
 
         //判断验证码是否正确
@@ -155,7 +146,7 @@ public class LoginServiceImpl implements LoginService {
             int unbind = loginMapper.updateUnbind(openId, phone);
             return AjaxResult.successOBD(unbind);
         }else{
-            return AjaxResult.success("104","验证码不对,请重新输入",null);
+            return AjaxResult.success("104","验证码错误",null);
         }
     }
 

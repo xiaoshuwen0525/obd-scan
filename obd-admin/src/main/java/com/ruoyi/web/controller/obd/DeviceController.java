@@ -152,14 +152,15 @@ public class DeviceController extends BaseController {
         if (StringUtils.isBlank(jobNumber) && StringUtils.isBlank(phone)) {
             return AjaxResult.warn("请求参数不正确");
         }
-        Pattern pattern = Pattern.compile("^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$");
+        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
+        Pattern pattern = Pattern.compile(regex);
         if (!pattern.matcher(phone).matches()) {
             return AjaxResult.warn("手机号格式不正确");
         }
 
         String s = "绑定失败";
+        lock.lock();
         try {
-            lock.lock();
             s = obdDeviceService.bindPhone(jobNumber, phone);
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,8 +178,8 @@ public class DeviceController extends BaseController {
             return AjaxResult.warn("请求参数不正确");
         }
         String s;
+        lock.lock();
         try {
-            lock.lock();
             s = obdDeviceService.unBindPhone(id);
         } catch (Exception e) {
             return AjaxResult.error("解绑失败");

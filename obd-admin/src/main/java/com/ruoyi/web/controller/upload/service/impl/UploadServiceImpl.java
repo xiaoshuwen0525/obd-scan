@@ -51,7 +51,11 @@ public class UploadServiceImpl implements IUploadService {
       if (!"".equals(obd.getBoxCode())) {
         obdBox.setCreateTime(new Date());
         obdBox.setBoxCode(obd.getBoxCode());
-        obdBox.setJobNumber(obd.getJobNumber());
+        if(StringUtils.isNotEmpty(obd.getJobNumber()) && !"undefined".equals(obd.getJobNumber())){
+          obdBox.setJobNumber(obd.getJobNumber());
+        }else {
+          return AjaxResult.error("工号为空或不是正常值："+obd.getJobNumber());
+        }
         //识别不出是null
         if (obd.getBoxCode() != null) {
           obdBox.setStatus(0);

@@ -194,6 +194,9 @@ public class DeviceController extends BaseController {
     @PostMapping("/bindPhone/bind")
     @ResponseBody
     public AjaxResult bindPhoneList(String jobNumber, String phone, String newPhone) {
+        if (StringUtils.isBlank(jobNumber) && "undefined".equals(jobNumber)){
+            return AjaxResult.warn("该员工信息有误，请联系管理员处理");
+        }
         if (phone.equals(newPhone)){
             return AjaxResult.warn("新的手机号码与原手机号码一致");
         }

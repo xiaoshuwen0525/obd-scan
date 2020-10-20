@@ -45,16 +45,10 @@ public class UploadController extends BaseController {
     @RepeatSubmit
     public AjaxResult uploadInformation(ObdVO obdVO, HttpServletRequest request) throws IOException {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
-        if(!"".equals(obdVO.getBoxCode())){
-            if (StringUtils.isNoneBlank(obdVO.getBoxCode())) {
-                if (!isNumber(obdVO.getBoxCode())) {
-                    return AjaxResult.error("OBD箱子扫描的二维码不对");
-                }
-            }
-        }else {
+        String undefined = "undefined";
+        if("".equals(obdVO.getBoxCode()) || undefined.equals(obdVO.getBoxCode())){
             return AjaxResult.error("OBD箱子串码无效");
         }
-
         AjaxResult ajaxResult;
         try {
             ajaxResult = uploadService.uploadInformation(obdVO);
@@ -91,24 +85,10 @@ public class UploadController extends BaseController {
     public AjaxResult updateObd(String obdInfoVOList, String boxCode, Integer boxId, HttpServletRequest request) throws IOException {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
         log.info("参数 boxCode:"+boxCode+",boxId:"+boxId);
+        String undefined = "undefined";
         ObdBoxVO obdBoxVO = new ObdBoxVO();
-        int length = 19;
-        if(boxCode!=null){
-            if (StringUtils.isNoneBlank(boxCode) ){
-                if(boxCode.length()>=length){
-                    if (!isNumber(boxCode.substring(1, boxCode.length() - 1))) {
-                        return AjaxResult.error("OBD箱子扫描的二维码不对");
-                    }else {
-                        obdBoxVO.setBoxCode(boxCode.substring(1, boxCode.length() - 1));
-                    }
-                }else {
-                    if (!isNumber(boxCode)){
-                        return AjaxResult.error("OBD箱子扫描的二维码不对");
-                    }else {
-                        obdBoxVO.setBoxCode(boxCode);
-                    }
-                }
-            }
+        if(undefined.equals(boxCode.substring(1,boxCode.length()-1))){
+            obdBoxVO.setBoxCode(boxCode.substring(1, boxCode.length() - 1));
         }
         obdBoxVO.setId(boxId);
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
@@ -121,19 +101,6 @@ public class UploadController extends BaseController {
             return AjaxResult.error("更新失败");
         }
         return ajaxResult;
-    }
-
-
-    private boolean isNumber(String string) {
-        int start = 17;
-        int end  = 18;
-        String regex = "^[0-9]*[0-9][0-9]*$";
-        if(string.length() != end && string.length() != start){
-            return false;
-        }
-
-        Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string).matches();
     }
 
 }

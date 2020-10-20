@@ -43,6 +43,7 @@ public class UploadServiceImpl implements IUploadService {
   public AjaxResult uploadInformation(ObdVO obd) {
     System.out.println("uploadInformation ");
     String msg = "";
+    String undefined = "undefined";
     //lock.lock();
     try {
       //建机箱
@@ -51,7 +52,7 @@ public class UploadServiceImpl implements IUploadService {
       if (!"".equals(obd.getBoxCode())) {
         obdBox.setCreateTime(new Date());
         obdBox.setBoxCode(obd.getBoxCode());
-        if(StringUtils.isNotEmpty(obd.getJobNumber()) && !"undefined".equals(obd.getJobNumber())){
+        if(StringUtils.isNotEmpty(obd.getJobNumber()) && !undefined.equals(obd.getJobNumber())){
           obdBox.setJobNumber(obd.getJobNumber());
         }else {
           return AjaxResult.error("工号为空或不是正常值："+obd.getJobNumber());

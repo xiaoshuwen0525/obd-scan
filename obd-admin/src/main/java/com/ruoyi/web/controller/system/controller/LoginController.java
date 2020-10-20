@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.regex.Pattern;
 
 /**
  * 登陆 控制层
@@ -51,7 +52,6 @@ public class LoginController extends BaseController {
         } catch (Exception e) {
             return AjaxResult.error("登陆失败");
         }
-
         AjaxResult ajaxResult = loginService.selectOpenId(openId);
         return ajaxResult;
     }
@@ -69,11 +69,23 @@ public class LoginController extends BaseController {
     @ResponseBody
     public AjaxResult bindingSuccess(String jobNumber,String phone,String openId,Integer authCode, HttpServletRequest request) throws IOException {
         log.info("成功进入【"+request.getRequestURI()+"】接口"+ "GET请求参数:"+RequestUtil.getMapParams(request)+"Post请求参数:"+RequestUtil.getRequestBody(request));
-        if(authCode == null){
-            return AjaxResult.success("104","参数不能为空",null);
+
+        if(StringUtils.isBlank(jobNumber) && "undefined".equals(jobNumber)){
+            return AjaxResult.success("104","工号不能为空",null);
         }
-        if(StringUtils.isBlank(openId) || StringUtils.isBlank(jobNumber) || StringUtils.isBlank(phone)){
-            return AjaxResult.success("104","参数不能为空",null);
+        if(StringUtils.isBlank(phone)){
+            return AjaxResult.success("104","手机号不能为空",null);
+        }
+        if(StringUtils.isBlank(openId)){
+            return AjaxResult.success("104","openId不能为空",null);
+        }
+        if(authCode == null){
+            return AjaxResult.success("104","验证码不能为空",null);
+        }
+        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
+        Pattern pattern = Pattern.compile(regex);
+        if(!pattern.matcher(phone).matches()){
+            return AjaxResult.success("104","手机号格式不正确",null);
         }
 
         AjaxResult ajaxResult = null;

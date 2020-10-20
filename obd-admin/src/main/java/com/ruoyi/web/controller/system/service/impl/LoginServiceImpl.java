@@ -2,13 +2,18 @@ package com.ruoyi.web.controller.system.service.impl;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.web.controller.system.controller.LoginController;
 import com.ruoyi.web.controller.system.domain.PhoneCode;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.system.mapper.LoginMapper;
 import com.ruoyi.web.controller.system.service.LoginService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,17 +29,16 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private LoginMapper loginMapper;
 
-
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     /**
      * 登陆
      * @param openId
      * @return
      */
     @Override
-    public AjaxResult selectOpenId(String openId) {
+    public AjaxResult selectOpenId(String openId ){
         WxUser wxUser = loginMapper.selectOpenId(openId);
-
-        if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && wxUser.getPhone() != null ){
+        if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && wxUser.getPhone() != null ){ ;
             return AjaxResult.successOBD(wxUser);
         }else{
             return AjaxResult.success("104","没有绑定",openId);

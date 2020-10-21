@@ -251,8 +251,11 @@ public class UploadServiceImpl implements IUploadService {
           }
         }
         int totalPage = uploadMapper.countByJobNumber(jobNumber);
+
         if(pageNum>totalPage){
-          return null;
+          List<ObdBoxVO> list = new ArrayList();
+          PageInfo<ObdBoxVO> pageInfo = new PageInfo<ObdBoxVO>(list);
+          return pageInfo;
         }
         PageInfo<ObdBoxVO> pageInfo = new PageInfo<ObdBoxVO>(obdBoxList);
         System.out.println("service selectObdByJobNumber pageInfo :"+pageInfo);

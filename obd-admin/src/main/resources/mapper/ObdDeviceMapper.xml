@@ -9,6 +9,11 @@
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
+        <result property="boxName" column="box_name" jdbcType="VARCHAR"/>
+        <result property="area" column="area" jdbcType="VARCHAR"/>
+        <result property="businessBureau" column="business_bureau" jdbcType="VARCHAR"/>
+        <result property="campService" column="camp_service" jdbcType="VARCHAR"/>
         <result property="exceptionType" column="exception_type" jdbcType="VARCHAR"/>
         <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
         <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
@@ -28,6 +33,8 @@
         <result property="seq" column="num" jdbcType="INTEGER"/>
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
+        <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
+        <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
     </resultMap>
 
@@ -41,18 +48,81 @@
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <sql id="ObdBoxVO">
+        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time,label_code,box_name,area,business_bureau,camp_service
+    </sql>
+
     <!--通过boxCode唯一ID查询-->
     <select id="boxSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         select (@num := @num + 1) as num,
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        <include refid="ObdBoxVO"></include>
          from obd_box, (select @num := 0) row_number
         where box_code = #{boxCode,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过盒子id查询obd列表-->
+    <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
+        SELECT
+        (@num := @num + 1) as num,
+        i.id,i.box_id,i.status,b.box_code,i.box_belong,i.obd_name
+        FROM obd_info i
+        INNER  JOIN obd_box b on  b.id = i.box_id,
+        (select @num := 0) row_number
+        <where>
+            <if test="boxId != null and boxId != ''">
+                and i.box_id = #{boxId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--通过boxCode或labelCode查询obd信息-->
+    <select id="selectAllInfoByCode" resultMap="ObdInfoVOMap" >
+        SELECT id,box_id,status,box_belong,obd_name
+        FROM obd_info where box_id = (
+        select id from obd_box
+        <where>
+            <if test="boxCode != null and boxCode != ''">
+                and box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                and label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+        )
+    </select>
+
+    <!--通过ObdId查询端口列表-->
+    <select id="selectPortByObdId" resultMap="ObdPortInfoVOMap" >
+        SELECT
+        (@num := @num + 1) as num,
+        id,obd_id,port_ser,port_code,status,img_url
+        FROM obd_port_info ,
+        (select @num := 0) row_number
+        <where>
+            <if test="obdId != null and obdId != ''">
+                and  obd_id = #{obdId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--通过工号查询盒子列表-->
+    <select id="selectBoxByJobNumber" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
+        SELECT
+        (@num := @num + 1) as num,
+        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        FROM
+        obd_box, (select @num := 0) row_number
+        <where>
+            <if test="jobNumber != null and jobNumber != ''">
+                and job_number = #{jobNumber,jdbcType=VARCHAR}
+            </if>
+        </where>
     </select>
 
     <!--通过jobNumber唯一ID查询-->
     <select id="jobNumberSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         select (@num := @num + 1) as num,
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        <include refid="ObdBoxVO"></include>
          from obd_box, (select @num := 0) row_number
         where job_number = #{jobNumber,jdbcType=VARCHAR}
     </select>
@@ -60,7 +130,7 @@
     <!--通过phone唯一ID查询-->
     <select id="phoneSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         select (@num := @num + 1) as num,
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        <include refid="ObdBoxVO"></include>
          from obd_box, (select @num := 0) row_number
         where job_number = (SELECT job_number from wx_user where phone = #{phone,jdbcType=VARCHAR})
     </select>
@@ -93,7 +163,7 @@
     <!--查询所有-->
     <select id="allSearch" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         select (@num := @num + 1) as num,
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        <include refid="ObdBoxVO"></include>
          from obd_box, (select @num := 0) row_number
     </select>
 
@@ -124,7 +194,7 @@
     <!--条件查询-->
     <select id="searchByCondition" resultMap="ObdBoxVOMap">
         select (@num := @num + 1) as num,
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        <include refid="ObdBoxVO"></include>
         from obd_box, (select @num := 0) row_number
         <where>
             <if test="jobNumber != null and jobNumber != ''">

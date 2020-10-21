@@ -34,6 +34,16 @@ public class ObdInfoVO {
     private String boxCode;
 
     /**
+     * 归属机箱
+     */
+    private String boxBelong;
+
+    /**
+     * OBD名称
+     */
+    private String obdName;
+
+    /**
      * 数据状态0：正常1：异常
      */
     private String status;

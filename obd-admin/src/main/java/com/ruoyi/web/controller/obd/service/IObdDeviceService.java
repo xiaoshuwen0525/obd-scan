@@ -2,6 +2,9 @@ package com.ruoyi.web.controller.obd.service;
 
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
+import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
+import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -54,5 +57,27 @@ public interface IObdDeviceService {
      * 查询所有机箱信息
      * */
     List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String boxCode,String status);
+
+    /**
+     * 根据obdid查询端口信息
+     * */
+    List<ObdPortInfoVO> portByObdId(String obdId);
+
+
+    /**
+     * 根据boxid查询obd信息
+     * */
+    List<ObdInfoVO> infoByBoxId(String boxId);
+
+
+    /**
+     * 根据工号查询机箱信息
+     * */
+    List<ObdBoxVO> selectBoxByJobNumber(String  jobNumber);
+
+    /**
+     * 根据boxCode或者labelCode查询机箱信息
+     * */
+    ObdBoxVO selectAllInfoByCode(String code);
 
 }

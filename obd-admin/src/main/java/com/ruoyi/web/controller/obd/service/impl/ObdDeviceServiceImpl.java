@@ -5,6 +5,8 @@ import com.ruoyi.web.controller.obd.mapper.ObdDeviceMapper;
 import com.ruoyi.web.controller.obd.service.IObdDeviceService;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
+import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
+import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +56,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     @Override
     public int isPhoneNumberExist(String newPhone) {
         WxUser wxUser = obdDeviceMapper.isPhoneNumberExist(newPhone);
-        if (wxUser != null){
+        if (wxUser != null) {
             return 1;
         }
         return 0;
@@ -107,7 +109,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
 
     @Override
     public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String boxCode, String status) {
-            List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxCode, status);
+        List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxCode, status);
         if (obdBoxVOS == null) {
             return null;
         }
@@ -123,7 +125,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
                     obdBox.setStatus("异常");
                     obdBox.setExceptionType("端口异常");
                 }
-            }else{
+            } else {
                 obdBox.setStatus("异常");
                 obdBox.setExceptionType("机箱异常");
             }
@@ -131,4 +133,92 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return obdBoxVOS;
     }
 
+    @Override
+    public List<ObdInfoVO> infoByBoxId(String boxId) {
+        List<ObdInfoVO> list = obdDeviceMapper.selectInfoByBoxId(boxId);
+        for (ObdInfoVO obdInfo : list) {
+            obdInfo.setStatus(changeStatus(obdInfo.getStatus()));
+        }
+        return list;
+    }
+
+    @Override
+    public ObdBoxVO selectAllInfoByCode(String code) {
+        String boxCode = null;
+        String labelCode = null;
+        if (code.startsWith("DG")) {
+            labelCode = code;
+        } else if (code.startsWith("光分纤箱")) {
+            boxCode = code;
+        } else {
+            return null;
+        }
+        ObdBoxVO obdBoxVO = new ObdBoxVO();
+        List<ObdInfoVO> obdInfoVOS = null;
+        List<ObdPortInfoVO> obdPortInfoVOS;
+        try {
+            //根据扫描出来的code查询OBD信息
+            obdInfoVOS = obdDeviceMapper.selectAllInfoByCode(boxCode, labelCode);
+        } catch (Exception e) {
+            return null;
+        }
+        if (obdInfoVOS == null) {
+            return null;
+        }
+        //循环该OBD并查询出对应的端口对象列表信息
+        for (int i = 0; i < obdInfoVOS.size(); i++) {
+            obdPortInfoVOS = obdDeviceMapper.selectPortByObdId(obdInfoVOS.get(i).getId().toString());
+            if (obdPortInfoVOS != null) {
+                obdInfoVOS.get(i).setObdPortInfoVOList(obdPortInfoVOS);
+            }
+        }
+        obdBoxVO.setObdInfoVOList(obdInfoVOS);
+        return obdBoxVO;
+    }
+
+    @Override
+    public List<ObdPortInfoVO> portByObdId(String obdId) {
+        List<ObdPortInfoVO> list = obdDeviceMapper.selectPortByObdId(obdId);
+        for (ObdPortInfoVO port : list) {
+            port.setStatus(changeStatus(port.getStatus()));
+        }
+        return list;
+    }
+
+    @Override
+    public List<ObdBoxVO> selectBoxByJobNumber(String jobNumber) {
+        List<ObdBoxVO> list = obdDeviceMapper.selectBoxByJobNumber(jobNumber);
+        for (ObdBoxVO obdBox : list) {
+            if ("1".equals(obdBox.getExceptionType())) {
+                obdBox.setStatus(changeStatus("1"));
+                obdBox.setExceptionType("盒子异常");
+            } else if ("2".equals(obdBox.getExceptionType())) {
+                obdBox.setStatus(changeStatus("1"));
+                obdBox.setExceptionType("obd异常");
+            } else {
+                obdBox.setStatus(changeStatus("0"));
+                obdBox.setExceptionType("正常");
+            }
+        }
+        return list;
+    }
+
+
+    /**
+     * 将status改文字
+     *
+     * @param status 值
+     * @return 异常状态文字
+     */
+    private String changeStatus(String status) {
+        String zero = "0";
+        if (status != null && !"".equals(status)) {
+            if (status.equals(zero)) {
+                return "正常";
+            } else {
+                return "异常";
+            }
+        }
+        return status;
+    }
 }

@@ -248,6 +248,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         HashSet<String> obd = new HashSet<>();
         for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
             if (obdPortInfoVO.getId()!=0){
+                //这里的id取值为机箱的唯一id
                 obdBoxVO.setId(obdPortInfoVO.getId());
             }
             obd.add(obdPortInfoVO.getObdId().toString());
@@ -257,7 +258,8 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
                 if (s.equals(obdPortInfoVO.getObdId().toString())){
                     ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
-                    obdPortInfoVO1.setPortSer(obdPortInfoVO.getSeq());
+                    //这里的seq取值为port唯一id
+                    obdPortInfoVO1.setSeq(obdPortInfoVO.getSeq());
                     obdPortInfoVO1.setPortSer(obdPortInfoVO.getPortSer());
                     obdPortInfoVO1.setPortCode(obdPortInfoVO.getPortCode());
                     obdPortInfoVOS1.add(obdPortInfoVO1);

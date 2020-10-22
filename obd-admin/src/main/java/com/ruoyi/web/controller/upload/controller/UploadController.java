@@ -39,24 +39,24 @@ public class UploadController extends BaseController {
 
     private static final Lock lock = new ReentrantLock();
 
-    @ApiOperation(value = "上传信息")
-    @PostMapping("/uploadInformation")
-    @ResponseBody
-    @RepeatSubmit
-    public AjaxResult uploadInformation(ObdVO obdVO, HttpServletRequest request) throws IOException {
-        log.info("成功进入【" + request.getRequestURI() + "】接口");
-        String undefined = "undefined";
-        if("".equals(obdVO.getBoxCode()) || undefined.equals(obdVO.getBoxCode())){
-            return AjaxResult.error("OBD箱子串码无效");
-        }
-        AjaxResult ajaxResult;
-        try {
-            ajaxResult = uploadService.uploadInformation(obdVO);
-        } catch (Exception e) {
-            return AjaxResult.error("上传失败");
-        }
-        return ajaxResult;
-    }
+//    @ApiOperation(value = "上传信息")
+//    @PostMapping("/uploadInformation")
+//    @ResponseBody
+//    @RepeatSubmit
+//    public AjaxResult uploadInformation(ObdVO obdVO, HttpServletRequest request) throws IOException {
+//        log.info("成功进入【" + request.getRequestURI() + "】接口");
+//        String undefined = "undefined";
+//        if("".equals(obdVO.getBoxCode()) || undefined.equals(obdVO.getBoxCode())){
+//            return AjaxResult.error("OBD箱子串码无效");
+//        }
+//        AjaxResult ajaxResult;
+//        try {
+//            ajaxResult = uploadService.uploadInformation(obdVO);
+//        } catch (Exception e) {
+//            return AjaxResult.error("上传失败");
+//        }
+//        return ajaxResult;
+//    }
 
     @ApiOperation(value = "根据工号查询分页")
     @GetMapping("/selectObdByJobNumber")
@@ -103,4 +103,32 @@ public class UploadController extends BaseController {
         return ajaxResult;
     }
 
+    @ApiOperation(value = "保存obd")
+    @PostMapping("/uploadInformation")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request) throws IOException {
+        log.info("成功进入【" + request.getRequestURI() + "】接口");
+        log.info("参数 boxCode:"+boxCode+",jobNumber:"+jobNumber);
+        String undefined = "undefined";
+        ObdBoxVO obdBoxVO = new ObdBoxVO();
+        if(!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)){
+            obdBoxVO.setBoxCode(boxCode);
+        }
+        if(StringUtils.isNotBlank(jobNumber) && !undefined.equals(jobNumber)){
+            obdBoxVO.setJobNumber(jobNumber);
+        }else {
+            return AjaxResult.warn("工号不应为空");
+        }
+        ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
+        obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
+        log.info("参数 obdInfoListVO:"+obdInfoListVO.toString());
+        AjaxResult ajaxResult;
+        try {
+            ajaxResult = uploadService.uploadInformation(obdBoxVO);
+        } catch (Exception e) {
+            return AjaxResult.error("更新失败");
+        }
+        return ajaxResult;
+    }
 }

@@ -58,4 +58,7 @@ public class ObdBox  {
         @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
         private Date createTime;
 
+        /** 倒灌标签二维码 */
+        private String labelCode;
+
 }

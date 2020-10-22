@@ -91,6 +91,13 @@ public interface UploadMapper {
     int updateObdBox(ObdBox obdBox);
 
     /**
+     * 更新obdBox
+     * @param obdBox
+     * @return int  id
+     */
+    int  updateBox(ObdBox obdBox);
+
+    /**
      * 根据工号查询obd盒子
      * @param jobNumber 工号
      * @return AjaxResult
@@ -135,6 +142,11 @@ public interface UploadMapper {
      */
     ObdPortInfoVO selectPortById(@Param("id") String  id);
 
-
+    /**
+     * 根据根据id查询端口
+     * @param id id
+     * @return AjaxResult
+     */
+    List<ObdPortInfoVO>  selectAllInfoById(@Param("id") Integer  id);
 
 }

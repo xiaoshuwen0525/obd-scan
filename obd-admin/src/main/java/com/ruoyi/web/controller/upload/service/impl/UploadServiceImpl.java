@@ -38,92 +38,208 @@ public class UploadServiceImpl implements IUploadService {
 
   private final  int portCount = 8;
 
+//  @Override
+//  @Transactional
+//  public AjaxResult uploadInformation(ObdVO obd) {
+//    System.out.println(obd.toString());
+//    String msg = "";
+//    String undefined = "undefined";
+//    //lock.lock();
+//    try {
+//      //建机箱
+//      int boxId = 0;
+//      ObdBox obdBox = new ObdBox();
+//      if (!"".equals(obd.getBoxCode())) {
+//        obdBox.setCreateTime(new Date());
+//        obdBox.setBoxCode(obd.getBoxCode());
+//        if(StringUtils.isNotEmpty(obd.getJobNumber()) && !undefined.equals(obd.getJobNumber())){
+//          obdBox.setJobNumber(obd.getJobNumber());
+//        }else {
+//          return AjaxResult.error("工号为空或不是正常值："+obd.getJobNumber());
+//        }
+//        //识别不出是null
+//        if (obd.getBoxCode() != null) {
+//          obdBox.setStatus(0);
+//        } else {
+//          obdBox.setBoxCode("");
+//          obdBox.setStatus(1);
+//          obdBox.setExceptionType(1);
+//          obdBox.setExceptionInfo("盒子二维码识别不出");
+//        }
+//        uploadMapper.insertObdBox(obdBox);
+//        boxId = obdBox.getId();
+//      }
+//      int infoCount = 1;
+//      InfoListVO InfoListVO = JSONUtil.toBean("{infoVOList:" + obd.getPortList() + "}", InfoListVO.class);
+//      for(InfoVO infoVO:InfoListVO.getInfoVOList()){
+//        //建obd
+//        ObdInfo obdInfo = new ObdInfo();
+//        obdInfo.setBoxId(boxId);
+//        obdInfo.setStatus(0);
+//        uploadMapper.insertObdInfo(obdInfo);
+//        int obdId = obdInfo.getId();
+//        for (ObdPortInfo port : infoVO.getPortData()) {
+//          ObdPortInfo obdPortInfo = new ObdPortInfo();
+//          //存端口
+//          obdPortInfo.setObdId(obdId);
+//          obdPortInfo.setPortSer(port.getPortSer());
+//          if (port.getPortSer() != null ) {
+//            if (port.getPortCode() != null) {
+//              obdPortInfo.setStatus(0);
+//              obdPortInfo.setPortCode(port.getPortCode());
+//            } else {
+//              obdPortInfo.setStatus(1);
+//              obdPortInfo.setPortCode("");
+//            }
+//            if (!"".equals(port.getPortCode())) {
+//              if(port.getPortCode()!=null){
+//                if(!isNumber(port.getPortCode()) ){
+//                  return AjaxResult.error("第"+infoCount+"个OBD的第"+port.getPortSer()+"端口二维码不对");
+//                }
+//              }
+//              uploadMapper.insertPort(obdPortInfo);
+//            }
+//          }
+//
+//        }
+//        if (uploadMapper.countByPortStatus(obdId) > 0) {
+//          obdInfo.setStatus(1);
+//          uploadMapper.updateObdInfo(obdInfo);
+//          obdBox.setExceptionType(2);
+//          if(StringUtils.isNoneBlank(obdBox.getExceptionInfo())){
+//            obdBox.setExceptionInfo(obdBox.getExceptionInfo()+",且存在端口识别异常");
+//          }else {
+//            obdBox.setExceptionInfo("存在端口识别异常");
+//          }
+//          uploadMapper.updateObdBox(obdBox);
+//        }
+//        infoCount++;
+//      }
+//    }catch (Exception e){
+//      e.printStackTrace();
+//    }/*finally {
+//      lock.unlock();
+//    }*/
+//    return AjaxResult.successOBD(msg);
+//  }
+
   @Override
   @Transactional
-  public AjaxResult uploadInformation(ObdVO obd) {
-    System.out.println("uploadInformation ");
-    String msg = "";
-    String undefined = "undefined";
-    //lock.lock();
+  public AjaxResult uploadInformation(ObdBoxVO obdBoxVO) {
+    System.out.println(obdBoxVO.toString());
+    String boxCode = null;
+    String labelCode = null;
     try {
-      //建机箱
-      int boxId = 0;
-      ObdBox obdBox = new ObdBox();
-      if (!"".equals(obd.getBoxCode())) {
-        obdBox.setCreateTime(new Date());
-        obdBox.setBoxCode(obd.getBoxCode());
-        if(StringUtils.isNotEmpty(obd.getJobNumber()) && !undefined.equals(obd.getJobNumber())){
-          obdBox.setJobNumber(obd.getJobNumber());
-        }else {
-          return AjaxResult.error("工号为空或不是正常值："+obd.getJobNumber());
+      if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
+        if (obdBoxVO.getBoxCode().startsWith("DG")) {
+          labelCode = obdBoxVO.getBoxCode();
+        } else if (obdBoxVO.getBoxCode().startsWith("光分纤箱")) {
+          boxCode = obdBoxVO.getBoxCode();
+        } else {
+          return null;
         }
-        //识别不出是null
-        if (obd.getBoxCode() != null) {
+        ObdBox obdBox = new ObdBox();
+        obdBox.setBoxCode(boxCode);
+        obdBox.setLabelCode(labelCode);
+        obdBox.setId(obdBoxVO.getId());
+        obdBox.setJobNumber(obdBoxVO.getJobNumber());
+        if (obdBoxVO.getBoxCode() != null) {
           obdBox.setStatus(0);
         } else {
-          obdBox.setBoxCode("");
           obdBox.setStatus(1);
-          obdBox.setExceptionType(1);
-          obdBox.setExceptionInfo("盒子二维码识别不出");
         }
-        uploadMapper.insertObdBox(obdBox);
-        boxId = obdBox.getId();
+        obdBox.setCreateTime(new Date());
+        uploadMapper.updateBox(obdBox);
       }
       int infoCount = 1;
-      InfoListVO InfoListVO = JSONUtil.toBean("{infoVOList:" + obd.getPortList() + "}", InfoListVO.class);
-      for(InfoVO infoVO:InfoListVO.getInfoVOList()){
-        //建obd
-        ObdInfo obdInfo = new ObdInfo();
-        obdInfo.setBoxId(boxId);
-        obdInfo.setStatus(0);
-        uploadMapper.insertObdInfo(obdInfo);
-        int obdId = obdInfo.getId();
-        for (ObdPortInfo port : infoVO.getPortData()) {
-          ObdPortInfo obdPortInfo = new ObdPortInfo();
-          //存端口
-          obdPortInfo.setObdId(obdId);
-          obdPortInfo.setPortSer(port.getPortSer());
-          if (port.getPortSer() != null ) {
-            if (port.getPortCode() != null) {
-              obdPortInfo.setStatus(0);
-              obdPortInfo.setPortCode(port.getPortCode());
-            } else {
-              obdPortInfo.setStatus(1);
-              obdPortInfo.setPortCode("");
-            }
-            if (!"".equals(port.getPortCode())) {
-              if(port.getPortCode()!=null){
-                if(!isNumber(port.getPortCode()) ){
-                  return AjaxResult.error("第"+infoCount+"个OBD的第"+port.getPortSer()+"端口二维码不对");
+      System.out.println(obdBoxVO.getObdInfoVOList().toString());
+      for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
+        for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
+          ObdPortInfoVO obdPort = obdPortInfo;
+          if (!"".equals(obdPort.getPortCode()) && obdPort.getSeq() != null) {
+            if (obdPort.getSeq() > 0) {
+              if (obdPort.getPortCode() != null) {
+                if (isNumber(obdPort.getPortCode())) {
+                  ObdPortInfo portInfo = new ObdPortInfo();
+                  portInfo.setId(obdPort.getSeq());
+                  portInfo.setPortCode(obdPort.getPortCode());
+                  portInfo.setStatus(0);
+                  uploadMapper.updateObdPort(portInfo);
+                } else {
+                  return AjaxResult.error("第" + infoCount + "个OBD的第" + obdPortInfo.getPortSer() + "端口二维码不对");
                 }
+              } else {
+                ObdPortInfo portInfo = new ObdPortInfo();
+                portInfo.setId(obdPort.getSeq());
+                portInfo.setPortCode("");
+                portInfo.setStatus(1);
+                uploadMapper.updateObdPort(portInfo);
               }
-              uploadMapper.insertPort(obdPortInfo);
+            }
+            if (obdPort.getSeq() == 0) {
+              if (obdPort.getPortCode() != null) {
+                if (isNumber(obdPort.getPortCode())) {
+                  ObdPortInfo portInfo = new ObdPortInfo();
+                  portInfo.setId(obdPort.getSeq());
+                  portInfo.setPortCode(obdPort.getPortCode());
+                  portInfo.setPortSer(obdPort.getPortSer());
+                  portInfo.setObdId(obdInfoVO.getId());
+                  portInfo.setStatus(0);
+                  uploadMapper.insertPort(portInfo);
+                } else {
+                  return AjaxResult.error("第" + infoCount + "个OBD的第" + obdPortInfo.getPortSer() + "端口二维码不对");
+                }
+              } else {
+                ObdPortInfo portInfo = new ObdPortInfo();
+                portInfo.setId(obdPort.getSeq());
+                portInfo.setPortCode(obdPort.getPortCode());
+                portInfo.setPortSer(obdPort.getPortSer());
+                portInfo.setObdId(obdInfoVO.getId());
+                portInfo.setStatus(1);
+                uploadMapper.insertPort(portInfo);
+              }
             }
           }
-
         }
-        if (uploadMapper.countByPortStatus(obdId) > 0) {
-          obdInfo.setStatus(1);
-          uploadMapper.updateObdInfo(obdInfo);
-          obdBox.setExceptionType(2);
-          if(StringUtils.isNoneBlank(obdBox.getExceptionInfo())){
-            obdBox.setExceptionInfo(obdBox.getExceptionInfo()+",且存在端口识别异常");
-          }else {
-            obdBox.setExceptionInfo("存在端口识别异常");
+        if (obdInfoVO.getId() != null) {
+          if (uploadMapper.countByPortStatus(obdInfoVO.getId()) > 0) {
+            ObdInfo obdInfo = new ObdInfo();
+            obdInfo.setId(obdInfoVO.getId());
+            obdInfo.setStatus(1);
+            uploadMapper.updateObdInfo(obdInfo);
+            ObdBox obdBox1 = new ObdBox();
+            obdBox1.setId((obdBoxVO.getId()));
+            obdBox1.setExceptionType(2);
+            if (StringUtils.isNoneBlank(obdBoxVO.getExceptionInfo())) {
+              obdBox1.setExceptionInfo(obdBoxVO.getExceptionInfo() + ",且存在端口识别异常");
+            } else {
+              obdBox1.setExceptionInfo("存在端口识别异常");
+            }
+            uploadMapper.updateObdBox(obdBox1);
+          } else {
+            ObdInfo obdInfo1 = new ObdInfo();
+            obdInfo1.setId(obdInfoVO.getId());
+            obdInfo1.setStatus(0);
+            uploadMapper.updateObdInfo(obdInfo1);
+            ObdBox obdBox1 = new ObdBox();
+            obdBox1.setId((obdBoxVO.getId()));
+            if (StringUtils.isNoneBlank(obdBoxVO.getBoxCode())) {
+              obdBox1.setExceptionType(0);
+              obdBox1.setExceptionInfo("");
+            } else {
+              obdBox1.setExceptionType(1);
+              obdBox1.setExceptionInfo("盒子二维码识别不出");
+            }
+            uploadMapper.updateObdBox(obdBox1);
           }
-          uploadMapper.updateObdBox(obdBox);
         }
         infoCount++;
       }
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
-    }/*finally {
-      lock.unlock();
-    }*/
-    return AjaxResult.successOBD(msg);
+    }
+    return AjaxResult.successOBD("操作成功");
   }
-
-
   @Override
   public int uploadObdBox(ObdBox obdBox) {
     if(obdBox.getBoxCode()!=null && !"".equals(obdBox.getBoxCode())){
@@ -242,6 +358,9 @@ public class UploadServiceImpl implements IUploadService {
           }else {
             obdBox.setStatus("正常");
           }
+          if(StringUtils.isNotBlank(obdBox.getLabelCode())){
+            obdBox.setBoxCode(obdBox.getLabelCode());
+          }
           if("1".equals(obdBox.getExceptionType())){
             obdBox.setExceptionType("盒子异常");
           }else if("2".equals(obdBox.getExceptionType())){
@@ -281,7 +400,8 @@ public class UploadServiceImpl implements IUploadService {
       if(obdBoxVO.getId()>0){
         List<ObdInfoVO> obdInfoList = uploadMapper.selectInfoByBoxId(obdBoxVO.getId().toString());
         for (ObdInfoVO obdInfo : obdInfoList) {
-          List<ObdPortInfoVO> obdPortList = getPortList(uploadMapper.selectPortByObdId(obdInfo.getId().toString()));
+//          List<ObdPortInfoVO> obdPortList = getPortList(uploadMapper.selectPortByObdId(obdInfo.getId().toString()));
+          List<ObdPortInfoVO> obdPortList = uploadMapper.selectPortByObdId(obdInfo.getId().toString());
           if(obdInfo.getStatus().equals(one)){
             obdInfo.setStatus("异常");
           }else {
@@ -322,7 +442,6 @@ public class UploadServiceImpl implements IUploadService {
       if(!"".equals(obdBoxVO.getBoxCode()) && obdBoxVO.getBoxCode()!=null && obdBoxVO.getId()>0){
         ObdBox obdBox = new ObdBox();
         obdBox.setId(obdBoxVO.getId());
-        obdBox.setBoxCode(obdBoxVO.getBoxCode());
         if(obdBoxVO.getBoxCode()!=null){
           obdBox.setStatus(0);
         }else {
@@ -451,63 +570,6 @@ public class UploadServiceImpl implements IUploadService {
     return obdPortInfos;
   }
 
-  /**
-   * 判断端口是否为空
-   * @param list 前端全部数据
-   * @return ObdBox 实体类
-   */
-  private boolean getObdFlag(List<ObdPortInfo> list){
-    int count = 0;
-    for (ObdPortInfo obdPortInfo : list){
-      if("".equals(obdPortInfo.getPortCode())){
-        count++;
-      }
-    }
-    if (count == portCount){
-      return  false;
-    }
-    return true;
-  }
-
-
-  /**
-   * 获得 obdBox 实体类
-   * @param obd 前端全部数据
-   * @return ObdBox 实体类
-   */
-  private ObdBox getObdBox(Obd obd){
-    ObdBox obdBox = new ObdBox();
-    obdBox.setCreateTime(new Date());
-    obdBox.setBoxCode(obd.getBoxCode());
-    obdBox.setJobNumber(obd.getJobNumber());
-    if(obd.getBoxCode()!=null && !"".equals(obd.getBoxCode())){
-      obdBox.setStatus(0);
-    }else{
-      obdBox.setStatus(1);
-    }
-    obdBox.setExceptionType(obd.getExceptionType());
-    obdBox.setExceptionInfo(obd.getExceptionInfo());
-    return obdBox;
-  }
-
-  /**
-   * 获得 obdBox 实体类
-   * @param obd 前端全部数据
-   * @return ObdBox 实体类
-   */
-  private ObdBox getObdBox(ObdVO obd){
-    ObdBox obdBox = new ObdBox();
-    obdBox.setCreateTime(new Date());
-    obdBox.setBoxCode(obd.getBoxCode());
-    obdBox.setJobNumber(obd.getJobNumber());
-    if(obd.getBoxCode()!=null && !"".equals(obd.getBoxCode())){
-      obdBox.setStatus(0);
-    }else{
-      obdBox.setStatus(1);
-    }
-    return obdBox;
-  }
-
 
   /**
    * 将status改文字
@@ -524,63 +586,6 @@ public class UploadServiceImpl implements IUploadService {
       }
     }
     return status;
-  }
-
-
-
-  /**
-   * 获得 ObdInfo 实体类
-   * @param boxId 盒子id
-   * @return ObdInfo 实体类
-   */
-  private ObdInfo getObdInfo(int boxId ){
-    ObdInfo obdInfo = new ObdInfo();
-    obdInfo.setBoxId(boxId);
-    return obdInfo;
-  }
-
-  /**
-   * 获得 ObdPortInfo 实体类
-   * @param portSer 端口序号
-   * @param portCode 端口sn码
-   * @param obdId obdId
-   * @return ObdPortInfo 实体类
-   */
-  private ObdPortInfo getPortInfo(String portSer, String portCode, int obdId){
-    ObdPortInfo obdPortInfo = new ObdPortInfo();
-    if (portSer!= null &&  !"".equals(portSer)){
-      obdPortInfo.setPortSer(Integer.parseInt(portSer));
-      if(portCode!=null  && !"".equals(portCode)) {
-        obdPortInfo.setStatus(0);
-      }else {
-        obdPortInfo.setStatus(1);
-      }
-    }
-    obdPortInfo.setPortCode(portCode);
-    obdPortInfo.setObdId(obdId);
-    return obdPortInfo;
-  }
-
-  /**
-   * 获得 ObdPortInfo 实体类
-   * @param portSer 端口序号
-   * @param portCode 端口sn码
-   * @param obdId obdId
-   * @return ObdPortInfo 实体类
-   */
-  private ObdPortInfo getPort(String portSer, String portCode, int obdId){
-    ObdPortInfo obdPortInfo = new ObdPortInfo();
-    if (portSer!= null &&  !"".equals(portSer)){
-      obdPortInfo.setPortSer((Integer.parseInt(portSer)+1));
-      if(!"".equals(portCode)) {
-        obdPortInfo.setStatus(0);
-      }else {
-        obdPortInfo.setStatus(1);
-      }
-    }
-    obdPortInfo.setPortCode(portCode);
-    obdPortInfo.setObdId(obdId);
-    return obdPortInfo;
   }
 
   /**

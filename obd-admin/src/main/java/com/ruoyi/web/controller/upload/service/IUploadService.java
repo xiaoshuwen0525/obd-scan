@@ -10,13 +10,19 @@ import java.util.List;
 public interface IUploadService
 {
 
+//    /**
+//     * 上传信息
+//     * @param obd 实体类
+//     * @return AjaxResult
+//     */
+//     AjaxResult uploadInformation(ObdVO obd);
+
     /**
      * 上传信息
-     * @param obd 实体类
+     * @param obdBoxVO 实体类
      * @return AjaxResult
      */
-     AjaxResult uploadInformation(ObdVO obd);
-
+    AjaxResult uploadInformation(ObdBoxVO obdBoxVO);
 
     /**
      * 上传obd盒子

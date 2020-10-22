@@ -5,6 +5,7 @@
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdBox" id="ObdBoxResultMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="exceptionType" column="exception_type" jdbcType="INTEGER"/>
@@ -17,6 +18,7 @@
         <result property="seq" column="num" jdbcType="INTEGER"/>
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="exceptionType" column="exception_type" jdbcType="VARCHAR"/>
@@ -64,6 +66,7 @@
         select count(id) from obd_box
         where box_code = #{boxCode,jdbcType=VARCHAR}
     </select>
+
 
     <!--通过状态查询单个-->
     <select id="countByPortStatus" resultType="int" parameterType="java.lang.Integer">
@@ -115,10 +118,42 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
 
+    <update id="updateBox" parameterType="com.ruoyi.web.controller.upload.domain.ObdBox">
+        update obd_box
+        <set>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url =  #{imgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status =  #{status,jdbcType=INTEGER},
+            </if>
+            <if test="exceptionType != null">
+                exception_type =  #{exceptionType,jdbcType=INTEGER},
+            </if>
+            <if test="exceptionInfo != null and exceptionInfo != ''">
+                exception_info = #{exceptionInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                job_number = #{jobNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <where>
+            <if test="labelCode != null and labelCode != ''">
+                and label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+            <if test="boxCode != null and boxCode != ''">
+                and box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </update>
+
     <!--通过工号查询盒子列表-->
     <select id="pageByJobNumber" resultMap="ObdBoxVOMap" >
         SELECT
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        id, box_code,label_code, img_url, status, exception_type, exception_info, job_number, create_time
         FROM
         obd_box
         <where>
@@ -321,7 +356,7 @@
     <select id="selectBoxById" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         SELECT
         (@num := @num + 1) as num,
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time
+        id, box_code,label_code,img_url, status, exception_type, exception_info, job_number, create_time
         FROM
         obd_box, (select @num := 0) row_number
         <where>

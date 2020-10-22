@@ -17,8 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * obd设备服务impl
+ *
+ * @author Administrator
  * @author: 曾志伟
  * @date: 2020-10-17 12:13
+ * @date 2020/10/22
  */
 @Service
 public class ObdDeviceServiceImpl implements IObdDeviceService {
@@ -26,6 +30,12 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     @Autowired
     private ObdDeviceMapper obdDeviceMapper;
 
+    /**
+     * 机箱搜索
+     *
+     * @param boxCode 机箱码
+     * @return {@link List<ObdBoxVO>}
+     */
     @Override
     public List<ObdBoxVO> boxSearch(String boxCode) {
         if (StringUtils.isNotBlank(boxCode)) {
@@ -35,6 +45,12 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
 
     }
 
+    /**
+     * 员工号搜索
+     *
+     * @param jobNumber 员工编号
+     * @return {@link List<ObdBoxVO>}
+     */
     @Override
     public List<ObdBoxVO> jobNumberSearch(String jobNumber) {
         if (StringUtils.isNotBlank(jobNumber)) {
@@ -43,6 +59,12 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return null;
     }
 
+    /**
+     * 手机搜索
+     *
+     * @param phone 电话
+     * @return {@link List<ObdBoxVO>}
+     */
     @Override
     public List<ObdBoxVO> phoneSearch(String phone) {
         if (StringUtils.isNotBlank(phone)) {
@@ -51,13 +73,25 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return null;
     }
 
+    /**
+     * 所有机箱信息搜索
+     *
+     * @return {@link List<ObdBoxVO>}
+     */
     @Override
     public List<ObdBoxVO> allSearch() {
         return obdDeviceMapper.allSearch();
     }
 
+    /**
+     * 电话号码是否存在
+     *
+     * @param newPhone 新电话
+     * @return int
+     */
     @Override
     public int isPhoneNumberExist(String newPhone) {
+        //核实前新手机号码是否存在
         WxUser wxUser = obdDeviceMapper.isPhoneNumberExist(newPhone);
         if (wxUser != null) {
             return 1;
@@ -65,10 +99,19 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return 0;
     }
 
+    /**
+     * 绑定手机
+     *
+     * @param jobNumber 员工编号
+     * @param phone     电话
+     * @param newPhone  新电话
+     * @return int
+     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public int bindPhone(String jobNumber, String phone, String newPhone) {
         int i = 0;
+        //绑定新手机号码
         try {
             i = obdDeviceMapper.bindPhone(jobNumber, phone, newPhone);
         } catch (Exception e) {
@@ -77,10 +120,17 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return i;
     }
 
+    /**
+     * 解绑手机
+     *
+     * @param id id
+     * @return {@link String}
+     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public String unBindPhone(String id) {
         int i = 0;
+        //解绑手机号
         try {
             i = obdDeviceMapper.unBindPhone(id);
         } catch (Exception e) {
@@ -89,6 +139,14 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return i != 0 ? "解绑成功" : "解绑失败";
     }
 
+    /**
+     * 微信信息查询
+     *
+     * @param jobNumber 员工编号
+     * @param phone     电话
+     * @param id        id
+     * @return {@link List<WxUser>}
+     */
     @Override
     public List<WxUser> queryWechatInfo(String jobNumber, String phone, String id) {
         WxUser wxUser = new WxUser();
@@ -102,6 +160,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             wxUser.setId(Integer.parseInt(id));
         }
         List<WxUser> wxUsers = null;
+        //查询微信用户信息
         try {
             wxUsers = obdDeviceMapper.queryWechatInfo(wxUser);
         } catch (Exception e) {
@@ -110,12 +169,23 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return wxUsers;
     }
 
+    /**
+     * 搜索条件
+     *
+     * @param jobNumber 员工编号
+     * @param phone     电话
+     * @param boxCode   框代码
+     * @param status    状态
+     * @return {@link List<ObdBoxVO>}
+     */
     @Override
     public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String boxCode, String status) {
+        //查询机箱信息
         List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxCode, status);
         if (obdBoxVOS == null) {
             return null;
         }
+        //根据状态码转换为字符
         for (ObdBoxVO obdBox : obdBoxVOS) {
             if ("0".equals(obdBox.getStatus())) {
                 if ("0".equals(obdBox.getExceptionType())) {
@@ -136,6 +206,12 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return obdBoxVOS;
     }
 
+    /**
+     * 机箱信息通过盒子id
+     *
+     * @param boxId 框标识
+     * @return {@link List<ObdInfoVO>}
+     */
     @Override
     public List<ObdInfoVO> infoByBoxId(String boxId) {
         List<ObdInfoVO> list = obdDeviceMapper.selectInfoByBoxId(boxId);
@@ -145,6 +221,12 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return list;
     }
 
+    /**
+     * 根据扫描识别出来的code进行判定并查询机箱以及其所属信息
+     *
+     * @param code 识别码
+     * @return ObdBoxVO
+     */
     @Override
     public ObdBoxVO selectAllInfoByCode(String code) {
         String boxCode = null;
@@ -175,6 +257,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
                 if (s.equals(obdPortInfoVO.getObdId().toString())){
                     ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
+                    obdPortInfoVO1.setPortSer(obdPortInfoVO.getId());
                     obdPortInfoVO1.setPortSer(obdPortInfoVO.getPortSer());
                     obdPortInfoVO1.setPortCode(obdPortInfoVO.getPortCode());
                     obdPortInfoVOS1.add(obdPortInfoVO1);
@@ -189,6 +272,12 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return obdBoxVO;
     }
 
+    /**
+     * 端口信息通过obd id
+     *
+     * @param obdId obd id
+     * @return {@link List<ObdPortInfoVO>}
+     */
     @Override
     public List<ObdPortInfoVO> portByObdId(String obdId) {
         List<ObdPortInfoVO> list = obdDeviceMapper.selectPortByObdId(obdId);
@@ -198,6 +287,12 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return list;
     }
 
+    /**
+     * 选择机箱通过员工工号
+     *
+     * @param jobNumber 工作数量
+     * @return {@link List<ObdBoxVO>}
+     */
     @Override
     public List<ObdBoxVO> selectBoxByJobNumber(String jobNumber) {
         List<ObdBoxVO> list = obdDeviceMapper.selectBoxByJobNumber(jobNumber);

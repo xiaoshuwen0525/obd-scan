@@ -47,7 +47,7 @@ public class WeChatController extends BaseController {
         if (obdBoxVO == null) {
             return AjaxResult.warn("该串码未能查询到对应数据");
         }
-        return AjaxResult.success(obdBoxVO);
+        return AjaxResult.success("200","查询成功",obdBoxVO);
     }
 
 }

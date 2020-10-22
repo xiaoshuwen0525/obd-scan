@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -154,23 +157,33 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             return null;
         }
         ObdBoxVO obdBoxVO = new ObdBoxVO();
-        List<ObdInfoVO> obdInfoVOS = null;
+        List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
         List<ObdPortInfoVO> obdPortInfoVOS;
-        try {
-            //根据扫描出来的code查询OBD信息
-            obdInfoVOS = obdDeviceMapper.selectAllInfoByCode(boxCode, labelCode);
-        } catch (Exception e) {
+        obdPortInfoVOS = obdDeviceMapper.selectAllInfoByCode(boxCode, labelCode);
+        if (obdPortInfoVOS == null || obdPortInfoVOS.size()==0){
             return null;
         }
-        if (obdInfoVOS == null) {
-            return null;
-        }
-        //循环该OBD并查询出对应的端口对象列表信息
-        for (int i = 0; i < obdInfoVOS.size(); i++) {
-            obdPortInfoVOS = obdDeviceMapper.selectPortByObdId(obdInfoVOS.get(i).getId().toString());
-            if (obdPortInfoVOS != null) {
-                obdInfoVOS.get(i).setObdPortInfoVOList(obdPortInfoVOS);
+        HashSet<String> obd = new HashSet<>();
+        for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
+            if (obdPortInfoVO.getId()!=0){
+                obdBoxVO.setId(obdPortInfoVO.getId());
             }
+            obd.add(obdPortInfoVO.getObdId().toString());
+        }
+        for (String s : obd) {
+            List<ObdPortInfoVO> obdPortInfoVOS1 = new ArrayList<>();
+            for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
+                if (s.equals(obdPortInfoVO.getObdId().toString())){
+                    ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
+                    obdPortInfoVO1.setPortSer(obdPortInfoVO.getPortSer());
+                    obdPortInfoVO1.setPortCode(obdPortInfoVO.getPortCode());
+                    obdPortInfoVOS1.add(obdPortInfoVO1);
+                }
+            }
+            ObdInfoVO obdInfoVO = new ObdInfoVO();
+            obdInfoVO.setId(Integer.parseInt(s));
+            obdInfoVO.setObdPortInfoVOList(obdPortInfoVOS1);
+            obdInfoVOS.add(obdInfoVO);
         }
         obdBoxVO.setObdInfoVOList(obdInfoVOS);
         return obdBoxVO;

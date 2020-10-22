@@ -77,10 +77,8 @@
     </select>
 
     <!--通过boxCode或labelCode查询obd信息-->
-    <select id="selectAllInfoByCode" resultMap="ObdInfoVOMap" >
-        SELECT id,box_id,status,box_belong,obd_name
-        FROM obd_info where box_id = (
-        select id from obd_box
+    <select id="selectAllInfoByCode" resultMap="ObdPortInfoVOMap" >
+        select id,obd_id,port_ser,port_code from obd_view
         <where>
             <if test="boxCode != null and boxCode != ''">
                 and box_code = #{boxCode,jdbcType=VARCHAR}
@@ -89,7 +87,6 @@
                 and label_code = #{labelCode,jdbcType=VARCHAR}
             </if>
         </where>
-        )
     </select>
 
     <!--通过ObdId查询端口列表-->

@@ -230,19 +230,4 @@ public class DeviceController extends BaseController {
         return getDataTable(wxUsers);
     }
 
-    /**
-     * 通过机箱串码或者倒灌二维码查询所需信息
-     */
-    @GetMapping("/selectAllInfoByCode")
-    public AjaxResult selectAllInfoByCode(String code) {
-        if (StringUtils.isBlank(code) && "undefined".equals(code)) {
-            return AjaxResult.warn("未能识别到有效机箱串码或标签二维码");
-        }
-        ObdBoxVO obdBoxVO = obdDeviceService.selectAllInfoByCode(code);
-        if (obdBoxVO == null) {
-            return AjaxResult.warn("该二维码未能查询到对应数据");
-        }
-        return AjaxResult.success(obdBoxVO);
-    }
-
 }

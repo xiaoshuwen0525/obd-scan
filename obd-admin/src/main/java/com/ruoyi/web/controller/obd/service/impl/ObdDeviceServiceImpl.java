@@ -257,7 +257,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
                 if (s.equals(obdPortInfoVO.getObdId().toString())){
                     ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
-                    obdPortInfoVO1.setPortSer(obdPortInfoVO.getId());
+                    obdPortInfoVO1.setPortSer(obdPortInfoVO.getSeq());
                     obdPortInfoVO1.setPortSer(obdPortInfoVO.getPortSer());
                     obdPortInfoVO1.setPortCode(obdPortInfoVO.getPortCode());
                     obdPortInfoVOS1.add(obdPortInfoVO1);

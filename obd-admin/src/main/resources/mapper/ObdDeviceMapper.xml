@@ -78,7 +78,7 @@
 
     <!--通过boxCode或labelCode查询obd信息-->
     <select id="selectAllInfoByCode" resultMap="ObdPortInfoVOMap" >
-        select id,obd_id,port_ser,port_code from obd_view
+        select id,obd_id,port_ser,port_code,port_id num from obd_view
         <where>
             <if test="boxCode != null and boxCode != ''">
                 and box_code = #{boxCode,jdbcType=VARCHAR}

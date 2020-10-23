@@ -33,6 +33,16 @@ public class ObdInfoVO {
      */
     private String boxCode;
 
+    /**
+     * 机箱归属
+     */
+    private String boxBelong;
+
+    /**
+     * obd名称
+     */
+    private String obdName;
+
 
 
     /**

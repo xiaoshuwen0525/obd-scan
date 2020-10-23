@@ -42,13 +42,5 @@ public class WeChatController extends BaseController {
         return AjaxResult.success("200","查询成功",obdBoxVO);
     }
 
-    @PostMapping("/importData")
-    @ResponseBody
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
-    {
-        ExcelUtil<ImportEntity> util = new ExcelUtil<ImportEntity>(ImportEntity.class);
-        List<ImportEntity> userList = util.importExcel(file.getInputStream());
-        return AjaxResult.success("message");
-    }
 
 }

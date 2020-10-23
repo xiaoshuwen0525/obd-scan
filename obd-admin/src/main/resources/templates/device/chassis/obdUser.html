@@ -26,11 +26,11 @@
             </form>
         </div>
         <!-- 此处用于导入表格数据，需要的时候解除注释-->
-<!--        <div class="btn-group-sm" id="toolbar" role="group">-->
-<!--            <a class="btn btn-info"  onclick="$.table.importExcel()" shiro:hasPermission="system:user:import">-->
-<!--                <i class="fa fa-upload"></i> 导入-->
-<!--            </a>-->
-<!--        </div>-->
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info"  onclick="$.table.importExcel()" shiro:hasPermission="system:user:import">
+                <i class="fa fa-upload"></i> 导入
+            </a>
+        </div>
         <div class="col-sm-12 select-table table-striped">
             <table id="bootstrap-table"></table>
         </div>
@@ -46,7 +46,7 @@
             // url: prefix + "/list",
             url: prefix + "/queryWechatInfo",
             updateUrl: prefix + "/bindPhone/{id}",
-            importUrl: ctx + "wechat" + "/importData",
+            importUrl: ctx + "excel" + "/importData",
             modalName: "手机号码",
             columns: [
                 {

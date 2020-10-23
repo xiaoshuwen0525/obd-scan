@@ -2,7 +2,9 @@ package com.ruoyi.web.controller.data;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.web.controller.data.service.IDataManagementService;
 import com.ruoyi.web.controller.obd.domain.ImportEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author: 曾志伟
+ * @author: 曾志伟，小洪
  * @date: 2020-10-23 10:45
  */
 @Controller
@@ -22,6 +24,9 @@ import java.util.List;
 public class DataManagementController {
 
     private final String prefix = "device/baseData";
+
+    @Autowired
+    private IDataManagementService dataManagementService;
 
     /**
      * 跳转基础数据页面
@@ -37,6 +42,7 @@ public class DataManagementController {
     {
         ExcelUtil<ImportEntity> util = new ExcelUtil<ImportEntity>(ImportEntity.class);
         List<ImportEntity> userList = util.importExcel(file.getInputStream());
+        dataManagementService.insertPcObd(userList);
         return AjaxResult.success("导入成功");
     }
 

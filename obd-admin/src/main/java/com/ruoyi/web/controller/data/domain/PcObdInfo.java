@@ -34,6 +34,6 @@ public class PcObdInfo implements Serializable {
     /**
      * 端口数
      */
-    private String portCount;
+    private int portCount;
 
 }

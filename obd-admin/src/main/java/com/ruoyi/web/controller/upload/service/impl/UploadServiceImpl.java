@@ -252,11 +252,23 @@ public class UploadServiceImpl implements IUploadService {
     return uploadMapper.insertObdBox(obdBox);
   }
 
+  /**
+   * 上传obd信息
+   *
+   * @param obdInfo obd信息
+   * @return int
+   */
   @Override
   public int uploadObdInfo(ObdInfo obdInfo) {
     return uploadMapper.insertObdInfo(obdInfo);
   }
 
+  /**
+   * 上传obd的端口
+   *
+   * @param obdPortInfo obd端口信息
+   * @return int
+   */
   @Override
   public int uploadObdPost(ObdPortInfo obdPortInfo) {
     if (obdPortInfo.getPortCode() != null && !"".equals(obdPortInfo.getPortCode())) {

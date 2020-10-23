@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.data.mapper.PcObdBoxDao">
+
+    <resultMap type="com.ruoyi.web.controller.data.domain.PcObdBox" id="PcObdBoxMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
+        <result property="boxName" column="box_name" jdbcType="VARCHAR"/>
+        <result property="area" column="area" jdbcType="VARCHAR"/>
+        <result property="businessBureau" column="business_bureau" jdbcType="VARCHAR"/>
+        <result property="campService" column="camp_service" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="exceptionType" column="exception_type" jdbcType="INTEGER"/>
+        <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PcObdBoxMap">
+        select
+          id, box_code, label_code, box_name, area, business_bureau, camp_service, job_number, img_url, status, exception_type, exception_info, create_time
+        from obd-scan.pc_obd_box
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PcObdBoxMap">
+        select
+          id, box_code, label_code, box_name, area, business_bureau, camp_service, job_number, img_url, status, exception_type, exception_info, create_time
+        from obd-scan.pc_obd_box
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="PcObdBoxMap">
+        select
+        id, box_code, label_code, box_name, area, business_bureau, camp_service, job_number, img_url, status,
+        exception_type, exception_info, create_time
+        from obd-scan.pc_obd_box
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="boxCode != null and boxCode != ''">
+                and box_code = #{boxCode}
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                and label_code = #{labelCode}
+            </if>
+            <if test="boxName != null and boxName != ''">
+                and box_name = #{boxName}
+            </if>
+            <if test="area != null and area != ''">
+                and area = #{area}
+            </if>
+            <if test="businessBureau != null and businessBureau != ''">
+                and business_bureau = #{businessBureau}
+            </if>
+            <if test="campService != null and campService != ''">
+                and camp_service = #{campService}
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                and job_number = #{jobNumber}
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                and img_url = #{imgUrl}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="exceptionType != null">
+                and exception_type = #{exceptionType}
+            </if>
+            <if test="exceptionInfo != null and exceptionInfo != ''">
+                and exception_info = #{exceptionInfo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into obd-scan.pc_obd_box(box_code, label_code, box_name, area, business_bureau, camp_service, job_number, img_url, status, exception_type, exception_info, create_time)
+        values (#{boxCode}, #{labelCode}, #{boxName}, #{area}, #{businessBureau}, #{campService}, #{jobNumber}, #{imgUrl}, #{status}, #{exceptionType}, #{exceptionInfo}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into obd-scan.pc_obd_box(box_code, label_code, box_name, area, business_bureau, camp_service, job_number,
+        img_url, status, exception_type, exception_info, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.boxCode}, #{entity.labelCode}, #{entity.boxName}, #{entity.area}, #{entity.businessBureau},
+            #{entity.campService}, #{entity.jobNumber}, #{entity.imgUrl}, #{entity.status}, #{entity.exceptionType},
+            #{entity.exceptionInfo}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into obd-scan.pc_obd_box(box_code, label_code, box_name, area, business_bureau, camp_service, job_number,
+        img_url, status, exception_type, exception_info, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.boxCode}, #{entity.labelCode}, #{entity.boxName}, #{entity.area}, #{entity.businessBureau},
+            #{entity.campService}, #{entity.jobNumber}, #{entity.imgUrl}, #{entity.status}, #{entity.exceptionType},
+            #{entity.exceptionInfo}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        box_code = values(box_code) , label_code = values(label_code) , box_name = values(box_name) , area =
+        values(area) , business_bureau = values(business_bureau) , camp_service = values(camp_service) , job_number =
+        values(job_number) , img_url = values(img_url) , status = values(status) , exception_type =
+        values(exception_type) , exception_info = values(exception_info) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update obd-scan.pc_obd_box
+        <set>
+            <if test="boxCode != null and boxCode != ''">
+                box_code = #{boxCode},
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                label_code = #{labelCode},
+            </if>
+            <if test="boxName != null and boxName != ''">
+                box_name = #{boxName},
+            </if>
+            <if test="area != null and area != ''">
+                area = #{area},
+            </if>
+            <if test="businessBureau != null and businessBureau != ''">
+                business_bureau = #{businessBureau},
+            </if>
+            <if test="campService != null and campService != ''">
+                camp_service = #{campService},
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                job_number = #{jobNumber},
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url = #{imgUrl},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="exceptionType != null">
+                exception_type = #{exceptionType},
+            </if>
+            <if test="exceptionInfo != null and exceptionInfo != ''">
+                exception_info = #{exceptionInfo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from obd-scan.pc_obd_box where id = #{id}
+    </delete>
+
+</mapper>

@@ -33,17 +33,8 @@ public class DeviceController extends BaseController {
     @Autowired
     private ObdDeviceServiceImpl obdDeviceService;
 
-    private static final Lock lock = new ReentrantLock();
+    private final String prefix = "device/chassis";
 
-    private String prefix = "device/chassis";
-
-    /**
-     * 跳转用户页面
-     */
-    @GetMapping("/obdUser")
-    public String obdUser() {
-        return prefix + "/obdUser";
-    }
 
     /**
      * 跳转机箱页面
@@ -130,7 +121,7 @@ public class DeviceController extends BaseController {
      */
     @PostMapping("/searchByCondition")
     @ResponseBody
-    public TableDataInfo searchByCondition(String jobNumber, String phone, String boxCode, String status) {
+    public TableDataInfo searchByCondition(String jobNumber, String phone, String code, String status) {
         List<ObdBoxVO> obdBoxVOS = null;
         String loginName;
         try {
@@ -142,92 +133,16 @@ public class DeviceController extends BaseController {
         if ("admin".equals(loginName)) {
             jobNumber = null;
         }
+        if ("undefined".equals(code)) {
+            return getDataTable(null);
+        }
         try {
             startPage();
-            obdBoxVOS = obdDeviceService.searchByCondition(jobNumber, phone, boxCode, status);
+            obdBoxVOS = obdDeviceService.searchByCondition(jobNumber, phone, code, status);
         } catch (Exception e) {
             return getDataTable(obdBoxVOS);
         }
         return getDataTable(obdBoxVOS);
-    }
-
-
-    /**
-     * 手机号解绑接口
-     */
-    @GetMapping("/unBindPhoneInteface")
-    @RepeatSubmit
-    @ResponseBody
-    public AjaxResult unBindPhone(String id) {
-        if (StringUtils.isBlank(id)) {
-            return AjaxResult.warn("请求参数不正确");
-        }
-        String s;
-        lock.lock();
-        try {
-            s = obdDeviceService.unBindPhone(id);
-        } catch (Exception e) {
-            return AjaxResult.error("解绑失败");
-        } finally {
-            lock.unlock();
-        }
-        return AjaxResult.success(s);
-    }
-
-    /**
-     * 给前端页面传值
-     */
-    @GetMapping("/bindPhone/{id}")
-    public String bindPhoneId(@PathVariable("id") String id, ModelMap mmap) {
-        mmap.put("id", id);
-        List<WxUser> wxUsers = null;
-        try {
-            wxUsers = obdDeviceService.queryWechatInfo(null, null, id);
-            mmap.put("jobNumber", wxUsers.get(0).getJobNumber());
-            mmap.put("phone", wxUsers.get(0).getPhone());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return prefix + "/bindPhone";
-    }
-
-    /**
-     * 绑定新的手机号码
-     */
-    @PostMapping("/bindPhone/bind")
-    @ResponseBody
-    public AjaxResult bindPhoneList(String jobNumber, String phone, String newPhone) {
-        if (StringUtils.isBlank(jobNumber) && "undefined".equals(jobNumber)) {
-            return AjaxResult.warn("该员工信息有误，请联系管理员处理");
-        }
-        if (phone.equals(newPhone)) {
-            return AjaxResult.warn("新的手机号码与原手机号码一致");
-        }
-        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
-        Pattern pattern = Pattern.compile(regex);
-        if (!pattern.matcher(newPhone).matches()) {
-            return AjaxResult.warn("新手机号格式不正确");
-        }
-        int phoneNumberExist = obdDeviceService.isPhoneNumberExist(newPhone);
-        if (phoneNumberExist > 0) {
-            return AjaxResult.warn("所填新手机号码已被使用");
-        }
-        int i = obdDeviceService.bindPhone(jobNumber, phone, newPhone);
-        if (i == 0) {
-            return AjaxResult.warn("绑定失败");
-        }
-        return AjaxResult.success("绑定成功");
-    }
-
-    /**
-     * 条件查询微信用户信息
-     */
-    @PostMapping("/queryWechatInfo")
-    @ResponseBody
-    public TableDataInfo queryWechatInfo(String jobNumber, String phone, String id) {
-        startPage();
-        List<WxUser> wxUsers = obdDeviceService.queryWechatInfo(jobNumber, phone, id);
-        return getDataTable(wxUsers);
     }
 
 }

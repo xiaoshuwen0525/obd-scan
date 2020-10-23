@@ -174,14 +174,24 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      *
      * @param jobNumber 员工编号
      * @param phone     电话
-     * @param boxCode   框代码
+     * @param code   串码
      * @param status    状态
      * @return {@link List<ObdBoxVO>}
      */
     @Override
-    public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String boxCode, String status) {
+    public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String code, String status) {
+        String boxCode = null;
+        String labelCode = null;
+        if("".equals(code)){
+            labelCode = null;
+            boxCode = null;
+        }else if (code.startsWith("DG")) {
+            labelCode = code;
+        } else if (code.startsWith("光分纤箱")) {
+            boxCode = code;
+        }
         //查询机箱信息
-        List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxCode, status);
+        List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxCode, labelCode, status);
         if (obdBoxVOS == null) {
             return null;
         }

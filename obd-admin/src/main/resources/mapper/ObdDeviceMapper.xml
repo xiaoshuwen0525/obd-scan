@@ -204,6 +204,9 @@
             <if test="boxCode != null and boxCode != ''">
                 and box_code = #{boxCode}
             </if>
+            <if test="labelCode != null and labelCode != ''">
+                and label_code = #{labelCode}
+            </if>
             <choose>
                 <when test="status == ''">
                     and 1 = 1

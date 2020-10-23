@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.obd.domain;
+package com.ruoyi.web.controller.data.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
@@ -36,7 +36,7 @@ public class ImportEntity{
     /**
      * 盒子串码
      */
-    @Excel(name = "盒子串码")
+    @Excel(name = "设备标签二维码")
     private String boxCode;
 
     /**
@@ -48,7 +48,7 @@ public class ImportEntity{
     /**
      * 归属机箱
      */
-    @Excel(name = "归属机箱")
+    @Excel(name = "归属设备")
     private String boxBelong;
 
     /**
@@ -60,6 +60,6 @@ public class ImportEntity{
     /**
      * 端口数量
      */
-    @Excel(name = "端口数量")
+    @Excel(name = "OBD端口")
     private int portCount;
 }

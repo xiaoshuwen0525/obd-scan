@@ -27,38 +27,51 @@
 
         $(function() {
             var options = {
-                // url: prefix + "device/chassis/list/"+2,
+                url: prefix + "/list/"+2,
                 updateUrl: prefix + "/port/{id}",
 				importUrl: prefix + "/importData",
 				exportUrl: prefix + "/export",
                 modalName: "基础数据",
                 columns: [
 				{
-					field : 'seq',
-					title : '序号' 
+					field : 'area',
+					title : '区域'
 				},
 				{
-					field : 'obdName',
-					title : 'OBD名称'
+					field : 'businessBureau',
+					title : '业务局'
 				},
 				{
-					field : 'boxBelong',
-					title : '归属设备'
+					field : 'campService',
+					title : '营服中心'
 				},
 				{
 					field : 'boxCode',
-					title : '所属机箱串码'
+					title : '设备标签二维码'
 				},
 				{
-		            field: 'status',
-		            title: 'OBD状态',
+		            field: 'labelCode',
+		            title: '倒灌标签二维码',
 		        },
+				{
+					field: 'boxBelong',
+					title: '归属设备',
+				},
+				{
+					field: 'obdName',
+					title: 'OBD名称',
+				},
+				{
+					field: 'portCount',
+					title: 'OBD端口',
+				},
 		        {
 		            title: '操作',
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		            	var actions = [];
-		            	actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看详情</a> ');
+						actions.push('<a class="btn btn-success btn-xs '  + '" href="javascript:void(0)" onclick="$.operate.editTab(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+						actions.push('<a class="btn btn-danger btn-xs '  + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
 						return actions.join('');
 		            }
 		        }

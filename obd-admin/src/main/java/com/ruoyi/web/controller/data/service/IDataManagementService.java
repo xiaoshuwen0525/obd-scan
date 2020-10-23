@@ -5,9 +5,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.data.domain.PcObdBox;
 import com.ruoyi.web.controller.data.domain.PcObdInfo;
-import com.ruoyi.web.controller.obd.domain.ImportEntity;
+import com.ruoyi.web.controller.data.domain.ImportEntity;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

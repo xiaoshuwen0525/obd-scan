@@ -3,7 +3,7 @@ package com.ruoyi.web.controller.data;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.web.controller.data.service.IDataManagementService;
-import com.ruoyi.web.controller.obd.domain.ImportEntity;
+import com.ruoyi.web.controller.data.domain.ImportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

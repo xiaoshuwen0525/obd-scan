@@ -5,8 +5,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.web.controller.obd.domain.ImportEntity;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.concurrent.locks.Lock;

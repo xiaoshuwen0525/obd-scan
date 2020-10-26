@@ -15,6 +15,8 @@ import java.util.Date;
 public class PcObdBox implements Serializable {
     private static final long serialVersionUID = 836954598803765565L;
 
+    private Integer seq;
+
     private Integer id;
     /**
      * 盒子串码
@@ -64,6 +66,9 @@ public class PcObdBox implements Serializable {
      * 创建时间
      */
     private Date createTime;
-
+    /**
+     * OBD数量
+     */
+    private int obdCount;
 
 }

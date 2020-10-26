@@ -139,7 +139,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
     }
 
     /**
-     * 选择obd的实体
+     * 选择obd的实体--专用于表格导出
      *
      * @param derivedEntity 派生实体
      * @return {@link List<DerivedEntity>}
@@ -160,6 +160,12 @@ public class DataManagementServiceImpl implements IDataManagementService {
         return pcObdInfos;
     }
 
+    /**
+     * 查询机箱的实体列表
+     *
+     * @param pcObdBox pc obd盒子
+     * @return {@link List<PcObdBox>}
+     */
     @Override
     public List<PcObdBox> selectBoxListByEntity(PcObdBox pcObdBox) {
         List<PcObdBox> pcObdBoxes = new ArrayList<PcObdBox>();

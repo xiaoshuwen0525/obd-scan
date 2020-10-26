@@ -4,8 +4,37 @@
 	<th:block th:include="include :: header('基础数据')" />
 </head>
 <body class="gray-bg">
-    <div class="container-div">
+	<div class="container-div">
 		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								设备标签码：<input type="text" name="boxCode"/>
+							</li>
+							<li>
+								营服中心：<input type="text" name="campService"/>
+							</li>
+							<li>
+								业务局：<input type="text" name="businessBureau"/>
+							</li>
+							<li>
+								区域：<input type="text" name="area"/>
+							</li>
+							<li>
+								倒灌标签码：<input type="text" name="labelCode"/>
+							</li>
+							<li>
+								机箱名称：<input type="text" name="boxName"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
 			<!-- 此处用于导入表格数据，需要的时候解除注释-->
 			<div class="btn-group-sm" id="toolbar" role="group">
 				<a class="btn btn-info"  onclick="$.table.importExcel()">
@@ -15,24 +44,28 @@
 					<i class="fa fa-download"></i> 导出
 				</a>
 			</div>
-	        <div class="col-sm-12 select-table table-striped">
-				<input type="hidden" id="id" th:value="${id}">
-	            <table id="bootstrap-table"></table>
-	        </div>
-    	</div>
-    </div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var prefix = ctx + "device/baseData";
 
         $(function() {
             var options = {
-                url: prefix + "/list/"+2,
-                updateUrl: prefix + "/port/{id}",
+                url: prefix + "/selectBoxListByEntity",
+				searchUrl:prefix + "/selectBoxListByEntity",
+				queryUrl: prefix + "/selectByBoxId/{id}",
 				importUrl: prefix + "/importData",
 				exportUrl: prefix + "/export",
                 modalName: "基础数据",
                 columns: [
+				{
+					field : 'seq',
+					title : '序号'
+				},
 				{
 					field : 'area',
 					title : '区域'
@@ -54,24 +87,15 @@
 		            title: '倒灌标签二维码',
 		        },
 				{
-					field: 'boxBelong',
-					title: '归属设备',
-				},
-				{
-					field: 'obdName',
-					title: 'OBD名称',
-				},
-				{
-					field: 'portCount',
-					title: 'OBD端口',
+					field: 'boxName',
+					title: '机箱名称',
 				},
 		        {
-		            title: '操作',
+		            title: 'OBD数量',
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		            	var actions = [];
-						actions.push('<a class="btn btn-success btn-xs '  + '" href="javascript:void(0)" onclick="$.operate.editTab(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-						actions.push('<a class="btn btn-danger btn-xs '  + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+						actions.push('<a class="btn btn-warning btn-xs' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-search">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>' + row.obdCount + '&nbsp;&nbsp;</a> ');
 						return actions.join('');
 		            }
 		        }

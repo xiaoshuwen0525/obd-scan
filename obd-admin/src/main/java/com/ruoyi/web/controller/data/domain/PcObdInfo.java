@@ -14,6 +14,8 @@ import java.io.Serializable;
 public class PcObdInfo implements Serializable {
     private static final long serialVersionUID = -10314166765699806L;
 
+    private Integer seq;
+
     private Integer id;
     /**
      * 引用盒子主键

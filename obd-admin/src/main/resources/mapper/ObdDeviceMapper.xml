@@ -34,6 +34,7 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
         <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
         <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
@@ -50,7 +51,7 @@
     </resultMap>
 
     <sql id="ObdBoxVO">
-        id, box_code, img_url, status, exception_type, exception_info, job_number, create_time,label_code,box_name,area,business_bureau,camp_service
+        id, box_code, label_code, img_url, status, exception_type, exception_info, job_number, create_time
     </sql>
 
     <!--通过boxCode唯一ID查询-->
@@ -65,7 +66,7 @@
     <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
-        i.id,i.box_id,i.status,b.box_code,i.box_belong,i.obd_name
+        i.id,i.box_id,i.status,b.box_code,b.label_code
         FROM obd_info i
         INNER  JOIN obd_box b on  b.id = i.box_id,
         (select @num := 0) row_number

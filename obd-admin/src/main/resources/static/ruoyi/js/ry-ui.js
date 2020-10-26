@@ -1328,10 +1328,10 @@ var table = {
                         $.modal.alertWarning("请至少选择一条记录");
                         return;
                     }
-                    var url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
+                    var url = table.options.queryUrl.replace("{id}", row[table.options.uniqueId]);
                     $.modal.open(table.options.modalName + "详情", url);
                 } else {
-                    $.modal.open(table.options.modalName + "详情", $.operate.editUrl(id));
+                    $.modal.open(table.options.modalName + "详情", $.operate.queryUrl(id));
                 }
             },
             // 绑定手机
@@ -1343,10 +1343,10 @@ var table = {
                         $.modal.alertWarning("请至少选择一条记录");
                         return;
                     }
-                    var url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
+                    var url = table.options.queryUrl.replace("{id}", row[table.options.uniqueId]);
                     $.modal.openBindPhone(table.options.modalName + "修改", url);
                 } else {
-                    $.modal.openBindPhone(table.options.modalName + "修改", $.operate.editUrl(id));
+                    $.modal.openBindPhone(table.options.modalName + "修改", $.operate.queryUrl(id));
                 }
             },
             // 修改信息，以tab页展现
@@ -1365,6 +1365,21 @@ var table = {
                     url = table.options.updateUrl.replace("{id}", row);
                 }
                 $.modal.openFull("修改" + table.options.modalName, url);
+            },
+            // 修改访问地址--obd专用
+            queryUrl: function (id) {
+                var url = "/404.html";
+                if ($.common.isNotEmpty(id)) {
+                    url = table.options.queryUrl.replace("{id}", id);
+                } else {
+                    var id = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                    if (id.length == 0) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    url = table.options.queryUrl.replace("{id}", id);
+                }
+                return url;
             },
             // 修改访问地址
             editUrl: function (id) {

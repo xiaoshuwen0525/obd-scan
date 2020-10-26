@@ -34,6 +34,11 @@ public class ObdInfoVO {
     private String boxCode;
 
     /**
+     * 机箱倒灌串码
+     */
+    private String labelCode;
+
+    /**
      * 机箱归属
      */
     private String boxBelong;

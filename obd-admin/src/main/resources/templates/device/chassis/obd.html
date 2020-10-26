@@ -15,13 +15,12 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-    var editFlag = [[${@permission.hasPermi('device:chassis:obd:port:list')}]];
         var prefix = ctx + "device/chassis/obd";
 
         $(function() {
             var options = {
                 url: prefix + "/list/"+$('#id').val(),
-                updateUrl: prefix + "/port/{id}",
+				queryUrl: prefix + "/port/{id}",
                 modalName: "OBD",
                 columns: [
 				{
@@ -29,16 +28,12 @@
 					title : '序号' 
 				},
 				{
-					field : 'obdName',
-					title : 'OBD名称'
-				},
-				{
-					field : 'boxBelong',
-					title : '归属设备'
-				},
-				{
 					field : 'boxCode',
 					title : '所属机箱串码'
+				},
+				{
+					field : 'labelCode',
+					title : '所属机箱倒灌标签'
 				},
 				{
 		            field: 'status',
@@ -49,7 +44,7 @@
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		            	var actions = [];
-		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看详情</a> ');
+		            	actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看详情</a> ');
 						return actions.join('');
 		            }
 		        }

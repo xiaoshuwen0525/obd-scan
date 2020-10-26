@@ -1,6 +1,9 @@
 package com.ruoyi.web.controller.data;
 
+import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.data.domain.PcObdBox;
@@ -9,10 +12,8 @@ import com.ruoyi.web.controller.data.service.IDataManagementService;
 import com.ruoyi.web.controller.data.domain.ImportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Controller
 @RequestMapping("/device/baseData")
-public class DataManagementController {
+public class DataManagementController extends BaseController {
 
     private final String prefix = "device/baseData";
 
@@ -43,7 +44,18 @@ public class DataManagementController {
         return prefix + "/baseData";
     }
 
-    //导入数据
+    /**
+     * 基础数据管理--跳转ODB页面并携带当前点击的机箱ID
+     */
+    @GetMapping("/selectByBoxId/{id}")
+    public String obdList(@PathVariable("id") int id, ModelMap mmap) {
+        mmap.put("id", id);
+        return prefix + "/baseObdData";
+    }
+
+    /**
+     * 导入数据
+     */
     @PostMapping("/importData")
     @ResponseBody
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
@@ -54,7 +66,9 @@ public class DataManagementController {
         return ajaxResult;
     }
 
-    // 导出数据
+    /**
+     * 导出数据
+     */
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(DerivedEntity derivedEntity)
@@ -115,16 +129,16 @@ public class DataManagementController {
 
     @PostMapping("/selectBoxListByEntity")
     @ResponseBody
-    public AjaxResult selectBoxListByEntity(PcObdBox pcObdBox)
+    public TableDataInfo selectBoxListByEntity(PcObdBox pcObdBox)
     {
-        return AjaxResult.success(dataManagementService.selectBoxListByEntity(pcObdBox));
+        return getDataTable(dataManagementService.selectBoxListByEntity(pcObdBox));
     }
 
-    @PostMapping("/selectByBoxId")
+    @PostMapping("/selectByBoxId/{id}")
     @ResponseBody
-    public AjaxResult deletePcObdBoxById(Integer boxId)
+    public TableDataInfo deletePcObdBoxById(@PathVariable("id") int boxId)
     {
-        return AjaxResult.success(dataManagementService.selectByBoxId(boxId));
+        return getDataTable(dataManagementService.selectByBoxId(boxId));
     }
 
 

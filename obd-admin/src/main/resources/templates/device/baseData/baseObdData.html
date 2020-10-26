@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-	<th:block th:include="include :: header('端口')" />
+	<th:block th:include="include :: header('OBD基础数据')" />
 </head>
 <body class="gray-bg">
     <div class="container-div">
 		<div class="row">
+
 	        <div class="col-sm-12 select-table table-striped">
 				<input type="hidden" id="id" th:value="${id}">
 	            <table id="bootstrap-table"></table>
@@ -14,32 +15,29 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var prefix = ctx + "device/chassis/obd/port";
+		var prefix = ctx + "device/baseData";
 
         $(function() {
             var options = {
-                url: prefix + "/list/"+$('#id').val(),
-                modalName: "端口",
+                url: prefix + "/selectByBoxId/"+$('#id').val(),
+				queryUrl: prefix + "/port/{id}",
+                modalName: "OBD",
                 columns: [
 				{
 					field : 'seq',
 					title : '序号' 
 				},
 				{
-					field : 'obdId',
-					title : '所属OBD编号'
+					field : 'obdName',
+					title : 'OBD名称'
 				},
 				{
-		            field: 'portSer',
-		            title: '端口号',
-		        },
-				{
-					field: 'portCode',
-					title: '端口串码',
+					field : 'boxBelong',
+					title : '归属设备'
 				},
 				{
-					field: 'status',
-					title: '端口状态',
+					field: 'portCount',
+					title: '端口数量',
 				}
 		        ]
             };

@@ -31,7 +31,7 @@ public class DerivedEntity {
     /**
      * 盒子串码
      */
-    @Excel(name = "盒子串码")
+    @Excel(name = "设备标签二维码")
     private String boxCode;
 
     /**
@@ -43,7 +43,7 @@ public class DerivedEntity {
     /**
      * 归属机箱
      */
-    @Excel(name = "归属机箱")
+    @Excel(name = "归属设备")
     private String boxBelong;
 
     /**
@@ -55,12 +55,10 @@ public class DerivedEntity {
     /**
      * 端口数量
      */
-    @Excel(name = "端口数量")
+    @Excel(name = "OBD端口数")
     private int portCount;
 
-    @Excel(name = "OBD名称")
     private String boxName;
-
 
     /** obdId */
     private Integer obdId;

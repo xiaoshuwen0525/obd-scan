@@ -8,8 +8,6 @@
 		<div class="row">
 			<div class="col-sm-12 search-collapse">
 				<form id="user-form">
-					<input type="hidden" id="deptId" name="deptId">
-					<input type="hidden" id="parentId" name="parentId">
 					<div class="select-list">
 						<ul>
 							<li>
@@ -41,14 +39,13 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-    var editFlag = [[${@permission.hasPermi('device:chassis:obd:list')}]];
         var prefix = ctx + "device/chassis";
 
         $(function() {
             var options = {
                 // url: prefix + "/list",
 				url: prefix + "/searchByCondition",
-				updateUrl: prefix + "/obd/{id}",
+				queryUrl: prefix + "/obd/{id}",
 				searchUrl:prefix + "/searchByCondition",
                 modalName: "机箱",
                 columns: [
@@ -62,23 +59,7 @@
 				},
 				{
 					field : 'labelCode',
-					title : '倒灌标签串码'
-				},
-				{
-					field : 'boxName',
-					title : '机箱名称'
-				},
-				{
-					field : 'area',
-					title : '区域'
-				},
-				{
-					field : 'businessBureau',
-					title : '业务局'
-				},
-				{
-					field : 'campService',
-					title : '营服中心'
+					title : '倒灌标签'
 				},
 				{
 					field: 'status',
@@ -103,7 +84,7 @@
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		            	var actions = [];
-		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看详情</a> ');
+		            	actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看详情</a> ');
 						return actions.join('');
 		            }
 		        }

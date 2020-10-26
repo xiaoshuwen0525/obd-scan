@@ -66,10 +66,10 @@ public interface DataManagementMapper {
     /**
      * 删除obd框通过id
      *
-     * @param id id
+     * @param boxIds boxIds
      * @return int
      */
-    int deletePcObdBoxById(@NotNull Integer id);
+    int deletePcObdBoxByIds(Long[] boxIds);
 
     /**
      * 选择obd的实体

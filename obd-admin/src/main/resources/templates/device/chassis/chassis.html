@@ -47,7 +47,7 @@
 				url: prefix + "/searchByCondition",
 				queryUrl: prefix + "/obd/{id}",
 				searchUrl:prefix + "/searchByCondition",
-                modalName: "机箱",
+                modalName: "OBD",
                 columns: [
 				{
 					field : 'seq',
@@ -84,7 +84,7 @@
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		            	var actions = [];
-		            	actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看详情</a> ');
+		            	actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看OBD</a> ');
 						return actions.join('');
 		            }
 		        }

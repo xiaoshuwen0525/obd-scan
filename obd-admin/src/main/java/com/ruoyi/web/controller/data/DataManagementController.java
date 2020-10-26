@@ -58,8 +58,7 @@ public class DataManagementController extends BaseController {
      */
     @PostMapping("/importData")
     @ResponseBody
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
-    {
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
         ExcelUtil<ImportEntity> util = new ExcelUtil<ImportEntity>(ImportEntity.class);
         List<ImportEntity> userList = util.importExcel(file.getInputStream());
         AjaxResult ajaxResult = dataManagementService.insertPcObd(userList);
@@ -71,8 +70,7 @@ public class DataManagementController extends BaseController {
      */
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(DerivedEntity derivedEntity)
-    {
+    public AjaxResult export(DerivedEntity derivedEntity) {
         List<DerivedEntity> derivedEntities = dataManagementService.selectObdByEntity(derivedEntity);
         ExcelUtil<DerivedEntity> util = new ExcelUtil<DerivedEntity>(DerivedEntity.class);
         return util.exportExcel(derivedEntities, "基础数据");
@@ -81,15 +79,14 @@ public class DataManagementController extends BaseController {
 
     @PostMapping("/updatePcObdBox")
     @ResponseBody
-    public AjaxResult updatePcObdBox(PcObdBox pcObdBox)
-    {
-        String s = "更新失败" ;
+    public AjaxResult updatePcObdBox(PcObdBox pcObdBox) {
+        String s = "更新失败";
         try {
             int i = dataManagementService.updatePcObdBox(pcObdBox);
-            if(i>0){
+            if (i > 0) {
                 s = "更新成功";
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             AjaxResult.error(s);
         }
         return AjaxResult.success(s);
@@ -97,15 +94,14 @@ public class DataManagementController extends BaseController {
 
     @PostMapping("/updatePcObdInfo")
     @ResponseBody
-    public AjaxResult updatePcObdInfo(PcObdInfo pcObdInfo)
-    {
-        String s = "更新失败" ;
+    public AjaxResult updatePcObdInfo(PcObdInfo pcObdInfo) {
+        String s = "更新失败";
         try {
             int i = dataManagementService.updatePcObdInfo(pcObdInfo);
-            if(i>0){
+            if (i > 0) {
                 s = "更新成功";
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             AjaxResult.error(s);
         }
         return AjaxResult.success(s);
@@ -113,15 +109,29 @@ public class DataManagementController extends BaseController {
 
     @PostMapping("/deletePcObdInfoById")
     @ResponseBody
-    public AjaxResult deletePcObdInfoById(Integer id)
-    {
-        String s = "删除失败" ;
+    public AjaxResult deletePcObdInfoById(Integer id) {
+        String s = "删除失败";
         try {
             int i = dataManagementService.deletePcObdInfoById(id);
-            if(i>0){
+            if (i > 0) {
                 s = "删除成功";
             }
-        }catch (Exception e){
+        } catch (Exception e) {
+            AjaxResult.error(s);
+        }
+        return AjaxResult.success(s);
+    }
+
+    @PostMapping("/deletePcObdBoxById")
+    @ResponseBody
+    public AjaxResult deletePcObdBoxByIds(String ids) {
+        String s = "删除失败";
+        try {
+            int i = dataManagementService.deletePcObdBoxByIds(ids);
+            if (i > 0) {
+                s = "删除成功";
+            }
+        } catch (Exception e) {
             AjaxResult.error(s);
         }
         return AjaxResult.success(s);
@@ -129,15 +139,13 @@ public class DataManagementController extends BaseController {
 
     @PostMapping("/selectBoxListByEntity")
     @ResponseBody
-    public TableDataInfo selectBoxListByEntity(PcObdBox pcObdBox)
-    {
+    public TableDataInfo selectBoxListByEntity(PcObdBox pcObdBox) {
         return getDataTable(dataManagementService.selectBoxListByEntity(pcObdBox));
     }
 
     @PostMapping("/selectByBoxId/{id}")
     @ResponseBody
-    public TableDataInfo deletePcObdBoxById(@PathVariable("id") int boxId)
-    {
+    public TableDataInfo selectPcObdBoxById(@PathVariable("id") int boxId) {
         return getDataTable(dataManagementService.selectByBoxId(boxId));
     }
 

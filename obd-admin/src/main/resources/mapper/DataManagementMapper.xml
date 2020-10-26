@@ -225,13 +225,13 @@
     </delete>
 
 
-    <delete id="deletePcObdBoxById" parameterType="java.lang.Integer">
+    <delete id="deletePcObdBoxByIds" parameterType="Long">
         delete from pc_obd_box
-        <where>
-         <if test="id != null ">
-            id = #{id,jdbcType=INTEGER}
-         </if>
-        </where>
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
     </delete>
 
 

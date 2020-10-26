@@ -37,6 +37,12 @@
 			</div>
 			<!-- 此处用于导入表格数据，需要的时候解除注释-->
 			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
+					<i class="fa fa-edit"></i> 修改
+				</a>
+				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+					<i class="fa fa-remove"></i> 删除
+				</a>
 				<a class="btn btn-info"  onclick="$.table.importExcel()">
 					<i class="fa fa-upload"></i> 导入
 				</a>
@@ -56,13 +62,21 @@
         $(function() {
             var options = {
                 url: prefix + "/selectBoxListByEntity",
+				updateUrl: prefix + "/edit/{id}",
 				searchUrl:prefix + "/selectBoxListByEntity",
 				queryUrl: prefix + "/selectByBoxId/{id}",
+				removeUrl: prefix + "/deletePcObdBoxById",
 				importUrl: prefix + "/importData",
 				exportUrl: prefix + "/export",
                 modalName: "基础数据",
                 columns: [
 				{
+					checkbox: true
+				},
+				{
+					field : 'id',
+					title : '主键'
+				},{
 					field : 'seq',
 					title : '序号'
 				},
@@ -95,13 +109,23 @@
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		            	var actions = [];
-						actions.push('<a class="btn btn-warning btn-xs' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-search">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>' + row.obdCount + '&nbsp;&nbsp;</a> ');
+						actions.push('<a class="btn btn-info btn-xs' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-search">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>' + row.obdCount + '&nbsp;&nbsp;</a> ');
 						return actions.join('');
 		            }
-		        }
+		        },
+				{
+					title: '删除机箱',
+					align: 'center',
+					formatter: function(value, row, index) {
+						var actions = [];
+						actions.push('<a class="btn btn-danger btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+						return actions.join('');
+					}
+				}
 		        ]
             };
             $.table.init(options);
+			$.table.hideColumn("id");
         });
     </script>
 </body>

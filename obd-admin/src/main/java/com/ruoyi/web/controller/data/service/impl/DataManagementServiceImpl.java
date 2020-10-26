@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.data.service.impl;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.data.domain.PcObdBox;
@@ -44,7 +45,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
      * @return {@link AjaxResult}
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult insertPcObd(List<ImportEntity> userList) {
         try {
             List<ImportEntity> toRepeatList = userList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getBoxCode() + ";" + o.getLabelCode()))), ArrayList::new));
@@ -101,6 +102,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
      * @return int
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updatePcObdBox(PcObdBox pcObdBox) {
         return dataManagementMapper.updatePcObdBox(pcObdBox);
     }
@@ -112,6 +114,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
      * @return int
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updatePcObdInfo(PcObdInfo pcObdInfo) {
         return dataManagementMapper.updatePcObdInfo(pcObdInfo);
     }
@@ -123,6 +126,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
      * @return int
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deletePcObdInfoById(Integer id) {
         return dataManagementMapper.deletePcObdInfoById(id);
     }
@@ -130,12 +134,18 @@ public class DataManagementServiceImpl implements IDataManagementService {
     /**
      * 删除obd框通过id
      *
-     * @param id id
+     * @param ids ids
      * @return int
      */
     @Override
-    public int deletePcObdBoxById(Integer id) {
-        return dataManagementMapper.deletePcObdBoxById(id);
+    @Transactional(rollbackFor = Exception.class)
+    public int deletePcObdBoxByIds(String ids) {
+        Long[] boxIds = Convert.toLongArray(ids);
+        if (boxIds.length == 0){
+            return 0;
+        }
+        return dataManagementMapper.deletePcObdBoxByIds(boxIds);
+
     }
 
     /**

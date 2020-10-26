@@ -55,10 +55,10 @@ public interface IDataManagementService
     /**
      * 删除obd箱子通过id
      *
-     * @param id id
+     * @param ids ids
      * @return int
      */
-    int deletePcObdBoxById(Integer id);
+    int deletePcObdBoxByIds(String ids);
 
     /**
      * 选择obd的实体

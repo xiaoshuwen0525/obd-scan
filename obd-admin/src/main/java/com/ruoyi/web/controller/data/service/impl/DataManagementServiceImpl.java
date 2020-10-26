@@ -46,48 +46,52 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Override
     @Transactional
     public AjaxResult insertPcObd(List<ImportEntity> userList) {
-        List<ImportEntity> toRepeatList = userList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getBoxCode() + ";" + o.getLabelCode()))), ArrayList::new));
-        Map<Integer, String> boxIdMap = new HashMap<>();
-        for (ImportEntity toRepeat : toRepeatList) {
-            PcObdBox pcObdBox = new PcObdBox();
-            if(StringUtils.isNotEmpty(toRepeat.getBoxCode()) || StringUtils.isNotEmpty(toRepeat.getLabelCode())){
-                pcObdBox.setArea(toRepeat.getArea());
-                pcObdBox.setBusinessBureau(toRepeat.getBusinessBureau());
-                pcObdBox.setCampService(toRepeat.getCampService());
-                pcObdBox.setBoxCode(toRepeat.getBoxCode());
-                pcObdBox.setLabelCode(toRepeat.getLabelCode());
-                pcObdBox.setBoxName(toRepeat.getObdName());
-                dataManagementMapper.insertPcObdBox(pcObdBox);
-                boxIdMap.put(pcObdBox.getId(), pcObdBox.getBoxCode() + "," + pcObdBox.getLabelCode());
-            }else {
-                return  AjaxResult.warn("存在code为空");
-            }
-        }
-        List<PcObdInfo> list = new ArrayList<>();
-        for (ImportEntity importEntity : userList) {
-            PcObdInfo pcObdInfo = new PcObdInfo();
-            pcObdInfo.setObdName(importEntity.getObdName());
-            pcObdInfo.setBoxBelong(importEntity.getBoxBelong());
-            pcObdInfo.setPortCount(importEntity.getPortCount());
-            String code = "";
-            if (StringUtils.isNotEmpty(importEntity.getBoxCode())) {
-                code = importEntity.getBoxCode();
-            } else {
-                code = importEntity.getLabelCode();
-            }
-            for (Map.Entry<Integer, String> entry : boxIdMap.entrySet()) {
-                if (entry.getValue().contains(code)) {
-                    pcObdInfo.setBoxId(entry.getKey());
+        try {
+            List<ImportEntity> toRepeatList = userList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getBoxCode() + ";" + o.getLabelCode()))), ArrayList::new));
+            Map<Integer, String> boxIdMap = new HashMap<>();
+            for (ImportEntity toRepeat : toRepeatList) {
+                PcObdBox pcObdBox = new PcObdBox();
+                if(StringUtils.isNotEmpty(toRepeat.getBoxCode()) || StringUtils.isNotEmpty(toRepeat.getLabelCode())){
+                    pcObdBox.setArea(toRepeat.getArea());
+                    pcObdBox.setBusinessBureau(toRepeat.getBusinessBureau());
+                    pcObdBox.setCampService(toRepeat.getCampService());
+                    pcObdBox.setBoxCode(toRepeat.getBoxCode());
+                    pcObdBox.setLabelCode(toRepeat.getLabelCode());
+                    pcObdBox.setBoxName(toRepeat.getObdName());
+                    dataManagementMapper.insertPcObdBox(pcObdBox);
+                    boxIdMap.put(pcObdBox.getId(), pcObdBox.getBoxCode() + "," + pcObdBox.getLabelCode());
+                }else {
+                    return  AjaxResult.warn("存在code为空");
                 }
             }
-            if (pcObdInfo.getBoxId() != null && pcObdInfo.getBoxId() != 0) {
-                list.add(pcObdInfo);
-            }else {
-                AjaxResult.warn("插入出错");
+            List<PcObdInfo> list = new ArrayList<>();
+            for (ImportEntity importEntity : userList) {
+                PcObdInfo pcObdInfo = new PcObdInfo();
+                pcObdInfo.setObdName(importEntity.getObdName());
+                pcObdInfo.setBoxBelong(importEntity.getBoxBelong());
+                pcObdInfo.setPortCount(importEntity.getPortCount());
+                String code = "";
+                if (StringUtils.isNotEmpty(importEntity.getBoxCode())) {
+                    code = importEntity.getBoxCode();
+                } else {
+                    code = importEntity.getLabelCode();
+                }
+                for (Map.Entry<Integer, String> entry : boxIdMap.entrySet()) {
+                    if (entry.getValue().contains(code)) {
+                        pcObdInfo.setBoxId(entry.getKey());
+                    }
+                }
+                if (pcObdInfo.getBoxId() != null && pcObdInfo.getBoxId() != 0) {
+                    list.add(pcObdInfo);
+                }else {
+                    AjaxResult.warn("插入出错");
+                }
             }
+            dataManagementMapper.insertPcObdInfo(list);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        dataManagementMapper.insertPcObdInfo(list);
-        return AjaxResult.success();
+        return AjaxResult.success("插入成功");
     }
 
     /**
@@ -147,7 +151,24 @@ public class DataManagementServiceImpl implements IDataManagementService {
 
     @Override
     public List<PcObdInfo> selectByBoxId(@NotNull Integer boxId) {
-        return dataManagementMapper.selectByBoxId(boxId);
+        List<PcObdInfo> pcObdInfos = new ArrayList<>();
+        try {
+            pcObdInfos = dataManagementMapper.selectByBoxId(boxId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return pcObdInfos;
+    }
+
+    @Override
+    public List<PcObdBox> selectBoxListByEntity(PcObdBox pcObdBox) {
+        List<PcObdBox> pcObdBoxes = new ArrayList<PcObdBox>();
+        try {
+            pcObdBoxes = dataManagementMapper.selectBoxListByEntity(pcObdBox);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return pcObdBoxes;
     }
 
 

@@ -76,4 +76,12 @@ public interface IDataManagementService
      * @return {@link List<PcObdInfo>}
      */
     List<PcObdInfo> selectByBoxId(Integer boxId);
+
+    /**
+     * 根据对象查询obd_box
+     *
+     * @param pcObdBox pc obd盒子
+     * @return {@link List<PcObdBox>}
+     */
+    List<PcObdBox> selectBoxListByEntity(PcObdBox pcObdBox);
 }

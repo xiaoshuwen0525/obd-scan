@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.data.mapper;
 
+
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.data.domain.PcObdBox;
 import com.ruoyi.web.controller.data.domain.PcObdInfo;
@@ -85,4 +86,12 @@ public interface DataManagementMapper {
      * @return {@link List<PcObdInfo>}
      */
     List<PcObdInfo> selectByBoxId(@NotNull Integer boxId);
+
+    /**
+     * 根据对象查询obd_box
+     *
+     * @param pcObdBox pc obd盒子
+     * @return {@link List<PcObdBox>}
+     */
+    List<PcObdBox> selectBoxListByEntity(PcObdBox pcObdBox);
 }

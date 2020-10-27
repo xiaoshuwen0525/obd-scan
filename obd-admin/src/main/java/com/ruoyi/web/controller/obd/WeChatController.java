@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -87,7 +88,7 @@ public class WeChatController extends BaseController {
     @GetMapping("/bindPhone/{id}")
     public String bindPhoneId(@PathVariable("id") String id, ModelMap mmap) {
         mmap.put("id", id);
-        List<WxUser> wxUsers = null;
+        List<WxUser> wxUsers = new ArrayList<>();
         try {
             wxUsers = obdDeviceService.queryWechatInfo(null, null, id);
             mmap.put("jobNumber", wxUsers.get(0).getJobNumber());

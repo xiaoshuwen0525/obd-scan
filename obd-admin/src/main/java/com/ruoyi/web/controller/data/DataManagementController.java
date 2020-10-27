@@ -1,18 +1,25 @@
 package com.ruoyi.web.controller.data;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.data.domain.PcObdBox;
 import com.ruoyi.web.controller.data.domain.PcObdInfo;
 import com.ruoyi.web.controller.data.service.IDataManagementService;
 import com.ruoyi.web.controller.data.domain.ImportEntity;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,8 +47,52 @@ public class DataManagementController extends BaseController {
      * 跳转基础数据页面
      */
     @GetMapping()
-    public String chassis() {
+    public String baseData() {
         return prefix + "/baseData";
+    }
+
+    /**
+     * 跳转基础数据修改页面
+     */
+    @GetMapping("/baseUpdate/{id}")
+    public String baseUpdateById(@PathVariable("id") int id, ModelMap mmap) {
+        DerivedEntity derivedEntity = new DerivedEntity();
+        derivedEntity.setBoxId(id);
+        List<DerivedEntity> derivedEntities = new ArrayList<>();
+        try {
+            derivedEntities = dataManagementService.selectObdByEntity(derivedEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(derivedEntities == null){
+            return prefix + "/baseUpdate";
+        }
+        int count = 0;
+        List<PcObdInfo> pcObdInfos = new ArrayList<>();
+        for (DerivedEntity entity : derivedEntities) {
+            PcObdInfo pcObdInfo = new PcObdInfo();
+            if (count == 0){
+                PcObdBox pcObdBox = new PcObdBox();
+                BeanUtil.copyProperties(entity,pcObdBox);
+                mmap.put("box", pcObdBox);
+            }
+            BeanUtil.copyProperties(entity,pcObdInfo);
+            pcObdInfos.add(pcObdInfo);
+            count++;
+        }
+        mmap.put("obd", pcObdInfos);
+        return prefix + "/baseUpdate";
+    }
+
+    /**
+     * 修改保存基础数据
+     */
+    @PostMapping("/baseUpdate")
+    @ResponseBody
+    public AjaxResult baseUpdate(SysUser user)
+    {
+        System.out.println(user);
+        return toAjax(1);
     }
 
     /**

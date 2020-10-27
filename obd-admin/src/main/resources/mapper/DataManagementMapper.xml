@@ -270,7 +270,7 @@
             <if test="obdName != null and obdName != ''">
                 and obd_name = #{obdName,jdbcType=VARCHAR}
             </if>
-            <if test="portCount != null">
+            <if test="portCount != null and portCount != 0">
                 and port_count = #{portCount,jdbcType=INTEGER}
             </if>
         </where>
@@ -282,7 +282,6 @@
         from pc_obd_info,(select @num := 0) row_number
         where box_id = #{boxId,jdbcType=INTEGER}
     </select>
-
 
     <select id="selectBoxListByEntity" resultMap="PcObdBoxMap"
             parameterType="com.ruoyi.web.controller.data.domain.PcObdBox">

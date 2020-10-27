@@ -159,7 +159,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         if (StringUtils.isNotBlank(id)) {
             wxUser.setId(Integer.parseInt(id));
         }
-        List<WxUser> wxUsers = null;
+        List<WxUser> wxUsers = new ArrayList<>();
         //查询微信用户信息
         try {
             wxUsers = obdDeviceMapper.queryWechatInfo(wxUser);

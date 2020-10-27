@@ -1,13 +1,10 @@
 package com.ruoyi.web.controller.obd;
 
-import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
-import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +40,7 @@ public class DeviceController extends BaseController {
     }
 
     /**
-     * 管理员用户查询所有机箱列表
+     * 管理员用户查询所有机箱列表--该方法暂停使用
      */
     @PostMapping("/list")
     @ResponseBody
@@ -52,14 +50,14 @@ public class DeviceController extends BaseController {
             loginName = ShiroUtils.getSysUser().getLoginName();
         } catch (Exception ignored) {
         }
-        List<ObdBoxVO> obdBoxVOS = null;
+        List<ObdBoxVO> obdBoxVOS = new ArrayList<>();
         //如果当前登录用户是管理员，则查询所有机箱信息
         if ("admin".equals(loginName)) {
             startPage();
             obdBoxVOS = obdDeviceService.selectBoxByJobNumber(null);
         } else {
             //如果不是管理员，PC端页面则不显示任何信息。
-            return getDataTable(null);
+            return getDataTable(obdBoxVOS);
         }
         return getDataTable(obdBoxVOS);
     }
@@ -79,7 +77,7 @@ public class DeviceController extends BaseController {
     @PostMapping("/obd/list/{id}")
     @ResponseBody
     public TableDataInfo queryObdList(@PathVariable("id") String id) {
-        List<ObdInfoVO> obdInfoVOS = null;
+        List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
         try {
             startPage();
             obdInfoVOS = obdDeviceService.infoByBoxId(id);
@@ -104,7 +102,7 @@ public class DeviceController extends BaseController {
     @PostMapping("/obd/port/list/{id}")
     @ResponseBody
     public TableDataInfo portList(@PathVariable("id") String id) {
-        List<ObdPortInfoVO> obdPortInfoVOS = null;
+        List<ObdPortInfoVO> obdPortInfoVOS = new ArrayList<>();
         try {
             startPage();
             obdPortInfoVOS = obdDeviceService.portByObdId(id);
@@ -119,19 +117,9 @@ public class DeviceController extends BaseController {
     @PostMapping("/searchByCondition")
     @ResponseBody
     public TableDataInfo searchByCondition(String jobNumber, String phone, String code, String status) {
-        List<ObdBoxVO> obdBoxVOS = null;
-        String loginName;
-        try {
-            loginName = ShiroUtils.getSysUser().getLoginName();
-        } catch (Exception e) {
-            return getDataTable(obdBoxVOS);
-        }
-        //如果当前登录用户是管理员，则查询所有机箱信息
-        if ("admin".equals(loginName)) {
-            jobNumber = null;
-        }
+        List<ObdBoxVO> obdBoxVOS = new ArrayList<>();
         if ("undefined".equals(code)) {
-            return getDataTable(null);
+            return getDataTable(obdBoxVOS);
         }
         try {
             startPage();

@@ -2,10 +2,7 @@ package com.ruoyi.web.controller.data.service;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.web.controller.data.domain.DerivedEntity;
-import com.ruoyi.web.controller.data.domain.PcObdBox;
-import com.ruoyi.web.controller.data.domain.PcObdInfo;
-import com.ruoyi.web.controller.data.domain.ImportEntity;
+import com.ruoyi.web.controller.data.domain.*;
 
 import java.util.List;
 
@@ -43,6 +40,14 @@ public interface IDataManagementService
      * @return int
      */
     int updatePcObdInfo(PcObdInfo pcObdInfo);
+
+    /**
+     * 更新基础数据
+     *
+     * @param baseUpdates 基础更新
+     * @return int
+     */
+    int updateBaseData(List<BaseUpdate> baseUpdates);
 
     /**
      * 删除obd通过id

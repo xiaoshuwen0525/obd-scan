@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.data.mapper;
 
 
+import com.ruoyi.web.controller.data.domain.BaseUpdate;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.data.domain.PcObdBox;
 import com.ruoyi.web.controller.data.domain.PcObdInfo;
@@ -54,6 +55,14 @@ public interface DataManagementMapper {
      * @return int
      */
     int updatePcObdInfo(PcObdInfo pcObdInfo);
+
+    /**
+     * 更新基础数据
+     *
+     * @param baseUpdate 基础更新
+     * @return int
+     */
+    int updateBaseData(BaseUpdate baseUpdate);
 
     /**
      * 删除obd信息通过id

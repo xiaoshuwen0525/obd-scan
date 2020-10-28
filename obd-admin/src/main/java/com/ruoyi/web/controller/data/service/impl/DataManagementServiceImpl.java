@@ -1,22 +1,21 @@
 package com.ruoyi.web.controller.data.service.impl;
 
 
-
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.web.controller.data.domain.DerivedEntity;
-import com.ruoyi.web.controller.data.domain.PcObdBox;
-import com.ruoyi.web.controller.data.domain.PcObdInfo;
+import com.ruoyi.web.controller.data.domain.*;
 import com.ruoyi.web.controller.data.mapper.DataManagementMapper;
 import com.ruoyi.web.controller.data.service.IDataManagementService;
-import com.ruoyi.web.controller.data.domain.ImportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 
@@ -30,6 +29,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DataManagementServiceImpl implements IDataManagementService {
+
+    private static final Lock lock = new ReentrantLock();
 
     /**
      * 数据管理映射器
@@ -52,17 +53,17 @@ public class DataManagementServiceImpl implements IDataManagementService {
             Map<Integer, String> boxIdMap = new HashMap<>();
             for (ImportEntity toRepeat : toRepeatList) {
                 PcObdBox pcObdBox = new PcObdBox();
-                if(StringUtils.isNotEmpty(toRepeat.getBoxCode()) || StringUtils.isNotEmpty(toRepeat.getLabelCode())){
+                if (StringUtils.isNotEmpty(toRepeat.getBoxCode()) || StringUtils.isNotEmpty(toRepeat.getLabelCode())) {
                     pcObdBox.setArea(toRepeat.getArea());
                     pcObdBox.setBusinessBureau(toRepeat.getBusinessBureau());
                     pcObdBox.setCampService(toRepeat.getCampService());
                     pcObdBox.setBoxCode(toRepeat.getBoxCode());
                     pcObdBox.setLabelCode(toRepeat.getLabelCode());
-                    pcObdBox.setBoxName(toRepeat.getObdName());
+                    pcObdBox.setBoxName(toRepeat.getBoxBelong());
                     dataManagementMapper.insertPcObdBox(pcObdBox);
                     boxIdMap.put(pcObdBox.getId(), pcObdBox.getBoxCode() + "," + pcObdBox.getLabelCode());
-                }else {
-                    return  AjaxResult.warn("存在code为空");
+                } else {
+                    return AjaxResult.warn("存在code为空");
                 }
             }
             List<PcObdInfo> list = new ArrayList<>();
@@ -84,12 +85,12 @@ public class DataManagementServiceImpl implements IDataManagementService {
                 }
                 if (pcObdInfo.getBoxId() != null && pcObdInfo.getBoxId() != 0) {
                     list.add(pcObdInfo);
-                }else {
+                } else {
                     AjaxResult.warn("插入出错");
                 }
             }
             dataManagementMapper.insertPcObdInfo(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return AjaxResult.success("插入成功");
@@ -104,7 +105,16 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updatePcObdBox(PcObdBox pcObdBox) {
-        return dataManagementMapper.updatePcObdBox(pcObdBox);
+        int i = 0;
+        lock.lock();
+        try {
+            i = dataManagementMapper.updatePcObdBox(pcObdBox);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return i;
     }
 
     /**
@@ -116,7 +126,41 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updatePcObdInfo(PcObdInfo pcObdInfo) {
-        return dataManagementMapper.updatePcObdInfo(pcObdInfo);
+        int i = 0;
+        lock.lock();
+        try {
+            i = dataManagementMapper.updatePcObdInfo(pcObdInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateBaseData(List<BaseUpdate> baseUpdates) {
+        int j = 0;
+        if (!CollectionUtils.isEmpty(baseUpdates)) {
+            lock.lock();
+            try {
+                for (BaseUpdate baseUpdate : baseUpdates) {
+                    int i = 0;
+                    i = dataManagementMapper.updateBaseData(baseUpdate);
+                    j++;
+                    if (i <= 0) {
+                        j = 0;
+                        int a = 1 / 0;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+        }
+        return j;
     }
 
     /**
@@ -128,7 +172,15 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int deletePcObdInfoById(Integer id) {
-        return dataManagementMapper.deletePcObdInfoById(id);
+        int i = 0;
+        try {
+            i = dataManagementMapper.deletePcObdInfoById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return i;
     }
 
     /**
@@ -141,10 +193,18 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Transactional(rollbackFor = Exception.class)
     public int deletePcObdBoxByIds(String ids) {
         Long[] boxIds = Convert.toLongArray(ids);
-        if (boxIds.length == 0){
+        if (boxIds.length == 0) {
             return 0;
         }
-        return dataManagementMapper.deletePcObdBoxByIds(boxIds);
+        int i = 0;
+        try {
+            i = dataManagementMapper.deletePcObdBoxByIds(boxIds);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+        return i;
 
     }
 
@@ -164,7 +224,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
         List<PcObdInfo> pcObdInfos = new ArrayList<>();
         try {
             pcObdInfos = dataManagementMapper.selectByBoxId(boxId);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return pcObdInfos;
@@ -181,7 +241,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
         List<PcObdBox> pcObdBoxes = new ArrayList<PcObdBox>();
         try {
             pcObdBoxes = dataManagementMapper.selectBoxListByEntity(pcObdBox);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return pcObdBoxes;

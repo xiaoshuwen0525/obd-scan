@@ -1,25 +1,16 @@
 package com.ruoyi.web.controller.data;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.framework.util.ShiroUtils;
-import com.ruoyi.system.domain.SysUser;
-import com.ruoyi.web.controller.data.domain.DerivedEntity;
-import com.ruoyi.web.controller.data.domain.PcObdBox;
-import com.ruoyi.web.controller.data.domain.PcObdInfo;
+import com.ruoyi.web.controller.data.domain.*;
 import com.ruoyi.web.controller.data.service.IDataManagementService;
-import com.ruoyi.web.controller.data.domain.ImportEntity;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,8 +28,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DataManagementController extends BaseController {
 
     private final String prefix = "device/baseData";
-
-    private static final Lock lock = new ReentrantLock();
 
     @Autowired
     private IDataManagementService dataManagementService;
@@ -64,36 +53,29 @@ public class DataManagementController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(derivedEntities == null){
+        if (derivedEntities == null) {
             return prefix + "/baseUpdate";
         }
         int count = 0;
         List<PcObdInfo> pcObdInfos = new ArrayList<>();
         for (DerivedEntity entity : derivedEntities) {
             PcObdInfo pcObdInfo = new PcObdInfo();
-            if (count == 0){
+            if (count == 0) {
                 PcObdBox pcObdBox = new PcObdBox();
-                BeanUtil.copyProperties(entity,pcObdBox);
+                BeanUtil.copyProperties(entity, pcObdBox);
+                pcObdBox.setId(entity.getBoxId());
                 mmap.put("box", pcObdBox);
             }
-            BeanUtil.copyProperties(entity,pcObdInfo);
+            BeanUtil.copyProperties(entity, pcObdInfo);
+            pcObdInfo.setId(entity.getObdId());
             pcObdInfos.add(pcObdInfo);
             count++;
         }
         mmap.put("obd", pcObdInfos);
+        mmap.put("obdSize", pcObdInfos.size());
         return prefix + "/baseUpdate";
     }
 
-    /**
-     * 修改保存基础数据
-     */
-    @PostMapping("/baseUpdate")
-    @ResponseBody
-    public AjaxResult baseUpdate(SysUser user)
-    {
-        System.out.println(user);
-        return toAjax(1);
-    }
 
     /**
      * 基础数据管理--跳转ODB页面并携带当前点击的机箱ID
@@ -112,8 +94,7 @@ public class DataManagementController extends BaseController {
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
         ExcelUtil<ImportEntity> util = new ExcelUtil<ImportEntity>(ImportEntity.class);
         List<ImportEntity> userList = util.importExcel(file.getInputStream());
-        AjaxResult ajaxResult = dataManagementService.insertPcObd(userList);
-        return ajaxResult;
+        return dataManagementService.insertPcObd(userList);
     }
 
     /**
@@ -127,65 +108,95 @@ public class DataManagementController extends BaseController {
         return util.exportExcel(derivedEntities, "基础数据");
     }
 
+    @PostMapping("/updateBaseData")
+    @ResponseBody
+    public AjaxResult updateBaseData(BaseDataVo baseDataVo) {
+        if (baseDataVo == null) {
+            return AjaxResult.error("不允许全部置空");
+        }
+        baseDataVo.makeBaseUpdateList();
+        int i;
+        try {
+            i = dataManagementService.updateBaseData(baseDataVo.getBaseUpdateList());
+            if (i > 0) {
+                return AjaxResult.success("更新成功");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("更新失败");
+    }
 
     @PostMapping("/updatePcObdBox")
     @ResponseBody
     public AjaxResult updatePcObdBox(PcObdBox pcObdBox) {
-        String s = "更新失败";
+        if (pcObdBox == null) {
+            return AjaxResult.error("更新失败");
+        }
+        int i;
         try {
-            int i = dataManagementService.updatePcObdBox(pcObdBox);
+            i = dataManagementService.updatePcObdBox(pcObdBox);
             if (i > 0) {
-                s = "更新成功";
+                return AjaxResult.success("更新成功");
             }
         } catch (Exception e) {
-            AjaxResult.error(s);
+            e.printStackTrace();
         }
-        return AjaxResult.success(s);
+        return AjaxResult.error("更新失败");
     }
 
     @PostMapping("/updatePcObdInfo")
     @ResponseBody
     public AjaxResult updatePcObdInfo(PcObdInfo pcObdInfo) {
-        String s = "更新失败";
+        if (pcObdInfo == null) {
+            return AjaxResult.error("更新失败");
+        }
+        int i;
         try {
-            int i = dataManagementService.updatePcObdInfo(pcObdInfo);
+            i = dataManagementService.updatePcObdInfo(pcObdInfo);
             if (i > 0) {
-                s = "更新成功";
+                return AjaxResult.success("更新成功");
             }
         } catch (Exception e) {
-            AjaxResult.error(s);
+            e.printStackTrace();
         }
-        return AjaxResult.success(s);
+        return AjaxResult.error("更新失败");
     }
 
     @PostMapping("/deletePcObdInfoById")
     @ResponseBody
     public AjaxResult deletePcObdInfoById(Integer id) {
-        String s = "删除失败";
+        if (id == 0) {
+            return AjaxResult.error("更新失败");
+        }
+        int i;
         try {
-            int i = dataManagementService.deletePcObdInfoById(id);
+            i = dataManagementService.deletePcObdInfoById(id);
             if (i > 0) {
-                s = "删除成功";
+                return AjaxResult.success("更新成功");
             }
         } catch (Exception e) {
-            AjaxResult.error(s);
+            e.printStackTrace();
         }
-        return AjaxResult.success(s);
+        return AjaxResult.error("更新失败");
     }
 
     @PostMapping("/deletePcObdBoxById")
     @ResponseBody
     public AjaxResult deletePcObdBoxByIds(String ids) {
-        String s = "删除失败";
+        if (StringUtils.isBlank(ids)) {
+            return AjaxResult.error("更新失败");
+        }
+        int i;
         try {
-            int i = dataManagementService.deletePcObdBoxByIds(ids);
+            i = dataManagementService.deletePcObdBoxByIds(ids);
             if (i > 0) {
-                s = "删除成功";
+                return AjaxResult.success("更新成功");
             }
         } catch (Exception e) {
-            AjaxResult.error(s);
+            e.printStackTrace();
         }
-        return AjaxResult.success(s);
+        return AjaxResult.error("更新失败");
     }
 
     @PostMapping("/selectBoxListByEntity")

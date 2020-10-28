@@ -145,7 +145,6 @@
         </foreach>
     </insert>
 
-
     <!--通过主键修改数据-->
     <update id="updatePcObdBox" parameterType="com.ruoyi.web.controller.data.domain.PcObdBox">
         update pc_obd_box
@@ -189,6 +188,50 @@
         </set>
         where id = #{id}
     </update>
+
+
+    <!--通过主键修改数据-->
+    <update id="updateBaseData" parameterType="com.ruoyi.web.controller.data.domain.BaseUpdate">
+        update pc_obd_box t1, pc_obd_info t2
+        <set>
+            <if test="boxCode != null and boxCode != ''">
+                t1.box_code = #{boxCode},
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                t1.label_code = #{labelCode},
+            </if>
+            <if test="boxName != null and boxName != ''">
+                t1.box_name = #{boxName},
+            </if>
+            <if test="area != null and area != ''">
+                t1.area = #{area},
+            </if>
+            <if test="businessBureau != null and businessBureau != ''">
+                t1.business_bureau = #{businessBureau},
+            </if>
+            <if test="campService != null and campService != ''">
+                t1.camp_service = #{campService},
+            </if>
+            <if test="obdName != null and obdName != ''">
+                t2.obd_name = #{obdName},
+            </if>
+            <if test="boxBelong != null and boxBelong != ''">
+                t2.box_belong = #{boxBelong},
+            </if>
+            <if test="portCount != null">
+                t2.port_count = #{portCount},
+            </if>
+        </set>
+        <where>
+            <if test="boxId != null">
+               and t1.id = #{boxId}
+            </if>
+            <if test="id != null">
+               and t2.id = #{id}
+            </if>
+        </where>
+    </update>
+
 
     <!--通过主键修改数据-->
     <update id="updatePcObdInfo" parameterType="com.ruoyi.web.controller.data.domain.PcObdInfo">

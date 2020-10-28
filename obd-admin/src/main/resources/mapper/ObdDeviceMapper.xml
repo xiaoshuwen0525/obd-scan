@@ -203,20 +203,21 @@
                 and job_number = (select job_number from wx_user where phone = #{phone})
             </if>
             <if test="boxCode != null and boxCode != ''">
-                and box_code = #{boxCode}
+                and box_code like concat('%', #{boxCode},'%')
             </if>
             <if test="labelCode != null and labelCode != ''">
-                and label_code = #{labelCode}
+                or label_code like concat('%', #{labelCode},'%')
             </if>
+            GROUP BY id HAVING
             <choose>
                 <when test="status == ''">
-                    and 1 = 1
+                    1 = 1
                 </when>
                 <when test="status == 0">
-                    and status = 0 and exception_type = 0
+                    status = 0 and exception_type = 0
                 </when>
                 <when test="status == 1">
-                    and status = 1 or exception_type != 0
+                    exception_type !=0
                 </when>
             </choose>
         </where>

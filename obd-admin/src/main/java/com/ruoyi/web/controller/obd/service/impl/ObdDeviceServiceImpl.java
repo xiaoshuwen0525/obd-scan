@@ -189,6 +189,9 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             labelCode = code;
         } else if (code.startsWith("光分纤箱")) {
             boxCode = code;
+        }else{
+            labelCode = code;
+            boxCode = code;
         }
         //查询机箱信息
         List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxCode, labelCode, status);
@@ -311,10 +314,10 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         for (ObdBoxVO obdBox : list) {
             if ("1".equals(obdBox.getExceptionType())) {
                 obdBox.setStatus(changeStatus("1"));
-                obdBox.setExceptionType("盒子异常");
+                obdBox.setExceptionType("机箱异常");
             } else if ("2".equals(obdBox.getExceptionType())) {
                 obdBox.setStatus(changeStatus("1"));
-                obdBox.setExceptionType("obd异常");
+                obdBox.setExceptionType("OBD异常");
             } else {
                 obdBox.setStatus(changeStatus("0"));
                 obdBox.setExceptionType("正常");

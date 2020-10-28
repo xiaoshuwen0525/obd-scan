@@ -60,6 +60,6 @@ public class ImportEntity{
     /**
      * 端口数量
      */
-    @Excel(name = "OBD端口")
+    @Excel(name = "OBD端口数")
     private int portCount;
 }

@@ -208,6 +208,7 @@
             <if test="labelCode != null and labelCode != ''">
                 or label_code like concat('%', #{labelCode},'%')
             </if>
+            and 1 = 1
             GROUP BY id HAVING
             <choose>
                 <when test="status == ''">

@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.obd.mapper;
 
+import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
@@ -76,5 +77,11 @@ public interface ObdDeviceMapper {
      * 根据boxCode或者labelCode查询机箱信息
      * */
     List<ObdPortInfoVO> selectAllInfoByCode(@Param("boxCode") String boxCode, @Param("labelCode") String labelCode);
+
+    /**
+     * 根据boxCode或者labelCode查询基础信息
+     * */
+    List<DerivedEntity> selectBaseDataByCode(@Param("boxCode") String boxCode, @Param("labelCode") String labelCode);
+
 
 }

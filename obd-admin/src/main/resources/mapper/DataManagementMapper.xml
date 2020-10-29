@@ -336,22 +336,22 @@
                 and t1.id = #{id,jdbcType=INTEGER}
             </if>
             <if test="boxCode != null and boxCode != ''">
-                and t1.box_code = #{boxCode,jdbcType=VARCHAR}
+                and t1.box_code like concat('%',#{boxCode,jdbcType=VARCHAR},'%')
             </if>
             <if test="labelCode != null and labelCode != ''">
-                and t1.label_code = #{labelCode,jdbcType=VARCHAR}
+                and t1.label_code like concat('%',#{labelCode,jdbcType=VARCHAR},'%')
             </if>
             <if test="boxName != null and boxName != ''">
-                and t1.box_name = #{boxName,jdbcType=VARCHAR}
+                and t1.box_name like concat('%',#{boxName,jdbcType=VARCHAR},'%')
             </if>
             <if test="area != null and area != ''">
-                and t1.area = #{area,jdbcType=VARCHAR}
+                and t1.area like concat('%',#{area,jdbcType=VARCHAR},'%')
             </if>
             <if test="businessBureau != null and businessBureau != ''">
-                and t1.business_bureau = #{businessBureau,jdbcType=VARCHAR}
+                and t1.business_bureau like concat('%',#{businessBureau,jdbcType=VARCHAR},'%')
             </if>
             <if test="campService != null and campService != ''">
-                and t1.camp_service = #{campService,jdbcType=VARCHAR}
+                and t1.camp_service like concat('%',#{campService,jdbcType=VARCHAR},'%')
             </if>
             <if test="jobNumber != null and jobNumber != ''">
                 and job_number = #{jobNumber,jdbcType=VARCHAR}

@@ -5,6 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.web.controller.data.domain.BaseDataVo;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
@@ -53,6 +54,22 @@ public class WeChatController extends BaseController {
             return AjaxResult.warn("识别到的串码无效");
         }
         ObdBoxVO obdBoxVO = obdDeviceService.selectAllInfoByCode(code);
+        if (obdBoxVO == null) {
+            return AjaxResult.warn("该串码未能查询到对应数据");
+        }
+        return AjaxResult.success("200","查询成功",obdBoxVO);
+    }
+
+    /**
+     * 通过机箱串码或者倒灌二维码查询基础信息--前端特定数据返回专用
+     */
+    @PostMapping("/selectBaseDataByCode")
+    @ResponseBody
+    public AjaxResult selectBaseDataByCode(String code) {
+        if (StringUtils.isBlank(code) || "undefined".equals(code)) {
+            return AjaxResult.warn("识别到的串码无效");
+        }
+        ObdBoxVO obdBoxVO = obdDeviceService.selectBaseDataByCode(code);
         if (obdBoxVO == null) {
             return AjaxResult.warn("该串码未能查询到对应数据");
         }

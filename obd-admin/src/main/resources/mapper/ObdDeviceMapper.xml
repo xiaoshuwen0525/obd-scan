@@ -20,6 +20,20 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap type="com.ruoyi.web.controller.data.domain.DerivedEntity" id="PcObdViewResultMap">
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
+        <result property="boxName" column="box_name" jdbcType="VARCHAR"/>
+        <result property="area" column="area" jdbcType="VARCHAR"/>
+        <result property="businessBureau" column="business_bureau" jdbcType="VARCHAR"/>
+        <result property="campService" column="camp_service" jdbcType="VARCHAR"/>
+        <result property="obdId" column="obd_id" jdbcType="INTEGER"/>
+        <result property="boxId" column="box_id" jdbcType="INTEGER"/>
+        <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
+        <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
+        <result property="portCount" column="port_count" jdbcType="INTEGER"/>
+    </resultMap>
+
     <resultMap type="com.ruoyi.web.controller.system.domain.WxUser" id="wxUserMap">
         <result property="seq" column="num" jdbcType="INTEGER"/>
         <result property="id" column="id" jdbcType="INTEGER"/>
@@ -89,6 +103,22 @@
             </if>
         </where>
     </select>
+
+    <!--通过boxCode或labelCode查询obd信息-->
+    <select id="selectBaseDataByCode" resultMap="PcObdViewResultMap" >
+        select box_id, obd_id, port_count from pc_obd_view
+        <where>
+            <if test="boxCode != null and boxCode != ''">
+                and box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                and label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+
 
     <!--通过ObdId查询端口列表-->
     <select id="selectPortByObdId" resultMap="ObdPortInfoVOMap" >

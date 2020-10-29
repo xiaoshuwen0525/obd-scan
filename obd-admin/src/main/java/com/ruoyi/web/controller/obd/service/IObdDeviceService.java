@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.obd.service;
 
+import com.ruoyi.web.controller.data.domain.BaseDataVo;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
@@ -79,5 +80,10 @@ public interface IObdDeviceService {
      * 根据boxCode或者labelCode查询机箱信息
      * */
     ObdBoxVO selectAllInfoByCode(String code);
+
+    /**
+     * 根据boxCode或者labelCode查询导入基础数据
+     * */
+    ObdBoxVO selectBaseDataByCode(String code);
 
 }

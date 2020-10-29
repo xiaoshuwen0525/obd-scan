@@ -1,6 +1,9 @@
 package com.ruoyi.web.controller.obd.service.impl;
 
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.web.controller.data.domain.BaseDataVo;
+import com.ruoyi.web.controller.data.domain.BaseUpdate;
+import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.obd.mapper.ObdDeviceMapper;
 import com.ruoyi.web.controller.obd.service.IObdDeviceService;
 import com.ruoyi.web.controller.system.domain.WxUser;
@@ -235,7 +238,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     }
 
     /**
-     * 根据扫描识别出来的code进行判定并查询机箱以及其所属信息
+     * 根据扫描识别出来的code进行查询基础信息
      *
      * @param code 识别码
      * @return ObdBoxVO
@@ -282,6 +285,56 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             obdInfoVO.setId(Integer.parseInt(s));
             obdInfoVO.setObdPortInfoVOList(obdPortInfoVOS1);
             obdInfoVOS.add(obdInfoVO);
+        }
+        obdBoxVO.setObdInfoVOList(obdInfoVOS);
+        return obdBoxVO;
+    }
+
+    /**
+     * 根据扫描识别出来的code进行判定并查询机箱以及其所属信息
+     *
+     * @param code 识别码
+     * @return ObdBoxVO
+     */
+    @Override
+    public ObdBoxVO selectBaseDataByCode(String code) {
+        String boxCode = null;
+        String labelCode = null;
+        if (code.startsWith("DG")) {
+            labelCode = code;
+        } else if (code.startsWith("光分纤箱")) {
+            boxCode = code;
+        } else {
+            return null;
+        }
+        ObdBoxVO obdBoxVO = new ObdBoxVO();
+        List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
+        List<DerivedEntity> derivedEntities;
+        derivedEntities = obdDeviceMapper.selectBaseDataByCode(boxCode, labelCode);
+        if (derivedEntities == null || derivedEntities.size()==0){
+            return null;
+        }
+        for (DerivedEntity derivedEntitie : derivedEntities) {
+            if (derivedEntitie.getBoxId()!=0){
+                //这里的id取值为机箱的唯一id
+                obdBoxVO.setId(derivedEntitie.getBoxId());
+            }
+            ObdInfoVO obdInfoVO = new ObdInfoVO();
+            obdInfoVO.setId(derivedEntitie.getObdId());
+            obdInfoVOS.add(obdInfoVO);
+            List<ObdPortInfoVO> obdPortInfoVOS1 = new ArrayList<>();
+            int portCount = derivedEntitie.getPortCount();
+            if (portCount!=0){
+                for (int i = 1; i <= portCount; i++) {
+                    ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
+                    obdPortInfoVO1.setPortSer(i);
+                    obdPortInfoVO1.setPortCode("");
+                    obdPortInfoVOS1.add(obdPortInfoVO1);
+                }
+            }else{
+                obdPortInfoVOS1.add(null);
+            }
+            obdInfoVO.setObdPortInfoVOList(obdPortInfoVOS1);
         }
         obdBoxVO.setObdInfoVOList(obdInfoVOS);
         return obdBoxVO;

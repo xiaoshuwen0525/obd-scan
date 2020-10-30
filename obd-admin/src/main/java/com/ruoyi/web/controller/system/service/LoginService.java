@@ -2,9 +2,12 @@ package com.ruoyi.web.controller.system.service;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.web.controller.employee.domain.EmployeeUser;
+import com.ruoyi.web.controller.employee.domain.ImportUser;
 import com.ruoyi.web.controller.system.domain.PhoneCode;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * 登陆 服务层
@@ -36,7 +39,7 @@ public interface LoginService {
      * 解绑
      * @return
      */
-    public AjaxResult updateUnbind(String openId,String phone,Integer authCode) throws ParseException;
+    public AjaxResult updateUnbind(String jobNumber,String openId,String phone,Integer authCode) throws ParseException;
 
     public int unbind(String openId);
 

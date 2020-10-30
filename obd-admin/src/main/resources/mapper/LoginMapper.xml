@@ -16,6 +16,14 @@
         <result property="createTime" column="create_time" />
     </resultMap>
 
+    <resultMap type="com.ruoyi.web.controller.employee.domain.EmployeeUser" id="employeeUserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" />
+    </resultMap>
+
+
     <!-- 添加手机号验证码 -->
     <insert id="insertPhoneAuthCode" parameterType="com.ruoyi.web.controller.system.domain.PhoneCode">
         insert into phone_code (
@@ -77,4 +85,9 @@
         set phone=null
         where wx_open_id=#{openId}
     </update>
+
+
+    <select id="selectEmployee" resultMap="employeeUserMap">
+        select user_name,job_number,phone from employee_user  where job_number=#{jobNumber} and phone=#{phone}
+    </select>
 </mapper> 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.employee.mapper.EmployeeMapper">
+
+    <resultMap type="com.ruoyi.web.controller.employee.domain.EmployeeUser" id="employeeUserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <select id="selectEmployeeList" resultMap="employeeUserMap">
+        select id,user_name,job_number,phone,create_time from employee_user
+        <where>
+             <if test="userName != null and userName != ''">and user_name=#{userName}</if>
+            <if test="jobNumber != null and jobNumber != ''">and job_number=#{jobNumber}</if>
+             <if test="phone != null and phone != ''">and phone=#{phone}</if>
+        </where>
+    </select>
+
+    <select id="selectByIdEmployee" resultMap="employeeUserMap">
+        select id,user_name,job_number,phone from employee_user where id=#{id}
+    </select>
+
+    <insert id="insertEmployee" parameterType="com.ruoyi.web.controller.employee.domain.EmployeeUser">
+        insert into employee_user(user_name,job_number,phone)
+        values
+        (#{userName},#{jobNumber},#{phone})
+    </insert>
+
+    <update id="updateEmployee" parameterType="com.ruoyi.web.controller.employee.domain.EmployeeUser">
+        update employee_user set user_name=#{userName},job_number=#{jobNumber},phone=#{phone}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteEmployee" parameterType="java.util.List">
+        delete from employee_user
+        where id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="importUser"  parameterType="com.ruoyi.web.controller.employee.domain.EmployeeUser">
+        insert into employee_user
+        (user_name,job_number,phone)
+        values
+        <foreach item="item" collection="list" separator="," open="" close="" index="index">
+            (#{item.userName},#{item.jobNumber},#{item.phone})
+        </foreach>
+
+    </insert>
+
+    <select id="selectUserName" resultMap="employeeUserMap">
+         select user_name from employee_user
+        where user_name=#{userName}
+    </select>
+
+    <select id="selectJobNumber" resultMap="employeeUserMap">
+         select job_number from employee_user
+        where job_number=#{jobNumber}
+    </select>
+    <select id="selectPhone" resultMap="employeeUserMap">
+         select phone from employee_user
+        where phone=#{phone}
+    </select>
+
+</mapper> 

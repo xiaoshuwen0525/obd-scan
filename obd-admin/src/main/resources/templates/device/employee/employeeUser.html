@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('一线员工资料管理')"/>
+</head>
+<body class="gray-bg">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="user-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                用户名：<input type="text" name="userName"/>
+                            </li>
+                            <li>
+                                员工号：<input type="text" name="jobNumber"/>
+                            </li>
+                            <li>
+                                手机号：<input type="text" name="phone"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                        class="fa fa-search"></i>&nbsp;搜索</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-info" onclick="$.table.importExcel()">
+                    <i class="fa fa-upload"></i> 导入
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer"/>
+    <script th:inline="javascript">
+        var prefix = ctx + "device/employee";
+
+        $(function () {
+            var options = {
+                url: prefix + "/selectEmployeeList",
+                updateUrl: prefix + "/editEmployee/{id}",
+                // updateUrl: prefix + "/editEmployee",
+                searchUrl: prefix + "/selectEmployeeList",
+                createUrl: prefix + "/addEmployee",
+                removeUrl: prefix + "/deleteEmployee",
+                importUrl: prefix + "/importUser",
+                exportUrl: prefix + "/export",
+                modalName: "一线员工资料管理",
+                columns: [
+                    {
+                        checkbox: true
+                    },
+                    {
+                        field : 'id',
+                        title : '主键'
+                    },
+                    {
+                        field : 'userName',
+                        title : '用户名'
+                    },
+                    {
+                        field : 'jobNumber',
+                        title : '员工号'
+                    },
+                    {
+                        field : 'phone',
+                        title : '手机号'
+                    },
+                    {
+                        field : 'createTime',
+                        title : '创建时间'
+                    }
+                ]
+            };
+            $.table.init(options);
+            $.table.hideColumn("id");
+        });
+    </script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</html>

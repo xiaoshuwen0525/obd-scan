@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.system.service.impl;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.web.controller.employee.domain.EmployeeUser;
+import com.ruoyi.web.controller.employee.domain.ImportUser;
 import com.ruoyi.web.controller.system.controller.LoginController;
 import com.ruoyi.web.controller.system.domain.PhoneCode;
 import com.ruoyi.web.controller.system.domain.WxUser;
@@ -11,13 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 登陆 服务层实现类
@@ -29,7 +29,6 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private LoginMapper loginMapper;
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     /**
      * 登陆
      * @param openId
@@ -41,7 +40,7 @@ public class LoginServiceImpl implements LoginService {
         if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && wxUser.getPhone() != null ){ ;
             return AjaxResult.successOBD(wxUser);
         }else{
-            return AjaxResult.success("104","没有绑定",openId);
+            return AjaxResult.success("104","未绑定",openId);
         }
     }
 
@@ -54,7 +53,13 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     @Override
+    @Transactional
     public AjaxResult insertUser(String jobNumber,String phone,String wxOpenId,Integer authCode) throws ParseException {
+
+        EmployeeUser employeeUser = loginMapper.selectEmployee(jobNumber, phone);
+        if(employeeUser==null || (!employeeUser.getPhone().equals(phone) && !employeeUser.getJobNumber().equals(jobNumber))){
+            return AjaxResult.success("104","资料库没有此工号或手机号",null);
+        }
 
         PhoneCode phoneCode = loginMapper.selectAuthCode();
         //判断手机号是否存在
@@ -62,10 +67,11 @@ public class LoginServiceImpl implements LoginService {
         if(wxUser1!=null && wxUser1.getPhone().equals(phone)){
             return AjaxResult.success("104","手机号已绑定,不能重复绑定",null);
         }
+
         //判断工号是否存在
         WxUser wxUser2 = loginMapper.selectJobNumber(jobNumber);
         if(wxUser2!=null && wxUser2.getJobNumber().equals(jobNumber)){
-            return AjaxResult.success("104","工号不能重复",null);
+            return AjaxResult.success("104","此工号已存在",null);
         }
 
         //判断验证码是否超时  超过5分钟
@@ -105,6 +111,7 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     @Override
+    @Transactional
     public AjaxResult insertPhoneAuthCode(PhoneCode phoneCode) {
 
         loginMapper.insertPhoneAuthCode(phoneCode);
@@ -117,13 +124,20 @@ public class LoginServiceImpl implements LoginService {
      * @return
      */
     @Override
-    public AjaxResult updateUnbind(String openId, String phone, Integer authCode) throws ParseException {
+    @Transactional
+    public AjaxResult updateUnbind(String jobNumber,String openId, String phone, Integer authCode) throws ParseException {
 
         //判断手机号是否存在
         WxUser wxUser1 = loginMapper.selectPhone(phone);
 
         if(wxUser1!=null && wxUser1.getPhone().equals(phone)){
             return AjaxResult.success("104","手机号已绑定,不能重复绑定",null);
+        }
+
+        //判断工号是否存在
+        WxUser wxUser2 = loginMapper.selectJobNumber(jobNumber);
+        if(wxUser2!=null && wxUser2.getJobNumber().equals(jobNumber)){
+            return AjaxResult.success("104","此工号已存在",null);
         }
 
         //判断验证码是否超时  超过5分钟
@@ -155,6 +169,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional
     public int unbind(String openId) {
         int unbind = loginMapper.unbind(openId);
         return unbind;

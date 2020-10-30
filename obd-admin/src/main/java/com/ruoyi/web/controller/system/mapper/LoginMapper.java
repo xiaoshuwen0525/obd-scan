@@ -1,10 +1,13 @@
 package com.ruoyi.web.controller.system.mapper;
 
 
+import com.ruoyi.web.controller.employee.domain.EmployeeUser;
 import com.ruoyi.web.controller.system.domain.PhoneCode;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 登陆 持久层
@@ -61,4 +64,8 @@ public interface LoginMapper {
     public int updateUnbind(@Param("openId") String openId, @Param("phone") String phone);
 
     public int unbind(String openId);
+
+    EmployeeUser selectEmployee(@Param("jobNumber") String jobNumber,@Param("phone") String phone);
+
+
 }

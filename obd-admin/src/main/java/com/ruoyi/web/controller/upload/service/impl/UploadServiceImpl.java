@@ -88,7 +88,7 @@ public class UploadServiceImpl implements IUploadService {
         }
       }
       if(uploadMapper.countByboxId(obdBoxVO.getId()) > 0) {
-        flag = 1;
+        return AjaxResult.error("该obd已上传");
       }
       int infoCount = 1;
       for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {

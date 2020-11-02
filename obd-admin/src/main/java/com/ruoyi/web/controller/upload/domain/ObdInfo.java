@@ -26,5 +26,6 @@ public class ObdInfo {
         /** 数据状态0：正常1：异常 */
         @Excel(name = "数据状态0：正常1：异常")
         private Integer status;
-    
+
+        private Integer portCount;
 }

@@ -4,6 +4,7 @@ package com.ruoyi.web.controller.upload.service;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.controller.upload.domain.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,6 +31,13 @@ public interface IUploadService
      * @return 盒子id
      */
      int uploadObdBox(ObdBox obdBox);
+
+    /**
+     * 上传obd盒子
+     * @param obdBox 实体类
+     * @return 盒子id
+     */
+    int uploadObdPicture(ObdBox obdBox,MultipartFile file,String boxCode);
 
     /**
      * 上传obd
@@ -130,9 +138,12 @@ public interface IUploadService
 
     /**
      * 更新obd
-     * @param obd
+     * @param obdBoxVO
      * @return int  id
      */
     AjaxResult updateObd(ObdBoxVO obdBoxVO);
+
+
+
 
 }

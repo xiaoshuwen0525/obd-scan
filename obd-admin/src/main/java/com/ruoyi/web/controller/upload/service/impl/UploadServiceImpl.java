@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.upload.service.impl;
 
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.json.JSONUtil;
 import com.github.pagehelper.PageHelper;
@@ -11,12 +12,18 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.upload.domain.*;
 import com.ruoyi.web.controller.upload.mapper.UploadMapper;
 import com.ruoyi.web.controller.upload.service.IUploadService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,98 +37,15 @@ import java.util.regex.Pattern;
 @Service
 public class UploadServiceImpl implements IUploadService {
 
+  @Value("${ruoyi.uploadfile}")
+  private String uploadfile;
 
   @Autowired
   private UploadMapper uploadMapper;
 
+  private static final Logger log = LoggerFactory.getLogger(UploadServiceImpl.class);
   //private ReentrantLock lock = new ReentrantLock();
-
   private final  int portCount = 8;
-
-//  @Override
-//  @Transactional
-//  public AjaxResult uploadInformation(ObdVO obd) {
-//    System.out.println(obd.toString());
-//    String msg = "";
-//    String undefined = "undefined";
-//    //lock.lock();
-//    try {
-//      //建机箱
-//      int boxId = 0;
-//      ObdBox obdBox = new ObdBox();
-//      if (!"".equals(obd.getBoxCode())) {
-//        obdBox.setCreateTime(new Date());
-//        obdBox.setBoxCode(obd.getBoxCode());
-//        if(StringUtils.isNotEmpty(obd.getJobNumber()) && !undefined.equals(obd.getJobNumber())){
-//          obdBox.setJobNumber(obd.getJobNumber());
-//        }else {
-//          return AjaxResult.error("工号为空或不是正常值："+obd.getJobNumber());
-//        }
-//        //识别不出是null
-//        if (obd.getBoxCode() != null) {
-//          obdBox.setStatus(0);
-//        } else {
-//          obdBox.setBoxCode("");
-//          obdBox.setStatus(1);
-//          obdBox.setExceptionType(1);
-//          obdBox.setExceptionInfo("盒子二维码识别不出");
-//        }
-//        uploadMapper.insertObdBox(obdBox);
-//        boxId = obdBox.getId();
-//      }
-//      int infoCount = 1;
-//      InfoListVO InfoListVO = JSONUtil.toBean("{infoVOList:" + obd.getPortList() + "}", InfoListVO.class);
-//      for(InfoVO infoVO:InfoListVO.getInfoVOList()){
-//        //建obd
-//        ObdInfo obdInfo = new ObdInfo();
-//        obdInfo.setBoxId(boxId);
-//        obdInfo.setStatus(0);
-//        uploadMapper.insertObdInfo(obdInfo);
-//        int obdId = obdInfo.getId();
-//        for (ObdPortInfo port : infoVO.getPortData()) {
-//          ObdPortInfo obdPortInfo = new ObdPortInfo();
-//          //存端口
-//          obdPortInfo.setObdId(obdId);
-//          obdPortInfo.setPortSer(port.getPortSer());
-//          if (port.getPortSer() != null ) {
-//            if (port.getPortCode() != null) {
-//              obdPortInfo.setStatus(0);
-//              obdPortInfo.setPortCode(port.getPortCode());
-//            } else {
-//              obdPortInfo.setStatus(1);
-//              obdPortInfo.setPortCode("");
-//            }
-//            if (!"".equals(port.getPortCode())) {
-//              if(port.getPortCode()!=null){
-//                if(!isNumber(port.getPortCode()) ){
-//                  return AjaxResult.error("第"+infoCount+"个OBD的第"+port.getPortSer()+"端口二维码不对");
-//                }
-//              }
-//              uploadMapper.insertPort(obdPortInfo);
-//            }
-//          }
-//
-//        }
-//        if (uploadMapper.countByPortStatus(obdId) > 0) {
-//          obdInfo.setStatus(1);
-//          uploadMapper.updateObdInfo(obdInfo);
-//          obdBox.setExceptionType(2);
-//          if(StringUtils.isNoneBlank(obdBox.getExceptionInfo())){
-//            obdBox.setExceptionInfo(obdBox.getExceptionInfo()+",且存在端口识别异常");
-//          }else {
-//            obdBox.setExceptionInfo("存在端口识别异常");
-//          }
-//          uploadMapper.updateObdBox(obdBox);
-//        }
-//        infoCount++;
-//      }
-//    }catch (Exception e){
-//      e.printStackTrace();
-//    }/*finally {
-//      lock.unlock();
-//    }*/
-//    return AjaxResult.successOBD(msg);
-//  }
 
   @Override
   @Transactional
@@ -129,6 +53,7 @@ public class UploadServiceImpl implements IUploadService {
     System.out.println(obdBoxVO.toString());
     String boxCode = null;
     String labelCode = null;
+    int flag = 0;
     try {
       if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
         if (obdBoxVO.getBoxCode().startsWith("DG")) {
@@ -146,14 +71,34 @@ public class UploadServiceImpl implements IUploadService {
         if (obdBoxVO.getBoxCode() != null) {
           obdBox.setStatus(0);
         } else {
+          obdBox.setBoxCode("");
           obdBox.setStatus(1);
+          obdBox.setExceptionType(1);
+          obdBox.setExceptionInfo("盒子二维码识别不出");
         }
         obdBox.setCreateTime(new Date());
-        uploadMapper.updateBox(obdBox);
+        if(uploadMapper.countByCode(obdBox.getBoxCode())>0){
+          ObdBoxVO boxVO = uploadMapper.selectBoxByCode(obdBox);
+          uploadMapper.updateObdBox(obdBox);
+          obdBoxVO.setId(boxVO.getId());
+        }else {
+          uploadMapper.insertObdBox(obdBox);
+          obdBoxVO.setId(obdBox.getId());
+        }
       }
+      if(uploadMapper.countByboxId(obdBoxVO.getId()) > 0) {
+        flag = 1;
+      }
+
       int infoCount = 1;
-      System.out.println(obdBoxVO.getObdInfoVOList().toString());
       for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
+          ObdInfo info = new ObdInfo();
+          info.setBoxId(obdBoxVO.getId());
+          if(flag ==0){
+            info.setStatus(0);
+            info.setPortCount(obdInfoVO.getPortCount());
+            uploadMapper.insertObdInfo(info);
+          }
         for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
           ObdPortInfoVO obdPort = obdPortInfo;
           if (!"".equals(obdPort.getPortCode()) && obdPort.getSeq() != null) {
@@ -162,6 +107,7 @@ public class UploadServiceImpl implements IUploadService {
                 if (isNumber(obdPort.getPortCode())) {
                   ObdPortInfo portInfo = new ObdPortInfo();
                   portInfo.setId(obdPort.getSeq());
+                  portInfo.setObdId(info.getId());
                   portInfo.setPortCode(obdPort.getPortCode());
                   portInfo.setStatus(0);
                   uploadMapper.updateObdPort(portInfo);
@@ -173,6 +119,7 @@ public class UploadServiceImpl implements IUploadService {
                 portInfo.setId(obdPort.getSeq());
                 portInfo.setPortCode("");
                 portInfo.setStatus(1);
+                portInfo.setObdId(info.getId());
                 uploadMapper.updateObdPort(portInfo);
               }
             }
@@ -183,7 +130,7 @@ public class UploadServiceImpl implements IUploadService {
                   portInfo.setId(obdPort.getSeq());
                   portInfo.setPortCode(obdPort.getPortCode());
                   portInfo.setPortSer(obdPort.getPortSer());
-                  portInfo.setObdId(obdInfoVO.getId());
+                  portInfo.setObdId(info.getId());
                   portInfo.setStatus(0);
                   uploadMapper.insertPort(portInfo);
                 } else {
@@ -194,7 +141,7 @@ public class UploadServiceImpl implements IUploadService {
                 portInfo.setId(obdPort.getSeq());
                 portInfo.setPortCode(obdPort.getPortCode());
                 portInfo.setPortSer(obdPort.getPortSer());
-                portInfo.setObdId(obdInfoVO.getId());
+                portInfo.setObdId(info.getId());
                 portInfo.setStatus(1);
                 uploadMapper.insertPort(portInfo);
               }
@@ -250,6 +197,18 @@ public class UploadServiceImpl implements IUploadService {
       obdBox.setExceptionInfo("无法识别");
     }
     return uploadMapper.insertObdBox(obdBox);
+  }
+
+  @Override
+  public int uploadObdPicture(ObdBox obdBox,MultipartFile multipartFile,String boxCode) {
+    obdBox.setImgUrl(uploadPicture(obdBox.getJobNumber(),multipartFile));
+    int i ;
+    if(uploadMapper.countByCode(boxCode)>0){
+      i = uploadMapper.updateBox(obdBox);
+    }else {
+      i = uploadMapper.insertObdBox(obdBox);
+    }
+    return i;
   }
 
   /**
@@ -409,11 +368,14 @@ public class UploadServiceImpl implements IUploadService {
       }else {
         obdBoxVO.setStatus("正常");
       }
+      if(StringUtils.isEmpty(obdBoxVO.getBoxCode())){
+          obdBoxVO.setBoxCode(obdBoxVO.getLabelCode());
+      }
       if(obdBoxVO.getId()>0){
         List<ObdInfoVO> obdInfoList = uploadMapper.selectInfoByBoxId(obdBoxVO.getId().toString());
         for (ObdInfoVO obdInfo : obdInfoList) {
-//          List<ObdPortInfoVO> obdPortList = getPortList(uploadMapper.selectPortByObdId(obdInfo.getId().toString()));
-          List<ObdPortInfoVO> obdPortList = uploadMapper.selectPortByObdId(obdInfo.getId().toString());
+         List<ObdPortInfoVO> obdPortList = getPortList(uploadMapper.selectPortByObdId(obdInfo.getId().toString()),obdInfo.getPortCount());
+//          List<ObdPortInfoVO> obdPortList = uploadMapper.selectPortByObdId(obdInfo.getId().toString());
           if(obdInfo.getStatus().equals(one)){
             obdInfo.setStatus("异常");
           }else {
@@ -467,48 +429,48 @@ public class UploadServiceImpl implements IUploadService {
         for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()){
           ObdPortInfoVO obdPort = obdPortInfo;
           if(!"".equals(obdPort.getPortCode()) && obdPort.getId()!=null){
-              if(obdPort.getId()>0){
-                if(obdPort.getPortCode()!=null){
-                  if(isNumber(obdPort.getPortCode())){
-                    ObdPortInfo portInfo = new ObdPortInfo();
-                    portInfo.setId(obdPort.getId());
-                    portInfo.setPortCode(obdPort.getPortCode());
-                    portInfo.setStatus(0);
-                    uploadMapper.updateObdPort(portInfo);
-                  }else {
-                    return AjaxResult.error("第"+infoCount+"个OBD的第"+obdPortInfo.getPortSer()+"端口二维码不对");
-                  }
-                }else {
+            if(obdPort.getId()>0){
+              if(obdPort.getPortCode()!=null){
+                if(isNumber(obdPort.getPortCode())){
                   ObdPortInfo portInfo = new ObdPortInfo();
                   portInfo.setId(obdPort.getId());
-                  portInfo.setPortCode("");
-                  portInfo.setStatus(1);
+                  portInfo.setPortCode(obdPort.getPortCode());
+                  portInfo.setStatus(0);
                   uploadMapper.updateObdPort(portInfo);
-                }
-              }
-              if(obdPort.getId() == 0) {
-                if(obdPort.getPortCode()!=null){
-                  if(isNumber(obdPort.getPortCode())){
-                    ObdPortInfo portInfo = new ObdPortInfo();
-                    portInfo.setId(obdPort.getId());
-                    portInfo.setPortCode(obdPort.getPortCode());
-                    portInfo.setPortSer(obdPort.getPortSer());
-                    portInfo.setObdId(obdInfoVO.getId());
-                    portInfo.setStatus(0);
-                    uploadMapper.insertPort(portInfo);
-                  }else {
-                    return AjaxResult.error("第"+infoCount+"个OBD的第"+obdPortInfo.getPortSer()+"端口二维码不对");
-                  }
                 }else {
+                  return AjaxResult.error("第"+infoCount+"个OBD的第"+obdPortInfo.getPortSer()+"端口二维码不对");
+                }
+              }else {
+                ObdPortInfo portInfo = new ObdPortInfo();
+                portInfo.setId(obdPort.getId());
+                portInfo.setPortCode("");
+                portInfo.setStatus(1);
+                uploadMapper.updateObdPort(portInfo);
+              }
+            }
+            if(obdPort.getId() == 0) {
+              if(obdPort.getPortCode()!=null){
+                if(isNumber(obdPort.getPortCode())){
                   ObdPortInfo portInfo = new ObdPortInfo();
                   portInfo.setId(obdPort.getId());
                   portInfo.setPortCode(obdPort.getPortCode());
                   portInfo.setPortSer(obdPort.getPortSer());
                   portInfo.setObdId(obdInfoVO.getId());
-                  portInfo.setStatus(1);
+                  portInfo.setStatus(0);
                   uploadMapper.insertPort(portInfo);
+                }else {
+                  return AjaxResult.error("第"+infoCount+"个OBD的第"+obdPortInfo.getPortSer()+"端口二维码不对");
                 }
+              }else {
+                ObdPortInfo portInfo = new ObdPortInfo();
+                portInfo.setId(obdPort.getId());
+                portInfo.setPortCode(obdPort.getPortCode());
+                portInfo.setPortSer(obdPort.getPortSer());
+                portInfo.setObdId(obdInfoVO.getId());
+                portInfo.setStatus(1);
+                uploadMapper.insertPort(portInfo);
               }
+            }
           }
           if(obdPort.getObdId()!=null){
             if(uploadMapper.countByPortStatus(obdPort.getObdId())>0){
@@ -553,14 +515,15 @@ public class UploadServiceImpl implements IUploadService {
     return AjaxResult.successOBD("操作成功");
   }
 
+
   /**
    * 获得端口列表
    * @param list 前端全部数据
    * @return ObdBox 实体类
    */
-  private List<ObdPortInfoVO> getPortList (List<ObdPortInfoVO> list){
+  private List<ObdPortInfoVO> getPortList (List<ObdPortInfoVO> list,int portCount){
     List<ObdPortInfoVO> obdPortInfos = new ArrayList<ObdPortInfoVO>();
-    for (int i = 0; i < 8 ; i++){
+    for (int i = 0; i < portCount ; i++){
       ObdPortInfoVO obdPortInfo = new ObdPortInfoVO();
       int poreSer = i+1;
       obdPortInfo.setPortSer(poreSer);
@@ -602,30 +565,33 @@ public class UploadServiceImpl implements IUploadService {
 
   /**
    * 获得 图片路径
-   * @param workNumber 工号
+   * @param jobNumber 工号
    * @param multipartFile 图片文件
    * @return path 图片路径
    */
-  private String uploadPicture(String workNumber, MultipartFile multipartFile)  {
-    Properties props = System.getProperties();
+  private String uploadPicture(String jobNumber, MultipartFile multipartFile)  {
     String path = "";
-    String uploadPath="obd-admin/src/main/resources/static/obdImg";
-    String uploadPaths = props.getProperty("user.dir")+ File.separator+uploadPath.replace("/", "\\");
-    String folder = uploadPaths+ File.separator + workNumber + File.separator;
+    String uploadPaths = uploadfile.replace("/", "\\");
+    String folder = uploadPaths+ File.separator + jobNumber + File.separator;
     if (!FileUtil.exist(folder)) {
       FileUtil.mkdir(folder);
     }
-    String fileName = UUID.randomUUID().toString() + "@" + multipartFile.getOriginalFilename();
+    String fileName = multipartFile.getOriginalFilename();
     try {
       File upload = FileUtil.writeBytes(multipartFile.getBytes(), folder + fileName);
       if(upload.length() > 0){
         path = folder + fileName;
       }
+      System.out.println("进入uploadPicture");
     }catch (Exception e){
       return null;
     }
     return path.replace("\\", "/");
   }
+
+
+
+
 
   /**
    * 验证是否为18位数字

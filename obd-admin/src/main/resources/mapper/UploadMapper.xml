@@ -33,6 +33,7 @@
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="portCount" column="port_count" jdbcType="INTEGER"/>
     </resultMap>
 
 
@@ -40,6 +41,7 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="portCount" column="port_count" jdbcType="INTEGER"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdPortInfo" id="ObdPortInfoResultMap">
@@ -174,6 +176,15 @@
         </where>
     </select>
 
+    <select id="countByCode" resultType="int"  >
+        SELECT count(0) FROM obd_box
+        <where>
+            <if test="code != null and code != ''">
+                box_code = #{code,jdbcType=VARCHAR} or  label_code = #{code,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 
     <!--通过主键修改实体属性不为null的列-->
     <update id="updateObdPort" parameterType="com.ruoyi.web.controller.upload.domain.ObdPortInfo">
@@ -223,8 +234,14 @@
             <if test="createTime != null">
                 create_time,
             </if>
+            <if test="labelCode != null and labelCode != '' ">
+                label_code
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="boxCode != null ">
+                #{boxCode,jdbcType=VARCHAR},
+            </if>
             <if test="boxCode != null ">
                 #{boxCode,jdbcType=VARCHAR},
             </if>
@@ -246,6 +263,9 @@
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="labelCode != null and labelCode != '' ">
+                #{labelCode,jdbcType=TIMESTAMP},
+            </if>
         </trim>
     </insert>
 
@@ -259,6 +279,9 @@
             <if test="status != null">
                 status,
             </if>
+            <if test="portCount != null">
+                port_count,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="boxId != null">
@@ -266,6 +289,9 @@
             </if>
             <if test="status != null">
                 #{status,jdbcType=INTEGER},
+            </if>
+            <if test="portCount != null">
+                #{portCount,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -327,7 +353,7 @@
     <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
-        i.id,i.box_id,i.status,b.box_code
+        i.id,i.box_id,i.status,b.box_code,i.port_count
         FROM obd_info i
         INNER  JOIN obd_box b on  b.id = i.box_id,
         (select @num := 0) row_number
@@ -394,6 +420,24 @@
         </where>
     </select>
 
+    <select id="selectBoxByCode" resultMap="ObdBoxVOMap" >
+        SELECT
+        (@num := @num + 1) as num,
+        id, box_code,label_code,img_url, status, exception_type, exception_info, job_number, create_time
+        FROM
+        obd_box, (select @num := 0) row_number
+        <where>
+            <if test="boxCode != null and boxCode != ''">
+                and  box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                and  label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
 
+    <select id="countByboxId" resultType="int" parameterType="java.lang.Integer" >
+          SELECT count(0) FROM obd_info  WHERE box_id = #{boxId,jdbcType=INTEGER}
+    </select>
 
 </mapper>

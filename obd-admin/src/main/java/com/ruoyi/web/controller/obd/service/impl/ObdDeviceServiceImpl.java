@@ -321,6 +321,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             }
             ObdInfoVO obdInfoVO = new ObdInfoVO();
             obdInfoVO.setId(derivedEntitie.getObdId());
+            obdInfoVO.setPortCount(derivedEntitie.getPortCount());
             obdInfoVOS.add(obdInfoVO);
             List<ObdPortInfoVO> obdPortInfoVOS1 = new ArrayList<>();
             int portCount = derivedEntitie.getPortCount();

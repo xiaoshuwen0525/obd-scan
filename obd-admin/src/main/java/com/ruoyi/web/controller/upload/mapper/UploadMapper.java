@@ -47,6 +47,8 @@ public interface UploadMapper {
      */
     int countByJobNumber(@Param("jobNumber") String jobNumber);
 
+    int countByCode(@Param("code") String code);
+
     /**
      * 新增obdInfo对象
      * @param obdInfo 实体类
@@ -105,7 +107,7 @@ public interface UploadMapper {
     List<ObdBoxVO> selectBoxByJobNumber(@Param("jobNumber") String  jobNumber);
 
     /**
-     * 根据盒子唯一ID和工号查询obd
+     * 根据盒子唯一ID
      * @param  boxId  盒子唯一id
      * @return AjaxResult
      */
@@ -142,11 +144,10 @@ public interface UploadMapper {
      */
     ObdPortInfoVO selectPortById(@Param("id") String  id);
 
-    /**
-     * 根据根据id查询端口
-     * @param id id
-     * @return AjaxResult
-     */
-    List<ObdPortInfoVO>  selectAllInfoById(@Param("id") Integer  id);
+
+
+    ObdBoxVO selectBoxByCode(ObdBox obdBox);
+
+    Integer countByboxId(@Param("boxId") Integer  boxId);
 
 }

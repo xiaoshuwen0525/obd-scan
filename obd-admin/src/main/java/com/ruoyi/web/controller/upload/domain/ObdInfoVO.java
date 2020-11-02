@@ -55,6 +55,9 @@ public class ObdInfoVO {
      */
     private String status;
 
+
+    private  Integer portCount;
+
     private List<ObdPortInfoVO> obdPortInfoVOList;
 
 }

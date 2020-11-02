@@ -47,7 +47,7 @@ public interface UploadMapper {
      */
     int countByJobNumber(@Param("jobNumber") String jobNumber);
 
-    int countByCode(@Param("code") String code);
+    int countByCode(ObdBox obdBox);
 
     /**
      * 新增obdInfo对象

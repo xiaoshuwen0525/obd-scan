@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class UploadServiceImpl implements IUploadService {
           obdBox.setExceptionInfo("盒子二维码识别不出");
         }
         obdBox.setCreateTime(new Date());
-        if(uploadMapper.countByCode(obdBox.getBoxCode())>0){
+        if(uploadMapper.countByCode(obdBox)>0){
           ObdBoxVO boxVO = uploadMapper.selectBoxByCode(obdBox);
           uploadMapper.updateObdBox(obdBox);
           obdBoxVO.setId(boxVO.getId());
@@ -89,62 +90,36 @@ public class UploadServiceImpl implements IUploadService {
       if(uploadMapper.countByboxId(obdBoxVO.getId()) > 0) {
         flag = 1;
       }
-
       int infoCount = 1;
       for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
           ObdInfo info = new ObdInfo();
           info.setBoxId(obdBoxVO.getId());
-          if(flag ==0){
+          if(flag == 0){
             info.setStatus(0);
             info.setPortCount(obdInfoVO.getPortCount());
             uploadMapper.insertObdInfo(info);
           }
         for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
-          ObdPortInfoVO obdPort = obdPortInfo;
-          if (!"".equals(obdPort.getPortCode()) && obdPort.getSeq() != null) {
-            if (obdPort.getSeq() > 0) {
-              if (obdPort.getPortCode() != null) {
-                if (isNumber(obdPort.getPortCode())) {
-                  ObdPortInfo portInfo = new ObdPortInfo();
-                  portInfo.setId(obdPort.getSeq());
-                  portInfo.setObdId(info.getId());
-                  portInfo.setPortCode(obdPort.getPortCode());
-                  portInfo.setStatus(0);
-                  uploadMapper.updateObdPort(portInfo);
-                } else {
-                  return AjaxResult.error("第" + infoCount + "个OBD的第" + obdPortInfo.getPortSer() + "端口二维码不对");
-                }
-              } else {
-                ObdPortInfo portInfo = new ObdPortInfo();
-                portInfo.setId(obdPort.getSeq());
-                portInfo.setPortCode("");
-                portInfo.setStatus(1);
-                portInfo.setObdId(info.getId());
-                uploadMapper.updateObdPort(portInfo);
-              }
+          if (!"".equals(obdPortInfo.getPortCode()) ) {
+            if (!isNumber(obdPortInfo.getPortCode())) {
+              return AjaxResult.error("第" + infoCount + "个OBD的第" + obdPortInfo.getPortSer() + "端口二维码不对");
             }
-            if (obdPort.getSeq() == 0) {
-              if (obdPort.getPortCode() != null) {
-                if (isNumber(obdPort.getPortCode())) {
-                  ObdPortInfo portInfo = new ObdPortInfo();
-                  portInfo.setId(obdPort.getSeq());
-                  portInfo.setPortCode(obdPort.getPortCode());
-                  portInfo.setPortSer(obdPort.getPortSer());
-                  portInfo.setObdId(info.getId());
-                  portInfo.setStatus(0);
-                  uploadMapper.insertPort(portInfo);
-                } else {
-                  return AjaxResult.error("第" + infoCount + "个OBD的第" + obdPortInfo.getPortSer() + "端口二维码不对");
-                }
-              } else {
-                ObdPortInfo portInfo = new ObdPortInfo();
-                portInfo.setId(obdPort.getSeq());
-                portInfo.setPortCode(obdPort.getPortCode());
-                portInfo.setPortSer(obdPort.getPortSer());
-                portInfo.setObdId(info.getId());
-                portInfo.setStatus(1);
-                uploadMapper.insertPort(portInfo);
-              }
+            if (obdPortInfo.getPortCode() != null) {
+              ObdPortInfo portInfo = new ObdPortInfo();
+              portInfo.setPortSer(obdPortInfo.getPortSer());
+              portInfo.setId(obdPortInfo.getSeq());
+              portInfo.setObdId(info.getId());
+              portInfo.setPortCode(obdPortInfo.getPortCode());
+              portInfo.setStatus(0);
+              uploadMapper.insertPort(portInfo);
+            } else {
+              ObdPortInfo portInfo = new ObdPortInfo();
+              portInfo.setPortSer(obdPortInfo.getPortSer());
+              portInfo.setId(obdPortInfo.getSeq());
+              portInfo.setPortCode("");
+              portInfo.setStatus(1);
+              portInfo.setObdId(info.getId());
+              uploadMapper.insertPort(portInfo);
             }
           }
         }
@@ -203,7 +178,7 @@ public class UploadServiceImpl implements IUploadService {
   public int uploadObdPicture(ObdBox obdBox,MultipartFile multipartFile,String boxCode) {
     obdBox.setImgUrl(uploadPicture(obdBox.getJobNumber(),multipartFile));
     int i ;
-    if(uploadMapper.countByCode(boxCode)>0){
+    if(uploadMapper.countByCode(obdBox)>0){
       i = uploadMapper.updateBox(obdBox);
     }else {
       i = uploadMapper.insertObdBox(obdBox);
@@ -531,14 +506,12 @@ public class UploadServiceImpl implements IUploadService {
       obdPortInfo.setId(0);
       obdPortInfo.setPortCode("");
       for (ObdPortInfoVO obdPort:list){
-        if(obdPort.getPortSer()!=null){
           if(obdPort.getPortSer() == poreSer){
             obdPortInfo.setId(obdPort.getId());
             obdPortInfo.setPortCode(obdPort.getPortCode());
             obdPortInfo.setStatus(obdPort.getStatus());
             obdPortInfo.setObdId(obdPort.getObdId());
           }
-        }
       }
       obdPortInfos.add(obdPortInfo);
     }

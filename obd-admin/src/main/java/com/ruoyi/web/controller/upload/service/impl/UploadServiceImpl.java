@@ -75,7 +75,7 @@ public class UploadServiceImpl implements IUploadService {
                         uploadMapper.deleteByPicture(picture);
                     }
                 }else {
-                    return AjaxResult.error("整改图片未上传,请重新上传");
+                    return AjaxResult.error("请重新上传整改图片");
                 }
 
                 if (obdBoxVO.getBoxCode() == null && obdBox.getLabelCode() == null) {
@@ -106,6 +106,9 @@ public class UploadServiceImpl implements IUploadService {
                 info.setStatus(0);
                 info.setPortCount(obdInfoVO.getPortCount());
                 uploadMapper.insertObdInfo(info);
+                if(!isNullPort(obdInfoVO.getObdPortInfoVOList())){
+                    return AjaxResult.error("全部端口为空,请扫码端口");
+                }
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     if (!"".equals(obdPortInfo.getPortCode())) {
                         if (!isNumber(obdPortInfo.getPortCode())) {
@@ -580,6 +583,17 @@ public class UploadServiceImpl implements IUploadService {
         }
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(string).matches();
+    }
+
+
+    private  boolean isNullPort(List<ObdPortInfoVO> list){
+        boolean flag = false;
+        for (ObdPortInfoVO portInfo:list){
+            if(StringUtils.isNotEmpty(portInfo.getPortCode())){
+                flag = true;
+            }
+        }
+        return flag;
     }
 
 }

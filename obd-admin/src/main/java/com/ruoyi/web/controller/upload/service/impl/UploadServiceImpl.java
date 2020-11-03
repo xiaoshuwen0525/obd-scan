@@ -54,6 +54,7 @@ public class UploadServiceImpl implements IUploadService {
         System.out.println(obdBoxVO.toString());
         String boxCode = null;
         String labelCode = null;
+        List<ObdPicture> obdPictureList;
         try {
             if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
                 if (obdBoxVO.getBoxCode().startsWith("DG")) {
@@ -68,11 +69,10 @@ public class UploadServiceImpl implements IUploadService {
                 obdBox.setLabelCode(labelCode);
                 obdBox.setId(obdBoxVO.getId());
                 obdBox.setJobNumber(obdBoxVO.getJobNumber());
-                List<ObdPicture> obdPictureList = uploadMapper.selectObdPicture(obdBox);
+                obdPictureList = uploadMapper.selectObdPicture(obdBox);
                 if(obdPictureList.size()!=0){
                     for (ObdPicture picture:obdPictureList){
                         obdBox.setImgUrl(picture.getImgUrl());
-                        uploadMapper.deleteByPicture(picture);
                     }
                 }else {
                     return AjaxResult.error("请重新上传整改图片");
@@ -99,6 +99,9 @@ public class UploadServiceImpl implements IUploadService {
                 uploadMapper.insertObdBox(obdBox);
                 obdBoxVO.setId(obdBox.getId());
             }
+            if(!isNullPort(obdBoxVO.getObdInfoVOList())){
+                return AjaxResult.error("全部端口端口均为空");
+            }
             int infoCount = 1;
             for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
                 ObdInfo info = new ObdInfo();
@@ -106,9 +109,6 @@ public class UploadServiceImpl implements IUploadService {
                 info.setStatus(0);
                 info.setPortCount(obdInfoVO.getPortCount());
                 uploadMapper.insertObdInfo(info);
-                if(!isNullPort(obdInfoVO.getObdPortInfoVOList())){
-                    return AjaxResult.error("全部端口为空,请扫码端口");
-                }
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     if (!"".equals(obdPortInfo.getPortCode())) {
                         if (!isNumber(obdPortInfo.getPortCode())) {
@@ -161,6 +161,15 @@ public class UploadServiceImpl implements IUploadService {
                     }
                 }
                 infoCount++;
+            }
+            ObdBox obdBox1 = new ObdBox();
+            obdBox1.setBoxCode(boxCode);
+            obdBox1.setLabelCode(labelCode);
+            obdPictureList = uploadMapper.selectObdPicture(obdBox1);
+            if(obdPictureList.size()!=0){
+                for (ObdPicture picture:obdPictureList){
+                    uploadMapper.deleteByPicture(picture);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -586,11 +595,13 @@ public class UploadServiceImpl implements IUploadService {
     }
 
 
-    private  boolean isNullPort(List<ObdPortInfoVO> list){
+    private  boolean isNullPort(List<ObdInfoVO> list){
         boolean flag = false;
-        for (ObdPortInfoVO portInfo:list){
-            if(StringUtils.isNotEmpty(portInfo.getPortCode())){
-                flag = true;
+        for (ObdInfoVO obdInfo:list){
+            for (ObdPortInfoVO portInfo:obdInfo.getObdPortInfoVOList()){
+                if(StringUtils.isNotEmpty(portInfo.getPortCode())){
+                    flag = true;
+                }
             }
         }
         return flag;

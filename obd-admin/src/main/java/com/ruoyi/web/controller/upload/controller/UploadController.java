@@ -116,14 +116,14 @@ public class UploadController extends BaseController {
         }
         String s = "更新成功";
         try {
-            int i = uploadService.uploadObdPicture(obdPicture, file,boxCode);
-            if(i<=0){
-                int a = 1/0;
+            int i = uploadService.uploadObdPicture(obdPicture, file, boxCode);
+            if (i <= 0) {
+                int a = 1 / 0;
             }
         } catch (Exception e) {
             return AjaxResult.error("更新失败");
         }
-        return AjaxResult.success("200","操作成功",s);
+        return AjaxResult.success("200", "操作成功", s);
     }
 
 
@@ -131,17 +131,17 @@ public class UploadController extends BaseController {
     @PostMapping("/uploadInformation")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request)  {
+    public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request) {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
-        log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber );
+        log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber);
         String undefined = "undefined";
         ObdBoxVO obdBoxVO = new ObdBoxVO();
-        if(!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)){
+        if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
             obdBoxVO.setBoxCode(boxCode);
         }
-        if(StringUtils.isNotBlank(jobNumber) && !undefined.equals(jobNumber)){
+        if (StringUtils.isNotBlank(jobNumber) && !undefined.equals(jobNumber)) {
             obdBoxVO.setJobNumber(jobNumber);
-        }else {
+        } else {
             return AjaxResult.warn("工号不应为空");
         }
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
@@ -171,6 +171,29 @@ public class UploadController extends BaseController {
         try {
             ServletOutputStream outputStream = response.getOutputStream();
             outputStream.write(FileUtil.readBytes(path));
+            IoUtil.close(outputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * desc: 图片显示
+     * param:
+     * return:
+     * author: CDN
+     * date: 2019/11/17
+     */
+    @ApiOperation(value = "图片显示")
+    @PostMapping("/pcShowImg")
+    @ResponseBody
+    @RepeatSubmit
+    public Object pcShowImg(HttpServletResponse response, @RequestParam(value = "id") String id) {
+        try {
+            ObdBoxVO boxVO = uploadService.selectBoxById(id);
+            ServletOutputStream outputStream = response.getOutputStream();
+            outputStream.write(FileUtil.readBytes(boxVO.getImgUrl()));
             IoUtil.close(outputStream);
         } catch (IOException e) {
             e.printStackTrace();

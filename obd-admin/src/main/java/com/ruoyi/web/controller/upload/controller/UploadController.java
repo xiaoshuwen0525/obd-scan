@@ -131,7 +131,7 @@ public class UploadController extends BaseController {
     @PostMapping("/uploadInformation")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult uploadInformation(MultipartFile file,String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request)  {
+    public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request)  {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
         log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber );
         String undefined = "undefined";

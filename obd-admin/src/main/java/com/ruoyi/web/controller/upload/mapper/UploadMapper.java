@@ -176,7 +176,7 @@ public interface UploadMapper {
 
     int insertPicture(ObdPicture obdPicture);
 
-    ObdPicture selectObdPicture(ObdBox obdBox);
+    List<ObdPicture> selectObdPicture(ObdBox obdBox);
 
     int deleteByPicture(ObdPicture obdPicture);
 }

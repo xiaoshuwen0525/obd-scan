@@ -68,21 +68,25 @@ public class UploadServiceImpl implements IUploadService {
                 obdBox.setLabelCode(labelCode);
                 obdBox.setId(obdBoxVO.getId());
                 obdBox.setJobNumber(obdBoxVO.getJobNumber());
-                ObdPicture obdPicture = uploadMapper.selectObdPicture(obdBox);
-                if(obdPicture!=null){
-                    obdBox.setImgUrl(obdPicture.getImgUrl());
-                    uploadMapper.deleteByPicture(obdPicture);
+                List<ObdPicture> obdPictureList = uploadMapper.selectObdPicture(obdBox);
+                if(obdPictureList.size()!=0){
+                    for (ObdPicture picture:obdPictureList){
+                        obdBox.setImgUrl(picture.getImgUrl());
+                        uploadMapper.deleteByPicture(picture);
+                    }
                 }else {
-                    return AjaxResult.error("整改图片未上传");
+                    return AjaxResult.error("整改图片未上传,请重新上传");
                 }
-                if (obdBoxVO.getBoxCode() != null) {
-                    obdBox.setStatus(0);
-                } else {
+
+                if (obdBoxVO.getBoxCode() == null && obdBox.getLabelCode() == null) {
                     obdBox.setBoxCode("");
                     obdBox.setStatus(1);
                     obdBox.setExceptionType(1);
                     obdBox.setExceptionInfo("盒子二维码识别不出");
+                } else {
+                    obdBox.setStatus(0);
                 }
+
                 obdBox.setCreateTime(new Date());
 
                 List<ObdBox> obdBoxList = uploadMapper.selectObdBox(obdBox);
@@ -141,20 +145,15 @@ public class UploadServiceImpl implements IUploadService {
                             obdBox1.setExceptionInfo("存在端口识别异常");
                         }
                         uploadMapper.updateObdBox(obdBox1);
-                    } else {
+                    }else {
                         ObdInfo obdInfo1 = new ObdInfo();
                         obdInfo1.setId(obdInfoVO.getId());
                         obdInfo1.setStatus(0);
                         uploadMapper.updateObdInfo(obdInfo1);
                         ObdBox obdBox1 = new ObdBox();
                         obdBox1.setId((obdBoxVO.getId()));
-                        if (StringUtils.isNoneBlank(obdBoxVO.getBoxCode())) {
-                            obdBox1.setExceptionType(0);
-                            obdBox1.setExceptionInfo("");
-                        } else {
-                            obdBox1.setExceptionType(1);
-                            obdBox1.setExceptionInfo("盒子二维码识别不出");
-                        }
+                        obdBox1.setExceptionType(0);
+                        obdBox1.setExceptionInfo("");
                         uploadMapper.updateObdBox(obdBox1);
                     }
                 }
@@ -162,6 +161,7 @@ public class UploadServiceImpl implements IUploadService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return  AjaxResult.error("上传失败");
         }
         return AjaxResult.successOBD("操作成功");
     }
@@ -463,18 +463,13 @@ public class UploadServiceImpl implements IUploadService {
                             uploadMapper.updateObdBox(obdBox1);
                         } else {
                             ObdInfo obdInfo1 = new ObdInfo();
-                            obdInfo1.setId(obdPort.getId());
+                            obdInfo1.setId(obdPort.getObdId());
                             obdInfo1.setStatus(0);
                             uploadMapper.updateObdInfo(obdInfo1);
                             ObdBox obdBox1 = new ObdBox();
                             obdBox1.setId((obdBoxVO.getId()));
-                            if (StringUtils.isNoneBlank(obdBoxVO.getBoxCode())) {
-                                obdBox1.setExceptionType(0);
-                                obdBox1.setExceptionInfo("");
-                            } else {
-                                obdBox1.setExceptionType(1);
-                                obdBox1.setExceptionInfo("盒子二维码识别不出");
-                            }
+                            obdBox1.setExceptionType(0);
+                            obdBox1.setExceptionInfo("");
                             uploadMapper.updateObdBox(obdBox1);
                         }
                     }

@@ -46,9 +46,14 @@
                 // url: prefix + "/list",
 				url: prefix + "/searchByCondition",
 				queryUrl: prefix + "/obd/{id}",
+				obdImageUrl: prefix + "/pcShowImg/{id}",
 				searchUrl:prefix + "/searchByCondition",
                 modalName: "OBD",
                 columns: [
+				{
+					field : 'id',
+					title : '机箱ID'
+				},
 				{
 					field : 'seq',
 					title : '序号' 
@@ -84,14 +89,16 @@
 		            align: 'center',
 		            formatter: function(value, row, index) {
 		            	var actions = [];
-		            	actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看OBD</a> ');
+						actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-search"></i>查看OBD</a> ');
+						actions.push('<a class="btn btn-warning btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryImage(\'' + row.id + '\')"><i class="fa fa-search"></i>查看整治图片</a> ');
 						return actions.join('');
 		            }
 		        }
 		        ]
             };
-            $.table.init(options);
-        });
+			$.table.init(options);
+			$.table.hideColumn("id");
+		});
     </script>
 </body>
 </html>

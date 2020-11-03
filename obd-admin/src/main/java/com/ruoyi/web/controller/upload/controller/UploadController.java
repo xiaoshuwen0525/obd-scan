@@ -178,27 +178,4 @@ public class UploadController extends BaseController {
         return null;
     }
 
-    /**
-     * desc: 图片显示
-     * param:
-     * return:
-     * author: CDN
-     * date: 2019/11/17
-     */
-    @ApiOperation(value = "图片显示")
-    @PostMapping("/pcShowImg")
-    @ResponseBody
-    @RepeatSubmit
-    public Object pcShowImg(HttpServletResponse response, @RequestParam(value = "id") String id) {
-        try {
-            ObdBoxVO boxVO = uploadService.selectBoxById(id);
-            ServletOutputStream outputStream = response.getOutputStream();
-            outputStream.write(FileUtil.readBytes(boxVO.getImgUrl()));
-            IoUtil.close(outputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 }

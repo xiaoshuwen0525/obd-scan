@@ -1,5 +1,8 @@
 package com.ruoyi.web.controller.obd;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
@@ -8,11 +11,16 @@ import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
+import com.ruoyi.web.controller.upload.service.impl.UploadServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +35,9 @@ public class DeviceController extends BaseController {
 
     @Autowired
     private ObdDeviceServiceImpl obdDeviceService;
+
+    @Autowired
+    private UploadServiceImpl uploadService;
 
     private final String prefix = "device/chassis";
 
@@ -128,6 +139,44 @@ public class DeviceController extends BaseController {
             return getDataTable(obdBoxVOS);
         }
         return getDataTable(obdBoxVOS);
+    }
+
+    /**
+     * 跳转图片展示页面并携带当前点击的机箱唯一ID
+     */
+    @GetMapping("/pcShowImg/{id}")
+    public String pcShowImg(@PathVariable("id") String id, ModelMap mmap) {
+        if (StringUtils.isNotEmpty(id)){
+            ObdBoxVO boxVO = new ObdBoxVO();
+            try {
+                boxVO = uploadService.selectBoxById(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (StringUtils.isNotEmpty(boxVO.getImgUrl())){
+                mmap.put("image", boxVO.getImgUrl());
+            }
+        }else{
+            mmap.put("image", "");
+        }
+        return prefix + "/image";
+    }
+
+    @PostMapping("/pcShowImg/{id}")
+    @ResponseBody
+    public String pcShowImg(HttpServletResponse response, @PathVariable(value = "id") String id) {
+        if (StringUtils.isNotEmpty(id)){
+            ObdBoxVO boxVO = new ObdBoxVO();
+            try {
+                boxVO = uploadService.selectBoxById(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (StringUtils.isNotEmpty(boxVO.getImgUrl())){
+                return boxVO.getImgUrl();
+            }
+        }
+        return "";
     }
 
 }

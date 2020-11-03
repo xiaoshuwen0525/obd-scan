@@ -1334,6 +1334,21 @@ var table = {
                     $.modal.open(table.options.modalName + "详情", $.operate.queryUrl(id));
                 }
             },
+            // 查看OBD相关图片信息
+            queryImage: function (id) {
+                table.set();
+                if ($.common.isEmpty(id) && table.options.type == table_type.bootstrapTreeTable) {
+                    var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+                    if ($.common.isEmpty(row)) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    var url = table.options.obdImageUrl.replace("{id}", row[table.options.uniqueId]);
+                    $.modal.open(table.options.modalName + "详情", url);
+                } else {
+                    $.modal.open(table.options.modalName + "详情", $.operate.imageUrl(id));
+                }
+            },
             // 绑定手机
             bindPhone: function (id) {
                 table.set();
@@ -1378,6 +1393,21 @@ var table = {
                         return;
                     }
                     url = table.options.queryUrl.replace("{id}", id);
+                }
+                return url;
+            },
+            // 图片访问地址--obd专用
+            imageUrl: function (id) {
+                var url = "/404.html";
+                if ($.common.isNotEmpty(id)) {
+                    url = table.options.obdImageUrl.replace("{id}", id);
+                } else {
+                    var id = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                    if (id.length == 0) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    url = table.options.obdImageUrl.replace("{id}", id);
                 }
                 return url;
             },

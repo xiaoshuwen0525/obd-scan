@@ -25,6 +25,15 @@ public interface UploadMapper {
      */
     int insertObdBox(@NotNull ObdBox obdBox);
 
+
+    /**
+     * 插入盒子历史
+     *
+     * @param obdBox obd盒子
+     * @return int
+     */
+    int insertBoxHistory(@NotNull ObdBox obdBox);
+
     /**
      * 检验该obd箱子是否存在
      * @param boxCode
@@ -145,9 +154,29 @@ public interface UploadMapper {
     ObdPortInfoVO selectPortById(@Param("id") String  id);
 
 
-
+    /**
+     * 选择框的代码
+     *
+     * @param obdBox obd盒子
+     * @return {@link ObdBoxVO}
+     */
     ObdBoxVO selectBoxByCode(ObdBox obdBox);
 
+    /**
+     * 计数bybox id
+     *
+     * @param boxId     框标识
+     * @return {@link Integer}
+     */
     Integer countByboxId(@Param("boxId") Integer  boxId);
 
+    List<ObdBox> selectObdBox(ObdBox obdBox);
+
+    int deleteByObdBox(ObdBox obdBox);
+
+    int insertPicture(ObdPicture obdPicture);
+
+    ObdPicture selectObdPicture(ObdBox obdBox);
+
+    int deleteByPicture(ObdPicture obdPicture);
 }

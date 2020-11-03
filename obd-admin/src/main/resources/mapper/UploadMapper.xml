@@ -27,6 +27,26 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap type="com.ruoyi.web.controller.upload.domain.ObdBox" id="ObdBoxMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="exceptionType" column="exception_type" jdbcType="VARCHAR"/>
+        <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.ruoyi.web.controller.upload.domain.ObdPicture" id="ObdPictureMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdInfoVO" id="ObdInfoVOMap">
         <result property="seq" column="num" jdbcType="INTEGER"/>
         <result property="id" column="id" jdbcType="INTEGER"/>
@@ -245,6 +265,67 @@
             <if test="boxCode != null ">
                 #{boxCode,jdbcType=VARCHAR},
             </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                #{imgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="exceptionType != null">
+                #{exceptionType,jdbcType=INTEGER},
+            </if>
+            <if test="exceptionInfo != null and exceptionInfo != ''">
+                #{exceptionInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                #{jobNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="labelCode != null and labelCode != '' ">
+                #{labelCode,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!--新增实体属性不为null的列-->
+    <insert id="insertBoxHistory"  parameterType="com.ruoyi.web.controller.upload.domain.ObdBox" useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
+        insert into obd_box_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                id,
+            </if>
+            <if test="boxCode != null ">
+                box_code,
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="exceptionType != null">
+                exception_type,
+            </if>
+            <if test="exceptionInfo != null and exceptionInfo != ''">
+                exception_info,
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                job_number,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="labelCode != null and labelCode != '' ">
+                label_code
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                #{id,jdbcType=INTEGER},
+            </if>
             <if test="boxCode != null ">
                 #{boxCode,jdbcType=VARCHAR},
             </if>
@@ -267,7 +348,7 @@
                 #{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="labelCode != null and labelCode != '' ">
-                #{labelCode,jdbcType=TIMESTAMP},
+                #{labelCode,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -439,8 +520,121 @@
         </where>
     </select>
 
-    <select id="countByboxId" resultType="int" parameterType="java.lang.Integer" >
+    <select id="countByboxId" resultType="int"  parameterType="java.lang.Integer">
           SELECT count(0) FROM obd_info  WHERE box_id = #{boxId,jdbcType=INTEGER}
     </select>
 
+    <select id="selectObdBox" resultMap="ObdBoxMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdBox" >
+        SELECT id, box_code, img_url, status, exception_type, exception_info, job_number, create_time,label_code FROM obd_box
+        <where>
+            <if test="boxCode != null and boxCode != ''">
+                and  box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                and  label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体非空属性删除-->
+        <delete id="deleteByObdBox" parameterType="com.ruoyi.web.controller.upload.domain.ObdBox">
+        delete from obd_box
+        <where>
+            <if test="id != null ">
+             and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="boxCode != null ">
+                and box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                and img_url = #{imgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="exceptionType != null">
+                and exception_type = #{exceptionType,jdbcType=INTEGER}
+            </if>
+            <if test="exceptionInfo != null and exceptionInfo != ''">
+                and exception_info = #{exceptionInfo,jdbcType=VARCHAR}
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                and job_number = #{jobNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="labelCode != null and labelCode != '' ">
+                and label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </delete>
+
+    <!--新增实体属性不为null的列-->
+    <insert id="insertPicture"  parameterType="com.ruoyi.web.controller.upload.domain.ObdPicture" useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
+        insert into obd_picture
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="boxCode != null ">
+                box_code,
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url,
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                job_number,
+            </if>
+            <if test="labelCode != null and labelCode != '' ">
+                label_code
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="boxCode != null ">
+                #{boxCode,jdbcType=VARCHAR},
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                #{imgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                #{jobNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="labelCode != null and labelCode != '' ">
+                #{labelCode,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectObdPicture" resultMap="ObdPictureMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdPicture" >
+        SELECT id, box_code, img_url, job_number,label_code  FROM obd_picture
+        <where>
+            <if test="boxCode != null and boxCode != ''">
+                and  box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                and  label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <!--通过实体非空属性删除-->
+    <delete id="deleteByPicture" parameterType="com.ruoyi.web.controller.upload.domain.ObdPicture">
+        delete from obd_picture
+        <where>
+            <if test="id != null ">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="boxCode != null ">
+                and box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                and img_url = #{imgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                and job_number = #{jobNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="labelCode != null and labelCode != '' ">
+                and label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </delete>
 </mapper>

@@ -13,6 +13,7 @@ import com.ruoyi.web.controller.upload.domain.ObdBox;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoListVO;
 
+import com.ruoyi.web.controller.upload.domain.ObdPicture;
 import com.ruoyi.web.controller.upload.service.IUploadService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -96,7 +97,7 @@ public class UploadController extends BaseController {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
         log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber + ",file:" + file);
         String undefined = "undefined";
-        ObdBox obdBox = new ObdBox();
+        ObdPicture obdPicture = new ObdPicture();
         String boxCode1 = null;
         String labelCode = null;
         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
@@ -106,16 +107,16 @@ public class UploadController extends BaseController {
                 boxCode1 = boxCode;
             }
         }
-        obdBox.setBoxCode(boxCode1);
-        obdBox.setLabelCode(labelCode);
+        obdPicture.setBoxCode(boxCode1);
+        obdPicture.setLabelCode(labelCode);
         if (StringUtils.isNotBlank(jobNumber) && !undefined.equals(jobNumber)) {
-            obdBox.setJobNumber(jobNumber);
+            obdPicture.setJobNumber(jobNumber);
         } else {
             return AjaxResult.warn("工号不应为空");
         }
         String s = "更新成功";
         try {
-            int i = uploadService.uploadObdPicture(obdBox, file,boxCode);
+            int i = uploadService.uploadObdPicture(obdPicture, file,boxCode);
             if(i<=0){
                 int a = 1/0;
             }
@@ -130,7 +131,7 @@ public class UploadController extends BaseController {
     @PostMapping("/uploadInformation")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request)  {
+    public AjaxResult uploadInformation(MultipartFile file,String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request)  {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
         log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber );
         String undefined = "undefined";

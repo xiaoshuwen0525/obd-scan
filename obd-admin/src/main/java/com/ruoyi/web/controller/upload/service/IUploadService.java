@@ -34,10 +34,10 @@ public interface IUploadService
 
     /**
      * 上传obd盒子
-     * @param obdBox 实体类
+     * @param obdPicture 实体类
      * @return 盒子id
      */
-    int uploadObdPicture(ObdBox obdBox,MultipartFile file,String boxCode);
+    int uploadObdPicture(ObdPicture obdPicture,MultipartFile file,String boxCode);
 
     /**
      * 上传obd

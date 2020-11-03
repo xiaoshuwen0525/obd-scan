@@ -162,21 +162,4 @@ public class DeviceController extends BaseController {
         return prefix + "/image";
     }
 
-    @PostMapping("/pcShowImg/{id}")
-    @ResponseBody
-    public String pcShowImg(HttpServletResponse response, @PathVariable(value = "id") String id) {
-        if (StringUtils.isNotEmpty(id)){
-            ObdBoxVO boxVO = new ObdBoxVO();
-            try {
-                boxVO = uploadService.selectBoxById(id);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (StringUtils.isNotEmpty(boxVO.getImgUrl())){
-                return boxVO.getImgUrl();
-            }
-        }
-        return "";
-    }
-
 }

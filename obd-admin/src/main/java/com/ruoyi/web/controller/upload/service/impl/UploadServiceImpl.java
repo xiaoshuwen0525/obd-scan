@@ -38,8 +38,8 @@ import java.util.regex.Pattern;
 @Service
 public class UploadServiceImpl implements IUploadService {
 
-//    @Value("${ruoyi.uploadfile}")
-//    private String uploadfile;
+    @Value("${ruoyi.uploadfile}")
+    private String uploadfile;
 
     @Autowired
     private UploadMapper uploadMapper;
@@ -552,11 +552,8 @@ public class UploadServiceImpl implements IUploadService {
      * @return path 图片路径
      */
     private String uploadPicture(String jobNumber, MultipartFile multipartFile) {
-        Properties props = System.getProperties();
-        String uploadPath="obd-admin/src/main/resources/static/obdImg";
-        String filePath = props.getProperty("user.dir")+ File.separator+uploadPath.replace("/", "\\");
         String path = "";
-        String uploadPaths = filePath.replace("/", "\\");
+        String uploadPaths = uploadfile.replace("/", "\\");
         String folder = uploadPaths + File.separator + jobNumber + File.separator;
         if (!FileUtil.exist(folder)) {
             FileUtil.mkdir(folder);

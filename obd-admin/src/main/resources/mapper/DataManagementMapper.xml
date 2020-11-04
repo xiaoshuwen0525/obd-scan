@@ -328,9 +328,9 @@
 
     <select id="selectBoxListByEntity" resultMap="PcObdBoxMap"
             parameterType="com.ruoyi.web.controller.data.domain.PcObdBox">
-        select (@num := @num + 1) as num,
+        select *, (@num := @num + 1) as num from (select
         t1.id, t1.box_code, t1.label_code, t1.box_name, t1.area, t1.business_bureau, t1.camp_service, t1.job_number, t1.img_url, t1.status, t1.exception_type, t1.exception_info, t1.create_time, count(t2.id) obd_count
-        from pc_obd_box t1 LEFT JOIN pc_obd_info t2 on t1.id = t2.box_id ,(select @num := 0) row_number
+        from pc_obd_box t1 LEFT JOIN pc_obd_info t2 on t1.id = t2.box_id
         <where>
             <if test="id != null">
                 and t1.id = #{id,jdbcType=INTEGER}
@@ -372,7 +372,8 @@
                 and t1.create_time = #{createTime,jdbcType=TIMESTAMP}
             </if>
         </where>
-        GROUP BY t1.id
+        GROUP BY t1.id ORDER BY t1.create_time DESC) t,
+        (select @num := 0) num
     </select>
 
 </mapper>

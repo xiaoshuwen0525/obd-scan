@@ -127,11 +127,8 @@
     <select id="selectBaseDataByCode" resultMap="PcObdViewResultMap" >
         select box_id, obd_id, port_count from pc_obd_view
         <where>
-            <if test="boxCode != null and boxCode != ''">
-                and box_code = #{boxCode,jdbcType=VARCHAR}
-            </if>
-            <if test="labelCode != null and labelCode != ''">
-                and label_code = #{labelCode,jdbcType=VARCHAR}
+            <if test="code != null and code != ''">
+                box_code = #{code} or label_code = #{code}
             </if>
         </where>
     </select>
@@ -251,11 +248,8 @@
             <if test="phone != null and phone != ''">
                 and job_number = (select job_number from wx_user where phone = #{phone})
             </if>
-            <if test="boxCode != null and boxCode != ''">
-                and box_code like concat('%', #{boxCode},'%')
-            </if>
-            <if test="labelCode != null and labelCode != ''">
-                or label_code like concat('%', #{labelCode},'%')
+            <if test="code != null and code != ''">
+                and box_code like concat('%', #{code},'%') or label_code like concat('%', #{code},'%')
             </if>
             and 1 = 1
             GROUP BY id HAVING
@@ -271,6 +265,7 @@
                 </when>
             </choose>
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectExportObd" resultMap="ObdViewMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdView" >
@@ -278,14 +273,14 @@
         obd_name,port_id,port_ser,port_code,port_status
         FROM obd_view
         <where>
-            <if test="boxCode != null and boxCode != ''">
-                and  box_code = #{boxCode,jdbcType=VARCHAR}
-            </if>
-            <if test="labelCode != null and labelCode != ''">
-                and  label_code = #{labelCode,jdbcType=VARCHAR}
-            </if>
             <if test="jobNumber != null and jobNumber != ''">
-                and  job_number = #{jobNumber,jdbcType=VARCHAR}
+                and job_number = #{jobNumber}
+            </if>
+            <if test="phone != null and phone != ''">
+                and job_number = (select job_number from wx_user where phone = #{phone})
+            </if>
+            <if test="code != null and code != ''">
+                and box_code like concat('%', #{code},'%') or label_code like concat('%', #{code},'%')
             </if>
         </where>
     </select>

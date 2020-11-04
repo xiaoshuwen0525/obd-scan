@@ -32,6 +32,12 @@
 					</div>
 				</form>
 			</div>
+			<!-- 此处用于导入表格数据，需要的时候解除注释-->
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-warning" onclick="$.table.exportExcel()">
+					<i class="fa fa-download"></i> 导出
+				</a>
+			</div>
 	        <div class="col-sm-12 select-table table-striped">
 	            <table id="bootstrap-table"></table>
 	        </div>
@@ -48,6 +54,7 @@
 				queryUrl: prefix + "/obd/{id}",
 				obdImageUrl: prefix + "/pcShowImg/{id}",
 				searchUrl:prefix + "/searchByCondition",
+				exportUrl: prefix + "/export",
                 modalName: "OBD",
                 imageName: "整治图片展示",
                 columns: [

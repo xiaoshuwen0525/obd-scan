@@ -35,11 +35,11 @@ public class ObdView extends BaseEntity {
         private String labelCode;
     
         /** 数据状态：0:正常 1:异常 */
-        @Excel(name = "机箱数据状态：0:正常 1:异常")
+        @Excel(name = "机箱状态")
         private String Status;
     
         /** 异常类型：1：盒子异常；2：OBD异常	 */
-        @Excel(name = "异常类型： 0：正常 1：盒子异常；2：OBD异常	")
+        @Excel(name = "异常类型")
         private String exceptionType;
     
         /** 异常信息	 */
@@ -47,13 +47,16 @@ public class ObdView extends BaseEntity {
         private String exceptionInfo;
 
         /** 异常信息	 */
-        @Excel(name = "机箱图片路径")
         private String imgUrl;
 
         /** 工号 */
         @Excel(name = "工号")
         private String jobNumber;
-    
+
+        private String phone;
+
+        private String code;
+
         /** ${column.comment} */
         @Excel(name = "时间")
         @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -64,24 +67,23 @@ public class ObdView extends BaseEntity {
         private Integer infoId;
     
         /** 数据状态0：正常1：异常 */
-        @Excel(name = "obd数据状态0：正常1：异常")
+        @Excel(name = "OBD状态")
         private String obdStatus;
     
         /** ${column.comment} */
         private Integer portId;
     
         /** 序号：取值范围（1-8）	 */
-        @Excel(name = "序号：取值范围（1-8）	")
+        @Excel(name = "端口序号")
         private Integer portSer;
     
         /** obd端口串码	 */
-        @Excel(name = "obd端口串码	")
+        @Excel(name = "OBD端口串码")
         private String portCode;
     
         /** 数据状态0：正常1：异常 */
-        @Excel(name = "端口数据状态0：正常1：异常")
+        @Excel(name = "端口状态")
         private String portStatus;
-
 
         @Excel(name = "归属设备")
         private String boxBelong;

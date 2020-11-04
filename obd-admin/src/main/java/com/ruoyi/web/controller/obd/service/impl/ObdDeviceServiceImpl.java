@@ -184,21 +184,8 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      */
     @Override
     public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String code, String status) {
-        String boxCode = null;
-        String labelCode = null;
-        if("".equals(code)){
-            labelCode = null;
-            boxCode = null;
-        }else if (code.startsWith("DG")) {
-            labelCode = code;
-        } else if (code.startsWith("光分纤箱")) {
-            boxCode = code;
-        }else{
-            labelCode = code;
-            boxCode = code;
-        }
         //查询机箱信息
-        List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxCode, labelCode, status);
+        List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, code, status);
         if (obdBoxVOS == null) {
             return null;
         }
@@ -299,19 +286,13 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      */
     @Override
     public ObdBoxVO selectBaseDataByCode(String code) {
-        String boxCode = null;
-        String labelCode = null;
-        if (code.startsWith("DG")) {
-            labelCode = code;
-        } else if (code.startsWith("光分纤箱")) {
-            boxCode = code;
-        } else {
-            return null;
-        }
         ObdBoxVO obdBoxVO = new ObdBoxVO();
+        if (StringUtils.isEmpty(code)) {
+            return obdBoxVO;
+        }
         List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
         List<DerivedEntity> derivedEntities;
-        derivedEntities = obdDeviceMapper.selectBaseDataByCode(boxCode, labelCode);
+        derivedEntities = obdDeviceMapper.selectBaseDataByCode(code);
         if (derivedEntities == null || derivedEntities.size()==0){
             return null;
         }
@@ -320,14 +301,18 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
                 //这里的id取值为机箱的唯一id
                 obdBoxVO.setId(derivedEntitie.getBoxId());
             }
+            //此处用于添加obd相关属性
             ObdInfoVO obdInfoVO = new ObdInfoVO();
             obdInfoVO.setId(derivedEntitie.getObdId());
             obdInfoVO.setPortCount(derivedEntitie.getPortCount());
+            obdInfoVO.setBoxBelong(derivedEntitie.getBoxBelong());
+            obdInfoVO.setObdName(derivedEntitie.getObdName());
             obdInfoVOS.add(obdInfoVO);
             List<ObdPortInfoVO> obdPortInfoVOS1 = new ArrayList<>();
             int portCount = derivedEntitie.getPortCount();
             if (portCount!=0){
                 for (int i = 1; i <= portCount; i++) {
+                    //此处用于添加端口相关属性
                     ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
                     obdPortInfoVO1.setPortSer(i);
                     obdPortInfoVO1.setPortCode("");

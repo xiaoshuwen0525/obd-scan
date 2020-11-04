@@ -49,7 +49,7 @@ public interface ObdDeviceMapper {
     /**
      * 查询所有机箱信息
      */
-    List<ObdBoxVO> searchByCondition(@Param("jobNumber") String jobNumber, @Param("phone")String phone, @Param("boxCode")String boxCode, @Param("labelCode")String labelCode,  @Param("status")String status);
+    List<ObdBoxVO> searchByCondition(@Param("jobNumber") String jobNumber, @Param("phone")String phone, @Param("code")String code,  @Param("status")String status);
 
     /**
      * 查询微信用户相关信息
@@ -79,7 +79,7 @@ public interface ObdDeviceMapper {
     /**
      * 根据boxCode或者labelCode查询基础信息
      * */
-    List<DerivedEntity> selectBaseDataByCode(@Param("boxCode") String boxCode, @Param("labelCode") String labelCode);
+    List<DerivedEntity> selectBaseDataByCode(@Param("code") String code);
 
     /**
      * 选择export obd

@@ -366,6 +366,12 @@
             <if test="portCount != null">
                 port_count,
             </if>
+            <if test="boxBelong != null and boxBelong != '' ">
+                box_belong,
+            </if>
+            <if test="obdName != null and obdName != ''  ">
+                obd_name,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="boxId != null">
@@ -376,6 +382,12 @@
             </if>
             <if test="portCount != null">
                 #{portCount,jdbcType=INTEGER},
+            </if>
+            <if test="boxBelong != null and boxBelong != '' ">
+                port_count,
+            </if>
+            <if test="obdName != null and obdName != ''  ">
+                obd_name,
             </if>
         </trim>
     </insert>

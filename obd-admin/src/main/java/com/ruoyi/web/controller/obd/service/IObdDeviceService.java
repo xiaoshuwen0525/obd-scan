@@ -5,6 +5,7 @@ import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
+import com.ruoyi.web.controller.upload.domain.ObdView;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -85,5 +86,13 @@ public interface IObdDeviceService {
      * 根据boxCode或者labelCode查询导入基础数据
      * */
     ObdBoxVO selectBaseDataByCode(String code);
+
+    /**
+     * 导出list
+     *
+     * @param obdView obd视图
+     * @return {@link List< ObdView >}
+     */
+    List<ObdView> selectExportObd(ObdView obdView);
 
 }

@@ -108,6 +108,8 @@ public class UploadServiceImpl implements IUploadService {
                 info.setBoxId(obdBoxVO.getId());
                 info.setStatus(0);
                 info.setPortCount(obdInfoVO.getPortCount());
+                info.setBoxBelong(obdInfoVO.getBoxBelong());
+                info.setObdName(obdInfoVO.getObdName());
                 uploadMapper.insertObdInfo(info);
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     if (!"".equals(obdPortInfo.getPortCode())) {
@@ -552,9 +554,6 @@ public class UploadServiceImpl implements IUploadService {
      * @return path 图片路径
      */
     private String uploadPicture(String jobNumber, MultipartFile multipartFile) {
-//        Properties props = System.getProperties();
-//        String uploadPath="obd-admin/src/main/resources/static/obdImg";
-//        String filePath = props.getProperty("user.dir")+ File.separator+uploadPath.replace("/", "\\");
         String path = "";
         String uploadPaths = uploadfile.replace("/", "\\");
         String folder = uploadPaths + File.separator + jobNumber + File.separator;

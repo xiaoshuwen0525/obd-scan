@@ -1344,9 +1344,9 @@ var table = {
                         return;
                     }
                     var url = table.options.obdImageUrl.replace("{id}", row[table.options.uniqueId]);
-                    $.modal.open(table.options.modalName + "详情", url);
+                    $.modal.open(table.options.imageName, url);
                 } else {
-                    $.modal.open(table.options.modalName + "详情", $.operate.imageUrl(id));
+                    $.modal.open(table.options.imageName, $.operate.imageUrl(id));
                 }
             },
             // 绑定手机

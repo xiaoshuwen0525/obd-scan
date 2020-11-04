@@ -20,6 +20,25 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap type="com.ruoyi.web.controller.upload.domain.ObdView" id="ObdViewMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
+        <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
+        <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="exceptionType" column="exception_type" jdbcType="VARCHAR"/>
+        <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="obdStatus" column="obd_status" jdbcType="VARCHAR"/>
+        <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
+        <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
+        <result property="portId" column="port_id" jdbcType="VARCHAR"/>
+        <result property="portSer" column="port_ser" jdbcType="VARCHAR"/>
+        <result property="portCode" column="port_code" jdbcType="VARCHAR"/>
+        <result property="portStatus" column="port_status" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <resultMap type="com.ruoyi.web.controller.data.domain.DerivedEntity" id="PcObdViewResultMap">
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
         <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
@@ -254,5 +273,21 @@
         </where>
     </select>
 
+    <select id="selectExportObd" resultMap="ObdViewMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdView" >
+        SELECT id,box_code,label_code,job_number,img_url,status,exception_type,exception_info,create_time,obd_status,box_belong,
+        obd_name,port_id,port_ser,port_code,port_status
+        FROM obd_view
+        <where>
+            <if test="boxCode != null and boxCode != ''">
+                and  box_code = #{boxCode,jdbcType=VARCHAR}
+            </if>
+            <if test="labelCode != null and labelCode != ''">
+                and  label_code = #{labelCode,jdbcType=VARCHAR}
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                and  job_number = #{jobNumber,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
 
 </mapper>

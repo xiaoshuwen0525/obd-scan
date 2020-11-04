@@ -4,13 +4,17 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
+import com.ruoyi.web.controller.upload.domain.ObdView;
 import com.ruoyi.web.controller.upload.service.impl.UploadServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,11 +159,25 @@ public class DeviceController extends BaseController {
             }
             if (StringUtils.isNotEmpty(boxVO.getImgUrl())){
                 mmap.put("image", boxVO.getImgUrl());
+            }else{
+                mmap.put("image", "static/obdImg/b06045afe09ac9868b1dab8b5ec3108.jpg");
             }
         }else{
-            mmap.put("image", "");
+            mmap.put("image", "static/obdImg/83bbabd27184ef8eaa3037b1ba9eb22.jpg");
         }
         return prefix + "/image";
+    }
+
+
+    /**
+     * 导出数据
+     */
+    @PostMapping("/export")
+    @ResponseBody
+    public AjaxResult export(ObdView obdView) {
+        List<ObdView> obdViewList = obdDeviceService.selectExportObd(obdView);
+        ExcelUtil<ObdView> util = new ExcelUtil<ObdView>(ObdView.class);
+        return util.exportExcel(obdViewList, "整治数据");
     }
 
 }

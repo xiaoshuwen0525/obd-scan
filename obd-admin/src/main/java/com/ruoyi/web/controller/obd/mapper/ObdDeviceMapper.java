@@ -2,9 +2,7 @@ package com.ruoyi.web.controller.obd.mapper;
 
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.system.domain.WxUser;
-import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
-import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
-import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
+import com.ruoyi.web.controller.upload.domain.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -83,5 +81,11 @@ public interface ObdDeviceMapper {
      * */
     List<DerivedEntity> selectBaseDataByCode(@Param("boxCode") String boxCode, @Param("labelCode") String labelCode);
 
-
+    /**
+     * 选择export obd
+     *
+     * @param obdView obd视图
+     * @return {@link List<ObdView>}
+     */
+    List<ObdView> selectExportObd(ObdView obdView);
 }

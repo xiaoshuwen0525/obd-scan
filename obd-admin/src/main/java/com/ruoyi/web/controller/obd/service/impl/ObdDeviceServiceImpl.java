@@ -10,6 +10,7 @@ import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
+import com.ruoyi.web.controller.upload.domain.ObdView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -339,6 +340,17 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         }
         obdBoxVO.setObdInfoVOList(obdInfoVOS);
         return obdBoxVO;
+    }
+
+    @Override
+    public List<ObdView> selectExportObd(ObdView obdView) {
+        List<ObdView> obdViews = new ArrayList<>();
+        try {
+            obdViews = obdDeviceMapper.selectExportObd(obdView);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return obdViews;
     }
 
     /**

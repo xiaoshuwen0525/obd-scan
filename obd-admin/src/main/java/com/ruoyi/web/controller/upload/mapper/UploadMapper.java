@@ -9,9 +9,10 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
+ * 上传映射器
  *
- *
- * @author
+ * @author Administrator
+ * @date 2020/11/04
  * @since
  */
 
@@ -170,13 +171,45 @@ public interface UploadMapper {
      */
     Integer countByboxId(@Param("boxId") Integer  boxId);
 
+    /**
+     * 选择obd框
+     *
+     * @param obdBox obd盒子
+     * @return {@link List<ObdBox>}
+     */
     List<ObdBox> selectObdBox(ObdBox obdBox);
 
+    /**
+     * 删除的obd盒子
+     *
+     * @param obdBox obd盒子
+     * @return int
+     */
     int deleteByObdBox(ObdBox obdBox);
 
+    /**
+     * 插入图片
+     *
+     * @param obdPicture obd图片
+     * @return int
+     */
     int insertPicture(ObdPicture obdPicture);
 
+    /**
+     * 选择obd图片
+     *
+     * @param obdBox obd盒子
+     * @return {@link List<ObdPicture>}
+     */
     List<ObdPicture> selectObdPicture(ObdBox obdBox);
 
+    /**
+     * 删除的照片
+     *
+     * @param obdPicture obd图片
+     * @return int
+     */
     int deleteByPicture(ObdPicture obdPicture);
+
+
 }

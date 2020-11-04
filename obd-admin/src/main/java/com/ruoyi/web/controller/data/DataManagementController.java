@@ -165,29 +165,11 @@ public class DataManagementController extends BaseController {
     @ResponseBody
     public AjaxResult deletePcObdInfoById(Integer id) {
         if (id == 0) {
-            return AjaxResult.error("数据有误无法操作，请联系管理员");
-        }
-        int i;
-        try {
-            i = dataManagementService.deletePcObdInfoById(id);
-            if (i > 0) {
-                return AjaxResult.success("成功删除");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return AjaxResult.error("删除操作失败，请联系管理员");
-    }
-
-    @PostMapping("/deletePcObdBoxById")
-    @ResponseBody
-    public AjaxResult deletePcObdBoxByIds(String ids) {
-        if (StringUtils.isBlank(ids)) {
             return AjaxResult.error("更新失败");
         }
         int i;
         try {
-            i = dataManagementService.deletePcObdBoxByIds(ids);
+            i = dataManagementService.deletePcObdInfoById(id);
             if (i > 0) {
                 return AjaxResult.success("更新成功");
             }
@@ -195,6 +177,24 @@ public class DataManagementController extends BaseController {
             e.printStackTrace();
         }
         return AjaxResult.error("更新失败");
+    }
+
+    @PostMapping("/deletePcObdBoxById")
+    @ResponseBody
+    public AjaxResult deletePcObdBoxByIds(String ids) {
+        if (StringUtils.isBlank(ids)) {
+            return AjaxResult.error("数据有误，请联系管理员");
+        }
+        int i;
+        try {
+            i = dataManagementService.deletePcObdBoxByIds(ids);
+            if (i > 0) {
+                return AjaxResult.success("成功删除");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("数据有误，请联系管理员");
     }
 
     @PostMapping("/selectBoxListByEntity")

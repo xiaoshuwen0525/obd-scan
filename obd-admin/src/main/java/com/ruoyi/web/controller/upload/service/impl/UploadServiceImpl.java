@@ -57,12 +57,13 @@ public class UploadServiceImpl implements IUploadService {
         List<ObdPicture> obdPictureList;
         try {
             if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
-                if (obdBoxVO.getBoxCode().startsWith("DG")) {
+                ObdBoxVO boxVO = uploadMapper.selectPcObdByCode(obdBoxVO.getBoxCode());
+                if (boxVO.getLabelCode().equals(obdBoxVO.getBoxCode())) {
                     labelCode = obdBoxVO.getBoxCode();
-                } else if (obdBoxVO.getBoxCode().startsWith("光分纤箱")) {
+                } else if (boxVO.getBoxCode().equals(obdBoxVO.getBoxCode())) {
                     boxCode = obdBoxVO.getBoxCode();
                 } else {
-                    return null;
+                    return AjaxResult.error("该串码找不到对应数据");
                 }
                 ObdBox obdBox = new ObdBox();
                 obdBox.setBoxCode(boxCode);
@@ -496,6 +497,16 @@ public class UploadServiceImpl implements IUploadService {
       lock.unlock();
     }*/
         return AjaxResult.successOBD("操作成功");
+    }
+
+    @Override
+    public ObdBoxVO selectPcObdByCode(String boxCode) {
+        try {
+            return uploadMapper.selectPcObdByCode(boxCode);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

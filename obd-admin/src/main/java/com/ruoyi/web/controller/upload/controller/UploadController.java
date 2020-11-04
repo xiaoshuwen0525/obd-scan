@@ -98,13 +98,16 @@ public class UploadController extends BaseController {
         log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber + ",file:" + file);
         String undefined = "undefined";
         ObdPicture obdPicture = new ObdPicture();
+        ObdBoxVO boxVO = uploadService.selectPcObdByCode(boxCode);
         String boxCode1 = null;
         String labelCode = null;
         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
-            if (boxCode.startsWith("DG")) {
+            if (boxVO.getLabelCode().equals(boxCode)) {
                 labelCode = boxCode;
-            } else if (boxCode.startsWith("光分纤箱")) {
+            } else if (boxVO.getBoxCode().equals(boxCode)) {
                 boxCode1 = boxCode;
+            }else {
+                return AjaxResult.warn("该串码找不到对应数据");
             }
         }
         obdPicture.setBoxCode(boxCode1);
@@ -173,6 +176,17 @@ public class UploadController extends BaseController {
             outputStream.write(FileUtil.readBytes(path));
             IoUtil.close(outputStream);
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @GetMapping("/test")
+    @ResponseBody
+    public AjaxResult test(@RequestParam(value = "boxCode") String boxCode) {
+        try {
+            return  AjaxResult.success(uploadService.selectPcObdByCode(boxCode));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

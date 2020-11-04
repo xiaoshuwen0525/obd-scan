@@ -637,4 +637,10 @@
             </if>
         </where>
     </delete>
+
+    <select id="selectPcObdByCode" resultMap="ObdBoxVOMap" parameterType="java.lang.String" >
+        SELECT id, box_code,job_number,label_code  FROM pc_obd_box
+        where  box_code = #{boxCode,jdbcType=VARCHAR} or label_code = #{boxCode,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

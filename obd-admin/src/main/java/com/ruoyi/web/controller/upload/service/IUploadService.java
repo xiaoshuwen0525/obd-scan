@@ -4,6 +4,7 @@ package com.ruoyi.web.controller.upload.service;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.controller.upload.domain.*;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -143,7 +144,13 @@ public interface IUploadService
      */
     AjaxResult updateObd(ObdBoxVO obdBoxVO);
 
-
+    /**
+     * 选择电脑obd代码
+     *
+     * @param boxCode 框代码
+     * @return {@link ObdBoxVO}
+     */
+    ObdBoxVO selectPcObdByCode(String  boxCode);
 
 
 }

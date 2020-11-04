@@ -212,4 +212,13 @@ public interface UploadMapper {
     int deleteByPicture(ObdPicture obdPicture);
 
 
+    /**
+     * 根据code找pcobd
+     *
+     * @param boxCode 框代码
+     * @return {@link ObdBoxVO}
+     */
+    ObdBoxVO selectPcObdByCode(@Param("boxCode") String  boxCode);
+
+
 }

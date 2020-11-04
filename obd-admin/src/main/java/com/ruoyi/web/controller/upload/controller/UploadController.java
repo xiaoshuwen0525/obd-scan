@@ -181,15 +181,5 @@ public class UploadController extends BaseController {
         return null;
     }
 
-    @GetMapping("/test")
-    @ResponseBody
-    public AjaxResult test(@RequestParam(value = "boxCode") String boxCode) {
-        try {
-            return  AjaxResult.success(uploadService.selectPcObdByCode(boxCode));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 }

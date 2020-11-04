@@ -74,7 +74,7 @@ public interface ObdDeviceMapper {
     /**
      * 根据boxCode或者labelCode查询机箱信息
      * */
-    List<ObdPortInfoVO> selectAllInfoByCode(@Param("boxCode") String boxCode, @Param("labelCode") String labelCode);
+    List<ObdPortInfoVO> selectAllInfoByCode(@Param("code") String code);
 
     /**
      * 根据boxCode或者labelCode查询基础信息

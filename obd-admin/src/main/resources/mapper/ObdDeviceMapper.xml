@@ -115,17 +115,14 @@
         select id,obd_id,port_ser,port_code,port_id num from obd_view
         <where>
             <if test="boxCode != null and boxCode != ''">
-                and box_code = #{boxCode,jdbcType=VARCHAR}
-            </if>
-            <if test="labelCode != null and labelCode != ''">
-                and label_code = #{labelCode,jdbcType=VARCHAR}
+                and box_code = #{code} or label_code = #{code}
             </if>
         </where>
     </select>
 
     <!--通过boxCode或labelCode查询obd信息-->
     <select id="selectBaseDataByCode" resultMap="PcObdViewResultMap" >
-        select box_id, obd_id, port_count from pc_obd_view
+        select box_id, obd_id, port_count, box_belong, obd_name from pc_obd_view
         <where>
             <if test="code != null and code != ''">
                 box_code = #{code} or label_code = #{code}

@@ -233,19 +233,13 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      */
     @Override
     public ObdBoxVO selectAllInfoByCode(String code) {
-        String boxCode = null;
-        String labelCode = null;
-        if (code.startsWith("DG")) {
-            labelCode = code;
-        } else if (code.startsWith("光分纤箱")) {
-            boxCode = code;
-        } else {
-            return null;
-        }
         ObdBoxVO obdBoxVO = new ObdBoxVO();
+        if(StringUtils.isEmpty(code)){
+            return obdBoxVO;
+        }
         List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
         List<ObdPortInfoVO> obdPortInfoVOS;
-        obdPortInfoVOS = obdDeviceMapper.selectAllInfoByCode(boxCode, labelCode);
+        obdPortInfoVOS = obdDeviceMapper.selectAllInfoByCode(code);
         if (obdPortInfoVOS == null || obdPortInfoVOS.size()==0){
             return null;
         }
@@ -279,7 +273,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     }
 
     /**
-     * 根据扫描识别出来的code进行判定并查询机箱以及其所属信息
+     * 根据扫描识别出来的code进行判定并查询机箱以及其所属信息--微信前端扫描用
      *
      * @param code 识别码
      * @return ObdBoxVO
@@ -315,6 +309,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
                     //此处用于添加端口相关属性
                     ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
                     obdPortInfoVO1.setPortSer(i);
+                    //特殊需求置空
                     obdPortInfoVO1.setPortCode("");
                     obdPortInfoVOS1.add(obdPortInfoVO1);
                 }

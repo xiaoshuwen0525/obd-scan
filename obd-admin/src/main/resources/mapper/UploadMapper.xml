@@ -384,10 +384,10 @@
                 #{portCount,jdbcType=INTEGER},
             </if>
             <if test="boxBelong != null and boxBelong != '' ">
-                port_count,
+                #{boxBelong,jdbcType=VARCHAR},
             </if>
             <if test="obdName != null and obdName != ''  ">
-                obd_name,
+                #{obdName,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

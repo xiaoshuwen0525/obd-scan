@@ -347,6 +347,33 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         List<ObdView> obdViews = new ArrayList<>();
         try {
             obdViews = obdDeviceMapper.selectExportObd(obdView);
+            for (ObdView obd : obdViews) {
+                if ("0".equals(obd.getStatus())) {
+                    if ("0".equals(obd.getExceptionType())) {
+                        obd.setStatus("正常");
+                        obd.setExceptionType("正常");
+                    } else if ("1".equals(obd.getExceptionType())) {
+                        obd.setStatus("异常");
+                        obd.setExceptionType("OBD异常");
+                    } else if ("2".equals(obd.getExceptionType())) {
+                        obd.setStatus("异常");
+                        obd.setExceptionType("端口异常");
+                    }
+                } else {
+                    obd.setStatus("异常");
+                    obd.setExceptionType("机箱异常");
+                }
+                if("0".equals(obd.getObdStatus())){
+                    obd.setObdStatus("正常");
+                }else {
+                    obd.setObdStatus("异常");
+                }
+                if ("0".equals(obd.getPortStatus())){
+                    obd.setPortStatus("正常");
+                }else {
+                    obd.setPortStatus("异常");
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -36,11 +36,11 @@ public class ObdView extends BaseEntity {
     
         /** 数据状态：0:正常 1:异常 */
         @Excel(name = "机箱数据状态：0:正常 1:异常")
-        private Integer Status;
+        private String Status;
     
         /** 异常类型：1：盒子异常；2：OBD异常	 */
         @Excel(name = "异常类型： 0：正常 1：盒子异常；2：OBD异常	")
-        private Integer exceptionType;
+        private String exceptionType;
     
         /** 异常信息	 */
         @Excel(name = "异常信息")
@@ -65,7 +65,7 @@ public class ObdView extends BaseEntity {
     
         /** 数据状态0：正常1：异常 */
         @Excel(name = "obd数据状态0：正常1：异常")
-        private Integer obdStatus;
+        private String obdStatus;
     
         /** ${column.comment} */
         private Integer portId;
@@ -80,7 +80,7 @@ public class ObdView extends BaseEntity {
     
         /** 数据状态0：正常1：异常 */
         @Excel(name = "端口数据状态0：正常1：异常")
-        private Integer portStatus;
+        private String portStatus;
 
 
         @Excel(name = "归属设备")

@@ -11,7 +11,7 @@ ruoyi:
   # 文件路径 示例（ Windows配置D:/obd/uploadPath，Linux配置 /home/obd/uploadPath）
   profile: E:/obd/uploadPath
  # uploadfile: F:/projects/obd-scan/obd-admin/src/main/resources/static/obdImg
-  uploadfile: E:/obd-scan/obd-admin/src/main/resources/static/obdImg
+  uploadfile: E:/static/obdImg
   # 获取ip地址开关
   addressEnabled: false
 

@@ -6,11 +6,7 @@
 <body class="gray-bg">
     <div class="container-div">
 		<div class="row">
-	        <div class="col-sm-12 select-table table-striped">
-				<div class="pull-left image">
-					<img alt="User Image"  th:src="@{/obdImg/bg3.jpg}">
-				</div>
-	        </div>
+			<img alt="User Image"  src="${image}" style="width: 100%; height: 100%; ">
     	</div>
     </div>
     <th:block th:include="include :: footer" />

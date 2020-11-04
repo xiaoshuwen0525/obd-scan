@@ -173,6 +173,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Transactional(rollbackFor = Exception.class)
     public int deletePcObdInfoById(Integer id) {
         int i = 0;
+        lock.lock();
         try {
             i = dataManagementMapper.deletePcObdInfoById(id);
         } catch (Exception e) {

@@ -16,6 +16,8 @@ public interface EmployeeMapper {
      */
     List<EmployeeUser> selectEmployeeList(EmployeeUser employeeUser);
 
+    List<EmployeeUser> selectEmployee();
+
     /**
      * 根据id查询单个
      * @param id

@@ -18,6 +18,9 @@
              <if test="phone != null and phone != ''">and phone=#{phone}</if>
         </where>
     </select>
+    <select id="selectEmployee" resultMap="employeeUserMap">
+        select id,user_name,job_number,phone,create_time from employee_user
+    </select>
 
     <select id="selectByIdEmployee" resultMap="employeeUserMap">
         select id,user_name,job_number,phone from employee_user where id=#{id}

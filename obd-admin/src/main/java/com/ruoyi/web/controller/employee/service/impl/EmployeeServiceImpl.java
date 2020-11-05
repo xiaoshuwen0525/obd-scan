@@ -73,17 +73,21 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Transactional(rollbackFor = Exception.class)
     public int updateEmployee(EmployeeUser employeeUser) {
 
-        EmployeeUser employeeUser1 = employeeMapper.selectUserName(employeeUser.getUserName());
-        if(employeeUser1!=null && employeeUser1.getUserName().equals(employeeUser.getUserName())){
-            return 301;
-        }
-        EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(employeeUser.getJobNumber());
-        if(employeeUser2!=null && employeeUser2.getJobNumber().equals(employeeUser.getJobNumber())){
-            return 301;
-        }
-        EmployeeUser employeeUser3 = employeeMapper.selectPhone(employeeUser.getPhone());
-        if(employeeUser3!=null && employeeUser3.getPhone().equals(employeeUser.getPhone())){
-            return 301;
+        List<EmployeeUser> employeeUsers = employeeMapper.selectEmployee();
+        for (EmployeeUser user : employeeUsers) {
+            if(employeeUser.getUserName().equals(user.getUserName()) &&
+                    employeeUser.getId() != user.getId()){
+                return 301;
+            }
+            if(employeeUser.getJobNumber().equals(user.getJobNumber()) &&
+                    employeeUser.getId() != user.getId()){
+                return 301;
+            }
+            if(employeeUser.getPhone().equals(user.getPhone()) &&
+                    employeeUser.getId() != user.getId()){
+                return 301;
+            }
+
         }
         return employeeMapper.updateEmployee(employeeUser);
     }

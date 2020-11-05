@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -49,21 +50,21 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult insertPcObd(List<ImportEntity> userList) {
         try {
-            List<ImportEntity> toRepeatList =  userList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ImportEntity::getBoxUniqueId))), ArrayList::new));
+            List<ImportEntity> toRepeatList = userList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ImportEntity::getBoxUniqueId))), ArrayList::new));
             Map<Integer, String> boxIdMap = new HashMap<>();
             for (ImportEntity toRepeat : toRepeatList) {
                 PcObdBox pcObdBox = new PcObdBox();
                 if (StringUtils.isNotEmpty(toRepeat.getBoxCode()) || StringUtils.isNotEmpty(toRepeat.getLabelCode())) {
                     pcObdBox.setArea(toRepeat.getArea());
-                    pcObdBox.setBoxUniqueId(toRepeat.getBoxUniqueId());
-                    pcObdBox.setObdUniqueId(toRepeat.getObdUniqueId());
+                    pcObdBox.setBoxUniqueId(trim(toRepeat.getBoxUniqueId()));
+                    pcObdBox.setObdUniqueId(trim(toRepeat.getObdUniqueId()));
                     pcObdBox.setBusinessBureau(toRepeat.getBusinessBureau());
                     pcObdBox.setCampService(toRepeat.getCampService());
                     pcObdBox.setBoxCode(toRepeat.getBoxCode());
                     pcObdBox.setLabelCode(toRepeat.getLabelCode());
                     pcObdBox.setBoxName(toRepeat.getBoxBelong());
                     dataManagementMapper.insertPcObdBox(pcObdBox);
-                    boxIdMap.put(pcObdBox.getId(), pcObdBox.getBoxCode() + "," + pcObdBox.getLabelCode());
+                    boxIdMap.put(pcObdBox.getId(), trim(toRepeat.getBoxUniqueId()));
                 } else {
                     return AjaxResult.warn("存在code为空");
                 }
@@ -74,21 +75,23 @@ public class DataManagementServiceImpl implements IDataManagementService {
                 pcObdInfo.setObdName(importEntity.getObdName());
                 pcObdInfo.setBoxBelong(importEntity.getBoxBelong());
                 pcObdInfo.setPortCount(importEntity.getPortCount());
-                String code = "";
-                if (StringUtils.isNotEmpty(importEntity.getBoxCode())) {
-                    code = importEntity.getBoxCode();
+                pcObdInfo.setBoxUniqueId(trim(importEntity.getBoxUniqueId()));
+                pcObdInfo.setObdUniqueId(trim(importEntity.getObdUniqueId()));
+                String boxUniqueId = "";
+                if (StringUtils.isNotEmpty(trim(importEntity.getBoxUniqueId()))) {
+                    boxUniqueId = trim(importEntity.getBoxUniqueId());
                 } else {
-                    code = importEntity.getLabelCode();
+                    return AjaxResult.warn("归属设备ID为空");
                 }
                 for (Map.Entry<Integer, String> entry : boxIdMap.entrySet()) {
-                    if (entry.getValue().contains(code)) {
+                    if (entry.getValue().contains(boxUniqueId)) {
                         pcObdInfo.setBoxId(entry.getKey());
                     }
                 }
                 if (pcObdInfo.getBoxId() != null && pcObdInfo.getBoxId() != 0) {
                     list.add(pcObdInfo);
                 } else {
-                    AjaxResult.warn("插入出错");
+                    return AjaxResult.warn("插入出错");
                 }
             }
             dataManagementMapper.insertPcObdInfo(list);
@@ -250,5 +253,34 @@ public class DataManagementServiceImpl implements IDataManagementService {
         return pcObdBoxes;
     }
 
+
+    /**
+     * 去掉非数字修剪
+     *
+     * @param str str
+     * @return {@link String}
+     */
+    public static String trim(String str) {
+        String rules = "^[-\\+]?[\\d]*$";
+        Pattern pattern = Pattern.compile(rules);
+        if (pattern.matcher(str).matches()) {
+            return str;
+        } else {
+            str = StringUtils.trim(str);
+            if (pattern.matcher(str).matches()) {
+                return str;
+            } else {
+                String s = "";
+                for (int len = 0; len < str.length(); len++) {
+                    if (pattern.matcher(String.valueOf(str.charAt(len))).matches()) {
+                        s = s + str.charAt(len);
+                    }else {
+                        s = s + "";
+                    }
+                }
+                return s;
+            }
+        }
+    }
 
 }

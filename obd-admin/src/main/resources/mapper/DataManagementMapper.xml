@@ -150,10 +150,10 @@
     <!--新增PcObdInfo-->
     <insert id="insertPcObdInfo" keyProperty="id" useGeneratedKeys="true" parameterType="com.ruoyi.web.controller.data.domain.PcObdInfo">
         insert into pc_obd_info
-        (box_id,box_belong,obd_name,port_count)
+        (box_id,box_belong,obd_name,port_count,box_unique_id,obd_unique_id)
         values
         <foreach item="item" collection="list" separator="," open="" close="" index="index">
-        (#{item.boxId},#{item.boxBelong}, #{item.obdName},#{item.portCount})
+        (#{item.boxId},#{item.boxBelong}, #{item.obdName},#{item.portCount},#{item.boxUniqueId},#{item.obdUniqueId})
         </foreach>
     </insert>
 

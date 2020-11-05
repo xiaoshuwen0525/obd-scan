@@ -261,26 +261,14 @@ public class DataManagementServiceImpl implements IDataManagementService {
      * @return {@link String}
      */
     public static String trim(String str) {
-        String rules = "^[-\\+]?[\\d]*$";
-        Pattern pattern = Pattern.compile(rules);
-        if (pattern.matcher(str).matches()) {
-            return str;
-        } else {
-            str = StringUtils.trim(str);
-            if (pattern.matcher(str).matches()) {
-                return str;
-            } else {
-                String s = "";
-                for (int len = 0; len < str.length(); len++) {
-                    if (pattern.matcher(String.valueOf(str.charAt(len))).matches()) {
-                        s = s + str.charAt(len);
-                    }else {
-                        s = s + "";
-                    }
-                }
-                return s;
-            }
+        str = StringUtils.trim(str);
+        String s = "";
+        String startStr = String.valueOf(str.charAt(0));
+        if (s.equals(startStr)) {
+            str = str.substring(1,str.length());
         }
+        return str;
+
     }
 
 }

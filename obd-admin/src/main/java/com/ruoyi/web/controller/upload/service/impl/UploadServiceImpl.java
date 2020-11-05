@@ -46,7 +46,7 @@ public class UploadServiceImpl implements IUploadService {
 
     private static final Logger log = LoggerFactory.getLogger(UploadServiceImpl.class);
     //private ReentrantLock lock = new ReentrantLock();
-    private final int portCount = 8;
+
 
     @Override
     @Transactional
@@ -60,8 +60,10 @@ public class UploadServiceImpl implements IUploadService {
                 ObdBoxVO boxVO = uploadMapper.selectPcObdByCode(obdBoxVO.getBoxCode());
                 if (boxVO.getLabelCode().equals(obdBoxVO.getBoxCode())) {
                     labelCode = obdBoxVO.getBoxCode();
+                    boxCode = boxVO.getBoxCode();
                 } else if (boxVO.getBoxCode().equals(obdBoxVO.getBoxCode())) {
                     boxCode = obdBoxVO.getBoxCode();
+                    labelCode = boxVO.getLabelCode();
                 } else {
                     return AjaxResult.error("该串码找不到对应数据");
                 }

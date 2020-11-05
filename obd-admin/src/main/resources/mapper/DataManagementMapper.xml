@@ -94,9 +94,6 @@
             <if test=" boxUniqueId != null and boxUniqueId != '' ">
                 box_unique_id,
             </if>
-            <if test="obdUniqueId != null and obdUniqueId != '' ">
-                obd_unique_id,
-            </if>
             <if test="exceptionType != null">
                 exception_type,
             </if>
@@ -137,9 +134,6 @@
             </if>
             <if test="boxUniqueId != null and boxUniqueId != '' ">
                 #{boxUniqueId},
-            </if>
-            <if test="obdUniqueId != null and obdUniqueId != '' ">
-                #{obdUniqueId},
             </if>
             <if test="exceptionType != null">
                 #{exceptionType},

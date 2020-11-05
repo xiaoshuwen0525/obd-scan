@@ -49,7 +49,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult insertPcObd(List<ImportEntity> userList) {
         try {
-            List<ImportEntity> toRepeatList = userList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getBoxCode() + ";" + o.getLabelCode()))), ArrayList::new));
+            List<ImportEntity> toRepeatList =  userList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ImportEntity::getBoxUniqueId))), ArrayList::new));
             Map<Integer, String> boxIdMap = new HashMap<>();
             for (ImportEntity toRepeat : toRepeatList) {
                 PcObdBox pcObdBox = new PcObdBox();

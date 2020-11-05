@@ -47,11 +47,11 @@ public class ObdBox  {
         /** 异常信息	 */
         @Excel(name = "异常信息	")
         private String exceptionInfo;
-    
+
         /** 工号 */
         @Excel(name = "工号")
         private String jobNumber;
-    
+
         /** ${column.comment} */
         @Excel(name = "${column.comment}")
         @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -60,5 +60,12 @@ public class ObdBox  {
 
         /** 倒灌标签二维码 */
         private String labelCode;
+
+        /**
+        * 机箱唯一ID
+        */
+        private String boxUniqueId;
+
+
 
 }

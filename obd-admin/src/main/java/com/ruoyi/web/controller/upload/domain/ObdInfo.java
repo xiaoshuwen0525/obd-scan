@@ -31,4 +31,10 @@ public class ObdInfo {
 
     @Excel(name = "OBD名称")
     private String obdName;
+
+    @Excel(name = "归属设备ID")
+    private String boxUniqueId;
+
+    @Excel(name = "OBD实物ID")
+    private String obdUniqueId;
 }

@@ -2,9 +2,7 @@ package com.ruoyi.web.controller.upload.service.impl;
 
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.lang.UUID;
-import cn.hutool.json.JSONUtil;
+
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -20,15 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
+
 import java.io.File;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
+
 import java.util.regex.Pattern;
 
 /**
@@ -51,9 +47,9 @@ public class UploadServiceImpl implements IUploadService {
     @Override
     @Transactional
     public AjaxResult uploadInformation(ObdBoxVO obdBoxVO) {
-        System.out.println(obdBoxVO.toString());
         String boxCode = null;
         String labelCode = null;
+        String boxUniqueId = null;
         List<ObdPicture> obdPictureList;
         try {
             if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
@@ -67,11 +63,13 @@ public class UploadServiceImpl implements IUploadService {
                 } else {
                     return AjaxResult.error("该串码找不到对应数据");
                 }
+                boxUniqueId = boxVO.getBoxUniqueId();
                 ObdBox obdBox = new ObdBox();
                 obdBox.setBoxCode(boxCode);
                 obdBox.setLabelCode(labelCode);
                 obdBox.setId(obdBoxVO.getId());
                 obdBox.setJobNumber(obdBoxVO.getJobNumber());
+                obdBox.setBoxUniqueId(boxUniqueId);
                 obdPictureList = uploadMapper.selectObdPicture(obdBox);
                 if(obdPictureList.size()!=0){
                     for (ObdPicture picture:obdPictureList){
@@ -113,6 +111,8 @@ public class UploadServiceImpl implements IUploadService {
                 info.setPortCount(obdInfoVO.getPortCount());
                 info.setBoxBelong(obdInfoVO.getBoxBelong());
                 info.setObdName(obdInfoVO.getObdName());
+                info.setBoxUniqueId(obdInfoVO.getBoxUniqueId());
+                info.setObdUniqueId(obdInfoVO.getObdUniqueId());
                 uploadMapper.insertObdInfo(info);
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     if (!"".equals(obdPortInfo.getPortCode())) {
@@ -401,7 +401,6 @@ public class UploadServiceImpl implements IUploadService {
     @Override
     @Transactional
     public AjaxResult updateObd(ObdBoxVO obdBoxVO) {
-        System.out.println(obdBoxVO.toString());
         //lock.lock();
         try {
             if (!"".equals(obdBoxVO.getBoxCode()) && obdBoxVO.getBoxCode() != null && obdBoxVO.getId() > 0) {
@@ -412,11 +411,19 @@ public class UploadServiceImpl implements IUploadService {
                 } else {
                     obdBox.setStatus(1);
                 }
+                obdBox.setBoxUniqueId(obdBoxVO.getBoxUniqueId());
+                obdBox.setBoxCode(obdBoxVO.getBoxCode());
+                obdBox.setLabelCode(obdBoxVO.getLabelCode());
                 obdBox.setCreateTime(new Date());
                 uploadMapper.updateObdBox(obdBox);
             }
             int infoCount = 1;
             for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
+                ObdInfo info = new ObdInfo();
+                info.setId(obdInfoVO.getId());
+                info.setBoxBelong(obdBoxVO.getBoxName());
+                info.setBoxUniqueId(obdBoxVO.getBoxUniqueId());
+                uploadMapper.updateObdInfo(info);
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     ObdPortInfoVO obdPort = obdPortInfo;
                     if (!"".equals(obdPort.getPortCode()) && obdPort.getId() != null) {

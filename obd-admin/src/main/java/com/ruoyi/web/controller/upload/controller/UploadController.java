@@ -73,10 +73,27 @@ public class UploadController extends BaseController {
         log.info("参数 boxCode:" + boxCode + ",boxId:" + boxId);
         String undefined = "undefined";
         ObdBoxVO obdBoxVO = new ObdBoxVO();
-        if (undefined.equals(boxCode.substring(1, boxCode.length() - 1))) {
-            obdBoxVO.setBoxCode(boxCode.substring(1, boxCode.length() - 1));
-        }
+        String boxCode1 = null;
+        String labelCode = null;
+        boxCode = boxCode.substring(1, boxCode.length() - 1);
+        ObdBoxVO boxVO = uploadService.selectPcObdByCode(boxCode);
+         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
+             if (boxVO.getLabelCode().equals(boxCode)) {
+                    labelCode = boxCode;
+                    boxCode1 = boxVO.getBoxCode();
+             } else if (boxVO.getBoxCode().equals(boxCode)) {
+                    boxCode1 = boxCode;
+                    labelCode = boxVO.getLabelCode();
+             }else {
+                 return AjaxResult.warn("该串码找不到对应数据");
+             }
+         }
+
         obdBoxVO.setId(boxId);
+         obdBoxVO.setBoxCode(boxCode1);
+         obdBoxVO.setLabelCode(labelCode);
+         obdBoxVO.setBoxUniqueId(boxVO.getBoxUniqueId());
+         obdBoxVO.setBoxName(boxVO.getBoxName());
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
         obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
         log.info("参数 obdInfoListVO:" + obdInfoListVO.toString());

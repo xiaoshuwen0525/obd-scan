@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.upload.domain;
 
+import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 
 import java.util.List;
@@ -57,6 +58,10 @@ public class ObdInfoVO {
 
 
     private  Integer portCount;
+
+    private String boxUniqueId;
+
+    private String obdUniqueId;
 
     private List<ObdPortInfoVO> obdPortInfoVOList;
 

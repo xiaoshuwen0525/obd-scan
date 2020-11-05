@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.upload.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -83,6 +84,13 @@ public class ObdBoxVO {
     private Date createTime;
 
     private List<ObdInfoVO> obdInfoVOList;
+
+
+    /**
+     * 机箱唯一ID
+     */
+    private String boxUniqueId;
+
 
 
 }

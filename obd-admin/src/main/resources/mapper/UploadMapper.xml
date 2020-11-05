@@ -25,6 +25,8 @@
         <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
         <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="boxName" column="box_name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdBox" id="ObdBoxMap">
@@ -37,6 +39,7 @@
         <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
         <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdPicture" id="ObdPictureMap">
@@ -62,6 +65,8 @@
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="portCount" column="port_count" jdbcType="INTEGER"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdPortInfo" id="ObdPortInfoResultMap">
@@ -106,6 +111,12 @@
             <if test="status != null">
                 status = #{status,jdbcType=INTEGER},
             </if>
+            <if test="boxBelong != null and boxBelong !='' ">
+                box_belong = #{boxBelong,jdbcType=INTEGER},
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId !='' ">
+                box_unique_id = #{boxUniqueId,jdbcType=INTEGER},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -135,6 +146,9 @@
             </if>
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId !='' ">
+                box_unique_id = #{boxUniqueId,jdbcType=INTEGER},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -258,7 +272,10 @@
                 create_time,
             </if>
             <if test="labelCode != null and labelCode != '' ">
-                label_code
+                label_code,
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != '' ">
+                box_unique_id,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -285,6 +302,9 @@
             </if>
             <if test="labelCode != null and labelCode != '' ">
                 #{labelCode,jdbcType=VARCHAR},
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != '' ">
+                #{boxUniqueId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -319,7 +339,10 @@
                 create_time,
             </if>
             <if test="labelCode != null and labelCode != '' ">
-                label_code
+                label_code,
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != '' ">
+                box_unique_id,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -350,6 +373,9 @@
             <if test="labelCode != null and labelCode != '' ">
                 #{labelCode,jdbcType=VARCHAR},
             </if>
+            <if test="boxUniqueId != null and boxUniqueId != '' ">
+                #{boxUniqueId,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -372,6 +398,12 @@
             <if test="obdName != null and obdName != ''  ">
                 obd_name,
             </if>
+            <if test="boxUniqueId != null and boxUniqueId != '' ">
+                box_unique_id,
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != '' ">
+                obd_unique_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="boxId != null">
@@ -388,6 +420,12 @@
             </if>
             <if test="obdName != null and obdName != ''  ">
                 #{obdName,jdbcType=VARCHAR},
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != '' ">
+                #{boxUniqueId,jdbcType=VARCHAR},
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != '' ">
+                #{obdUniqueId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -651,7 +689,7 @@
     </delete>
 
     <select id="selectPcObdByCode" resultMap="ObdBoxVOMap" parameterType="java.lang.String" >
-        SELECT id, box_code,job_number,label_code  FROM pc_obd_box
+        SELECT id, box_code,job_number,label_code,box_unique_id,box_name  FROM pc_obd_box
         where  box_code = #{boxCode,jdbcType=VARCHAR} or label_code = #{boxCode,jdbcType=VARCHAR}
     </select>
 

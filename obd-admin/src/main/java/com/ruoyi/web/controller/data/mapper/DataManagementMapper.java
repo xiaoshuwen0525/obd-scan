@@ -81,6 +81,15 @@ public interface DataManagementMapper {
     int deletePcObdBoxByIds(Long[] boxIds);
 
     /**
+     * 删除导入obd信息通过机箱id
+     *
+     * @param boxIds 机箱id
+     * @return int
+     */
+    int deletePcObdInfoByBoxIds(Long[] boxIds);
+
+
+    /**
      * 选择obd的实体
      *
      * @param derivedEntity 派生实体

@@ -202,15 +202,17 @@ public class DataManagementServiceImpl implements IDataManagementService {
             return 0;
         }
         int i = 0;
+        int j = 0;
         lock.lock();
         try {
             i = dataManagementMapper.deletePcObdBoxByIds(boxIds);
+            j = dataManagementMapper.deletePcObdInfoByBoxIds(boxIds);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             lock.unlock();
         }
-        return i;
+        return i+j;
 
     }
 

@@ -51,7 +51,7 @@
     </resultMap>
 
     <sql id="pc_obd">
-      box_code, label_code, box_name, area, business_bureau, camp_service, obd_id, box_id, box_belong, obd_name, port_count
+      box_code, label_code, box_name, area, business_bureau, camp_service, obd_id, box_id, box_belong, obd_name, port_count, box_unique_id, obd_unique_id
     </sql>
 
 
@@ -286,7 +286,14 @@
         <foreach collection="array" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
 
+    <delete id="deletePcObdInfoByBoxIds" parameterType="Long">
+        delete from pc_obd_info
+        where box_id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </delete>
 
 
@@ -327,6 +334,12 @@
             </if>
             <if test="portCount != null and portCount != 0">
                 and port_count = #{portCount,jdbcType=INTEGER}
+            </if>
+            <if test=" boxUniqueId != null and boxUniqueId != '' ">
+                and box_unique_id = #{boxUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test=" obdUniqueId != null and obdUniqueId != '' ">
+                and obd_unique_id = #{obdUniqueId,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

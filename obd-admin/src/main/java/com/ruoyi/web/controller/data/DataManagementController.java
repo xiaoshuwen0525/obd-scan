@@ -161,24 +161,6 @@ public class DataManagementController extends BaseController {
         return AjaxResult.error("更新失败");
     }
 
-    @PostMapping("/deletePcObdInfoById")
-    @ResponseBody
-    public AjaxResult deletePcObdInfoById(Integer id) {
-        if (id == 0) {
-            return AjaxResult.error("更新失败");
-        }
-        int i;
-        try {
-            i = dataManagementService.deletePcObdInfoById(id);
-            if (i > 0) {
-                return AjaxResult.success("更新成功");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return AjaxResult.error("更新失败");
-    }
-
     @PostMapping("/deletePcObdBoxById")
     @ResponseBody
     public AjaxResult deletePcObdBoxByIds(String ids) {

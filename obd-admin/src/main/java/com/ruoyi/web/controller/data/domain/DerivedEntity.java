@@ -47,10 +47,22 @@ public class DerivedEntity {
     private String boxBelong;
 
     /**
+     * 机箱唯一ID
+     */
+    @Excel(name = "归属设备ID")
+    private String boxUniqueId;
+
+    /**
      * OBD名称
      */
     @Excel(name = "OBD名称")
     private String obdName;
+
+    /**
+     * OBD唯一ID
+     */
+    @Excel(name = "OBD实物ID")
+    private String obdUniqueId;
 
     /**
      * 端口数量
@@ -58,17 +70,9 @@ public class DerivedEntity {
     @Excel(name = "OBD端口数")
     private int portCount;
 
-    /**
-     * 机箱唯一ID
-     */
-    @Excel(name = "归属设备ID")
-    private String boxUniqueId;
 
-    /**
-     * OBD唯一ID
-     */
-    @Excel(name = "OBD实物ID")
-    private String obdUniqueId;
+
+
 
 
     private String boxName;

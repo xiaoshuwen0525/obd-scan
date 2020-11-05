@@ -18,6 +18,8 @@
         <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="obdCount" column="obd_count" jdbcType="VARCHAR"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.data.domain.PcObdInfo" id="PcObdInfoMap">
@@ -28,6 +30,8 @@
         <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
         <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
         <result property="portCount" column="port_count" jdbcType="VARCHAR"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.data.domain.DerivedEntity" id="PcObdViewResultMap">
@@ -42,6 +46,8 @@
         <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
         <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
         <result property="portCount" column="port_count" jdbcType="INTEGER"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="pc_obd">
@@ -85,6 +91,12 @@
             <if test="status != null  ">
                 status,
             </if>
+            <if test=" boxUniqueId != null and boxUniqueId != '' ">
+                box_unique_id,
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != '' ">
+                obd_unique_id,
+            </if>
             <if test="exceptionType != null">
                 exception_type,
             </if>
@@ -122,6 +134,12 @@
             </if>
             <if test="status != null  ">
                 #{status},
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != '' ">
+                #{boxUniqueId},
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != '' ">
+                #{obdUniqueId},
             </if>
             <if test="exceptionType != null">
                 #{exceptionType},

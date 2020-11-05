@@ -55,6 +55,8 @@ public class DataManagementServiceImpl implements IDataManagementService {
                 PcObdBox pcObdBox = new PcObdBox();
                 if (StringUtils.isNotEmpty(toRepeat.getBoxCode()) || StringUtils.isNotEmpty(toRepeat.getLabelCode())) {
                     pcObdBox.setArea(toRepeat.getArea());
+                    pcObdBox.setBoxUniqueId(toRepeat.getBoxUniqueId());
+                    pcObdBox.setObdUniqueId(toRepeat.getObdUniqueId());
                     pcObdBox.setBusinessBureau(toRepeat.getBusinessBureau());
                     pcObdBox.setCampService(toRepeat.getCampService());
                     pcObdBox.setBoxCode(toRepeat.getBoxCode());

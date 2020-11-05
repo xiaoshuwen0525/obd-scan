@@ -81,6 +81,7 @@
         <result property="portCode" column="port_code" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="ObdBoxVO">
@@ -99,7 +100,7 @@
     <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
-        i.id,i.box_id,i.status,b.box_code,b.label_code
+        i.id,i.box_id,i.status,b.box_code,b.label_code,obd_name
         FROM obd_info i
         INNER  JOIN obd_box b on  b.id = i.box_id,
         (select @num := 0) row_number
@@ -135,11 +136,12 @@
 
     <!--通过ObdId查询端口列表-->
     <select id="selectPortByObdId" resultMap="ObdPortInfoVOMap" >
-        SELECT
-        (@num := @num + 1) as num,
-        id,obd_id,port_ser,port_code,status,img_url
-        FROM obd_port_info ,
-        (select @num := 0) row_number
+        SELECT (@num := @num + 1) as num,
+        t1.id,t1.obd_id,t1.port_ser,t1.port_code,t1.status,t1.img_url,t2.obd_name
+        FROM (select @num := 0) row_number,
+        obd_port_info t1
+        JOIN obd_info t2 on
+        t1.obd_id = t2.id
         <where>
             <if test="obdId != null and obdId != ''">
                 and  obd_id = #{obdId,jdbcType=VARCHAR}

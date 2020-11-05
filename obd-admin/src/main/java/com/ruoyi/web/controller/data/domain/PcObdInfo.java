@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.data.domain;
 
+import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -37,5 +38,15 @@ public class PcObdInfo implements Serializable {
      * 端口数
      */
     private int portCount;
+
+    /**
+     * 机箱唯一ID
+     */
+    private String boxUniqueId;
+
+    /**
+     * OBD唯一ID
+     */
+    private String obdUniqueId;
 
 }

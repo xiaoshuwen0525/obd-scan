@@ -46,4 +46,9 @@ public class ObdPortInfoVO {
      */
     private String imgUrl;
 
+    /**
+     * obd名称
+     */
+    private String obdName;
+
 }

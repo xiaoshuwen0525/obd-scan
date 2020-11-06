@@ -44,10 +44,12 @@ public class DataManagementController extends BaseController {
     @GetMapping("/baseUpdate/{id}")
     public String baseUpdateById(@PathVariable("id") int id, ModelMap mmap) {
         DerivedEntity derivedEntity = new DerivedEntity();
+        List<PcObdBox> pcObdBoxes = new ArrayList<>();
         derivedEntity.setBoxId(id);
         List<DerivedEntity> derivedEntities = new ArrayList<>();
         try {
             derivedEntities = dataManagementService.selectObdByEntity(derivedEntity);
+            pcObdBoxes = dataManagementService.selectAllBoxName();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,6 +72,7 @@ public class DataManagementController extends BaseController {
             count++;
         }
         mmap.put("obd", pcObdInfos);
+        mmap.put("boxNameList", pcObdBoxes);
         mmap.put("obdSize", pcObdInfos.size());
         return prefix + "/baseUpdate";
     }
@@ -116,42 +119,6 @@ public class DataManagementController extends BaseController {
         int i;
         try {
             i = dataManagementService.updateBaseData(baseDataVo.getBaseUpdateList());
-            if (i > 0) {
-                return AjaxResult.success("更新成功");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return AjaxResult.error("更新失败");
-    }
-
-    @PostMapping("/updatePcObdBox")
-    @ResponseBody
-    public AjaxResult updatePcObdBox(PcObdBox pcObdBox) {
-        if (pcObdBox == null) {
-            return AjaxResult.error("更新失败");
-        }
-        int i;
-        try {
-            i = dataManagementService.updatePcObdBox(pcObdBox);
-            if (i > 0) {
-                return AjaxResult.success("更新成功");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return AjaxResult.error("更新失败");
-    }
-
-    @PostMapping("/updatePcObdInfo")
-    @ResponseBody
-    public AjaxResult updatePcObdInfo(PcObdInfo pcObdInfo) {
-        if (pcObdInfo == null) {
-            return AjaxResult.error("更新失败");
-        }
-        int i;
-        try {
-            i = dataManagementService.updatePcObdInfo(pcObdInfo);
             if (i > 0) {
                 return AjaxResult.success("更新成功");
             }

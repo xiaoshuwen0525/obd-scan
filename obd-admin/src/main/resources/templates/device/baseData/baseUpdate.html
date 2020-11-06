@@ -85,8 +85,10 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">归属设备：</label>
                     <div class="col-sm-8">
-                        <input class="form-control" maxlength="30" name="boxBelong" readonly="true"
-                               th:value="${o.boxBelong}" type="text">
+                        <select class="form-control" maxlength="30" name="boxBelong" th:with="list=${boxNameList}">
+                            <option th:text="${o.boxBelong}"></option>
+                            <option th:each="box : ${list}" th:text="${box.boxName}" th:value="${box.boxUniqueId}"></option>
+                        </select>
                     </div>
                 </div>
             </div>

@@ -33,6 +33,14 @@ public interface DataManagementMapper {
 
 
     /**
+     * 查询所有机箱名称
+     *
+     * @return {@link List<PcObdBox>}
+     */
+    List<PcObdBox> selectAllBoxName();
+
+
+    /**
      * 插入obd信息
      *
      * @param pcObdInfo pc obd信息
@@ -49,12 +57,20 @@ public interface DataManagementMapper {
     int updatePcObdBox(PcObdBox pcObdBox);
 
     /**
-     * 更新obd信息
+     * 用于关联更新obd的信息---基础数据修改专用
      *
      * @param pcObdInfo pc obd信息
      * @return int
      */
-    int updatePcObdInfo(PcObdInfo pcObdInfo);
+    int updatePcObdInfoForBaseData(PcObdInfo pcObdInfo);
+
+    /**
+     * 根据机箱唯一id查询机箱信息
+     *
+     * @param boxUniqueId 盒子里惟一的id
+     * @return {@link PcObdBox}
+     */
+    PcObdBox selectByBoxUniqueId(String boxUniqueId);
 
     /**
      * 更新基础数据

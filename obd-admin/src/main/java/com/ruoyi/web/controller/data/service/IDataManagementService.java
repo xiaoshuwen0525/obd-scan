@@ -34,14 +34,6 @@ public interface IDataManagementService
     int updatePcObdBox(PcObdBox pcObdBox);
 
     /**
-     * 更新obd信息
-     *
-     * @param pcObdInfo pc obd信息
-     * @return int
-     */
-    int updatePcObdInfo(PcObdInfo pcObdInfo);
-
-    /**
      * 更新基础数据
      *
      * @param baseUpdates 基础更新
@@ -73,6 +65,12 @@ public interface IDataManagementService
      */
     List<DerivedEntity> selectObdByEntity(DerivedEntity derivedEntity);
 
+    /**
+     * 查询所有机箱名称
+     *
+     * @return {@link List<PcObdBox>}
+     */
+    List<PcObdBox> selectAllBoxName();
 
     /**
      * 根据boxid查询obd

@@ -59,6 +59,10 @@
       id, box_code, label_code, box_name, area, business_bureau, camp_service, job_number, img_url, status, exception_type, exception_info, create_time
     </sql>
 
+    <select id="selectAllBoxName" resultMap="PcObdBoxMap">
+        select box_name,box_unique_id from pc_obd_box GROUP BY box_name
+    </select>
+
 
     <!--新增PcObdBox-->
     <insert id="insertPcObdBox" keyProperty="id" useGeneratedKeys="true" parameterType="com.ruoyi.web.controller.data.domain.PcObdBox">
@@ -246,23 +250,23 @@
 
 
     <!--通过主键修改数据-->
-    <update id="updatePcObdInfo" parameterType="com.ruoyi.web.controller.data.domain.PcObdInfo">
+    <update id="updatePcObdInfoForBaseData" parameterType="com.ruoyi.web.controller.data.domain.PcObdInfo">
         update pc_obd_info
         <set>
             <if test="boxId != null">
                 box_id = #{boxId},
             </if>
-            <if test="status != null">
-                status = #{status},
-            </if>
             <if test="boxBelong != null and boxBelong != ''">
                 box_belong = #{boxBelong},
+            </if>
+            <if test=" boxUniqueId != null and boxUniqueId != '' ">
+                box_unique_id = #{boxUniqueId,jdbcType=VARCHAR},
             </if>
             <if test="obdName != null and obdName != ''">
                 obd_name = #{obdName},
             </if>
-            <if test="portCount != null and portCount != ''">
-                port_count = #{portCount},
+            <if test="portCount != null">
+                port_count = #{portCount}
             </if>
         </set>
         where id = #{id}
@@ -349,6 +353,11 @@
         id, box_id, status, box_belong, obd_name, port_count
         from pc_obd_info,(select @num := 0) row_number
         where box_id = #{boxId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByBoxUniqueId" resultMap="PcObdBoxMap" parameterType="String">
+        select * from pc_obd_box
+        where box_unique_id = #{boxUniqueId,jdbcType=VARCHAR}
     </select>
 
     <select id="selectBoxListByEntity" resultMap="PcObdBoxMap"

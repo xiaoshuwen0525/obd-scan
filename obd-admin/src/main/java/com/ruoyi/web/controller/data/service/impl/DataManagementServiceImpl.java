@@ -39,7 +39,6 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Autowired
     private DataManagementMapper dataManagementMapper;
 
-
     /**
      * 插入obd
      *
@@ -122,37 +121,46 @@ public class DataManagementServiceImpl implements IDataManagementService {
         return i;
     }
 
-    /**
-     * 更新obd信息
-     *
-     * @param pcObdInfo pc obd信息
-     * @return int
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int updatePcObdInfo(PcObdInfo pcObdInfo) {
-        int i = 0;
-        lock.lock();
-        try {
-            i = dataManagementMapper.updatePcObdInfo(pcObdInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return i;
-    }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateBaseData(List<BaseUpdate> baseUpdates) {
         int j = 0;
+        Pattern pattern = Pattern.compile("[0-9]*");
         if (!CollectionUtils.isEmpty(baseUpdates)) {
             lock.lock();
             try {
                 for (BaseUpdate baseUpdate : baseUpdates) {
                     int i = 0;
-                    i = dataManagementMapper.updateBaseData(baseUpdate);
+                    //是否为纯数字
+                    boolean matches = pattern.matcher(baseUpdate.getBoxBelong()).matches();
+                    //如果obdBelong被修改了，则传过来的值会变更为boxUniqueId
+                    PcObdBox pcObdBox = new PcObdBox();
+                    if (matches){
+                        try {
+                            pcObdBox = dataManagementMapper.selectByBoxUniqueId(baseUpdate.getBoxBelong());
+                        } catch (Exception e) {
+                            System.out.println("机箱唯一ID查询出多个数据，无法判定修改哪一个");
+                            return 0;
+                        }
+                        PcObdInfo pcObdInfo = new PcObdInfo();
+                        //指定要更新的obd设备
+                        pcObdInfo.setId(baseUpdate.getId());
+                        //更新obd的设备归属名称
+                        pcObdInfo.setBoxBelong(pcObdBox.getBoxName());
+                        //更新obd的设备归属机箱的唯一ID
+                        pcObdInfo.setBoxUniqueId(pcObdBox.getBoxUniqueId());
+                        //更新obd的关联机箱主键ID
+                        pcObdInfo.setBoxId(pcObdBox.getId());
+                        //如果有更新obd名称则同步更新
+                        pcObdInfo.setObdName(baseUpdate.getObdName());
+                        //如果有更新端口数则同步更新
+                        pcObdInfo.setPortCount(baseUpdate.getPortCount());
+                        i = dataManagementMapper.updatePcObdInfoForBaseData(pcObdInfo);
+                    }else{
+                        //obd归属设备未变更，则boxBelong等于boxName
+                        baseUpdate.setBoxBelong(baseUpdate.getBoxName());
+                        i = dataManagementMapper.updateBaseData(baseUpdate);
+                    }
                     j++;
                     if (i <= 0) {
                         j = 0;
@@ -236,6 +244,22 @@ public class DataManagementServiceImpl implements IDataManagementService {
             e.printStackTrace();
         }
         return pcObdInfos;
+    }
+
+    /**
+     * 查询所有机箱名称
+     *
+     * @return {@link List<PcObdBox>}
+     */
+    @Override
+    public List<PcObdBox> selectAllBoxName() {
+        List<PcObdBox> pcObdBoxs = new ArrayList<>();
+        try {
+            pcObdBoxs = dataManagementMapper.selectAllBoxName();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pcObdBoxs;
     }
 
     /**

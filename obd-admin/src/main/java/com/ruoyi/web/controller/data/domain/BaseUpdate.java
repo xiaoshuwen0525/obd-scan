@@ -33,4 +33,6 @@ public class BaseUpdate {
 
     private Integer portCount;
 
+    private String boxUniqueId;
+
 }

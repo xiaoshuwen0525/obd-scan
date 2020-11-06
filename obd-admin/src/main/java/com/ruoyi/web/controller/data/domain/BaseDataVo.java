@@ -50,8 +50,7 @@ public class BaseDataVo {
             baseUpdate.setLabelCode(labelCode);
             baseUpdate.setBoxCode(boxCode);
             baseUpdate.setBoxName(boxName);
-            //如果boxName被修改，则boxBelong也随之修改
-            baseUpdate.setBoxBelong(boxName);
+            baseUpdate.setBoxBelong(boxBelong.get(i));
             baseUpdate.setObdName(obdName.get(i));
             baseUpdate.setPortCount(portCount.get(i));
             baseUpdate.setId(id.get(i));

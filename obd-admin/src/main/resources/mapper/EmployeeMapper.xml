@@ -13,7 +13,7 @@
     <select id="selectEmployeeList" resultMap="employeeUserMap">
         select id,user_name,job_number,phone,create_time from employee_user
         <where>
-             <if test="userName != null and userName != ''">and user_name=#{userName}</if>
+             <if test="userName != null and userName != ''">and user_name like concat('%',#{userName},'%')</if>
             <if test="jobNumber != null and jobNumber != ''">and job_number=#{jobNumber}</if>
              <if test="phone != null and phone != ''">and phone=#{phone}</if>
         </where>

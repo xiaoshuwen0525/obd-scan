@@ -101,7 +101,7 @@ public class UploadServiceImpl implements IUploadService {
                 obdBoxVO.setId(obdBox.getId());
             }
             if(!isNullPort(obdBoxVO.getObdInfoVOList())){
-                return AjaxResult.error("全部端口端口均为空");
+                return AjaxResult.error("请至少扫描一个obd端口二维码");
             }
             int infoCount = 1;
             for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {

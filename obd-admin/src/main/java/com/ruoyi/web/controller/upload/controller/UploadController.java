@@ -121,8 +121,10 @@ public class UploadController extends BaseController {
         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
             if (boxVO.getLabelCode().equals(boxCode)) {
                 labelCode = boxCode;
+                boxCode1 = boxVO.getBoxCode();
             } else if (boxVO.getBoxCode().equals(boxCode)) {
                 boxCode1 = boxCode;
+                labelCode = boxVO.getLabelCode();
             }else {
                 return AjaxResult.warn("该串码找不到对应数据");
             }

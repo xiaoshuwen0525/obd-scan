@@ -55,11 +55,11 @@ public class EmployeeServiceImpl implements IEmployeeService {
         }
         EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(employeeUser.getJobNumber());
         if(employeeUser2!=null && employeeUser2.getJobNumber().equals(employeeUser.getJobNumber())){
-            return 301;
+            return 302;
         }
         EmployeeUser employeeUser3 = employeeMapper.selectPhone(employeeUser.getPhone());
         if(employeeUser3!=null && employeeUser3.getPhone().equals(employeeUser.getPhone())){
-            return 301;
+            return 303;
         }
         return employeeMapper.insertEmployee(employeeUser);
     }
@@ -81,11 +81,11 @@ public class EmployeeServiceImpl implements IEmployeeService {
             }
             if(employeeUser.getJobNumber().equals(user.getJobNumber()) &&
                     employeeUser.getId() != user.getId()){
-                return 301;
+                return 302;
             }
             if(employeeUser.getPhone().equals(user.getPhone()) &&
                     employeeUser.getId() != user.getId()){
-                return 301;
+                return 303;
             }
 
         }
@@ -134,16 +134,17 @@ public class EmployeeServiceImpl implements IEmployeeService {
                         continue;
                     }
                     EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(importUserList.getJobNumber());
-                    if(employeeUser2!=null && employeeUser1.getJobNumber().equals(importUserList.getJobNumber())){
+                    if(employeeUser2!=null && employeeUser2.getJobNumber().equals(importUserList.getJobNumber())){
                         continue;
                     }
                     EmployeeUser employeeUser3 = employeeMapper.selectPhone(importUserList.getPhone());
-                    if(employeeUser3!=null && employeeUser1.getPhone().equals(importUserList.getPhone())){
+                    if(employeeUser3!=null && employeeUser3.getPhone().equals(importUserList.getPhone())){
                         continue;
                     }
 
                     list.add(employeeUser);
                 }
+
                 if(list != null && list.size()==0){
                     return AjaxResult.warn("已存在此用户名或员工号或手机号");
                 }

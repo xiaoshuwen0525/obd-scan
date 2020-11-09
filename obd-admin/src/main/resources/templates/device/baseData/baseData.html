@@ -4,72 +4,73 @@
 	<th:block th:include="include :: header('基础数据')" />
 </head>
 <body class="gray-bg">
-	<div class="container-div">
-		<div class="row">
-			<div class="col-sm-12 search-collapse">
-				<form id="user-form">
-					<div class="select-list">
-						<ul>
-							<li>
-								区域：<input name="area" style="width: 80px;" type="text"/>
-							</li>
-							<li>
-								业务局：<input name="businessBureau" style="width: 80px;" type="text"/>
-							</li>
-							<li>
-								营服中心：<input name="campService" style="width: 120px;" type="text"/>
-							</li>
-							<li>
-								设备标签码：<input name="boxCode" style="width: 150px;" type="text"/>
-							</li>
-							<li>
-								倒灌标签码：<input name="labelCode" style="width: 150px;" type="text"/>
-							</li>
-							<li>
-								机箱名称：<input name="boxName" style="width: 120px;" type="text"/>
-							</li>
-							<li>
-								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-							</li>
-						</ul>
-					</div>
-				</form>
-			</div>
-			<!-- 此处用于导入表格数据，需要的时候解除注释-->
-			<div class="btn-group-sm" id="toolbar" role="group">
-				<a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
-					<i class="fa fa-edit"></i> 修改
-				</a>
-				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
-					<i class="fa fa-remove"></i> 删除
-				</a>
-				<a class="btn btn-info"  onclick="$.table.importExcel()">
-					<i class="fa fa-upload"></i> 导入
-				</a>
-				<a class="btn btn-warning" onclick="$.table.exportExcel()">
-					<i class="fa fa-download"></i> 导出
-				</a>
-			</div>
-			<div class="col-sm-12 select-table table-striped">
-				<table id="bootstrap-table"></table>
-			</div>
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="user-form">
+				<div class="select-list">
+					<ul>
+						<li>
+							区域：<input name="area" type="text"/>
+						</li>
+						<li>
+							业务局：<input name="businessBureau" type="text"/>
+						</li>
+						<li>
+							营服中心：<input name="campService" type="text"/>
+						</li>
+						<li>
+							机箱名称：<input name="boxName" type="text"/>
+						</li>
+						<li>
+							设备标签码：<input name="boxCode" type="text"/>
+						</li>
+						<li>
+							倒灌标签码：<input name="labelCode" type="text"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+		<!-- 此处用于导入表格数据，需要的时候解除注释-->
+		<div class="btn-group-sm" id="toolbar" role="group">
+			<a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
+				<i class="fa fa-edit"></i> 修改
+			</a>
+			<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+				<i class="fa fa-remove"></i> 删除
+			</a>
+			<a class="btn btn-info"  onclick="$.table.importExcel()">
+				<i class="fa fa-upload"></i> 导入
+			</a>
+			<a class="btn btn-warning" onclick="$.table.exportExcel()">
+				<i class="fa fa-download"></i> 导出
+			</a>
+		</div>
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
 		</div>
 	</div>
-    <th:block th:include="include :: footer" />
-    <script th:inline="javascript">
-        var prefix = ctx + "device/baseData";
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var prefix = ctx + "device/baseData";
 
-        $(function() {
-            var options = {
-                url: prefix + "/selectBoxListByEntity",
-				updateUrl: prefix + "/baseUpdate/{id}",
-				searchUrl:prefix + "/selectBoxListByEntity",
-				queryUrl: prefix + "/selectByBoxId/{id}",
-				removeUrl: prefix + "/deletePcObdBoxById",
-				importUrl: prefix + "/importData",
-				exportUrl: prefix + "/export",
-                modalName: "基础数据",
-                columns: [
+	$(function() {
+		var options = {
+			url: prefix + "/selectBoxListByEntity",
+			updateUrl: prefix + "/baseUpdate/{id}",
+			searchUrl:prefix + "/selectBoxListByEntity",
+			queryUrl: prefix + "/selectByBoxId/{id}",
+			removeUrl: prefix + "/deletePcObdBoxById",
+			importUrl: prefix + "/importData",
+			exportUrl: prefix + "/export",
+			modalName: "基础数据",
+			columns: [
 				{
 					checkbox: true
 				},
@@ -97,22 +98,22 @@
 					title : '设备标签二维码'
 				},
 				{
-		            field: 'labelCode',
-		            title: '倒灌标签二维码',
-		        },
+					field: 'labelCode',
+					title: '倒灌标签二维码',
+				},
 				{
 					field: 'boxName',
 					title: '机箱名称',
 				},
-		        {
-		            title: 'OBD数量',
-		            align: 'center',
-		            formatter: function(value, row, index) {
-		            	var actions = [];
+				{
+					title: 'OBD数量',
+					align: 'center',
+					formatter: function(value, row, index) {
+						var actions = [];
 						actions.push('<a class="btn btn-info btn-xs' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-search">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>' + row.obdCount + '&nbsp;&nbsp;</a> ');
 						return actions.join('');
-		            }
-		        },
+					}
+				},
 				{
 					title: '删除数据',
 					align: 'center',
@@ -122,12 +123,12 @@
 						return actions.join('');
 					}
 				}
-		        ]
-            };
-            $.table.init(options);
-			$.table.hideColumn("id");
-        });
-    </script>
+			]
+		};
+		$.table.init(options);
+		$.table.hideColumn("id");
+	});
+</script>
 </body>
 <!-- 导入区域 -->
 <script id="importTpl" type="text/template">

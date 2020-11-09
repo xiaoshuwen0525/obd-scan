@@ -80,11 +80,7 @@ public class EmployeeController extends BaseController {
         try {
             i = employeeService.insertEmployee(employeeUser);
             if (i == 301) {
-                return AjaxResult.warn("用户名已存在");
-            }else if(i == 302){
-                return AjaxResult.warn("工号已存在");
-            }else if(i == 303){
-                return AjaxResult.warn("手机号已存在");
+                return AjaxResult.warn("已存在此用户名或员工号或手机号");
             }
             if (i > 0) {
                 return AjaxResult.success("新增成功");
@@ -107,11 +103,7 @@ public class EmployeeController extends BaseController {
         try {
             i = employeeService.updateEmployee(employeeUser);
             if (i == 301) {
-                return AjaxResult.warn("用户名已存在");
-            }else if(i == 302){
-                return AjaxResult.warn("工号已存在");
-            }else if(i == 303){
-                return AjaxResult.warn("手机号已存在");
+                return AjaxResult.warn("已存在此用户名或员工号或手机号");
             }
             if (i > 0) {
                 return AjaxResult.success("更新成功");
@@ -136,7 +128,7 @@ public class EmployeeController extends BaseController {
         int i;
         try {
             i = employeeService.deleteEmployee(idList);
-                System.out.println(i);
+            System.out.println(i);
             if (i > 0) {
                 return AjaxResult.success("删除成功");
             }

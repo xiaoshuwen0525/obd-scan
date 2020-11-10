@@ -68,6 +68,7 @@ spring:
   servlet:
      multipart:
        # 单个文件大小
+       enabled: true
        max-file-size:  30MB
        # 设置总上传的文件大小
        max-request-size:  300MB
@@ -135,3 +136,7 @@ xss:
   excludes: /system/notice/*
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+
+
+

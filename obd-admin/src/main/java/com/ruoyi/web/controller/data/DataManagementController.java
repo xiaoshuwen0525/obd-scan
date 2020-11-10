@@ -149,12 +149,14 @@ public class DataManagementController extends BaseController {
     @PostMapping("/selectBoxListByEntity")
     @ResponseBody
     public TableDataInfo selectBoxListByEntity(PcObdBox pcObdBox) {
+        startPage();
         return getDataTable(dataManagementService.selectBoxListByEntity(pcObdBox));
     }
 
     @PostMapping("/selectByBoxId/{id}")
     @ResponseBody
     public TableDataInfo selectPcObdBoxById(@PathVariable("id") int boxId) {
+        startPage();
         return getDataTable(dataManagementService.selectByBoxId(boxId));
     }
 

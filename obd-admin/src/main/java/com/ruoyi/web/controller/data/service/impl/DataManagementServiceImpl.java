@@ -94,6 +94,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
                 }
             }
             dataManagementMapper.insertPcObdInfo(list);
+            toRepeat();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -295,6 +296,30 @@ public class DataManagementServiceImpl implements IDataManagementService {
         }
         return str;
 
+    }
+
+    /**
+     * 去重
+     *
+     * @return {@link String}
+     */
+    public void toRepeat() {
+        //obdCount 表示 条数 box_name 表示 id
+        List<PcObdBox> pcObdBoxes = dataManagementMapper.selectCount();
+        List<Integer> list = new ArrayList<>();
+        for (PcObdBox pcObdBox:pcObdBoxes){
+            String[] idStrList = pcObdBox.getBoxName().split("-");
+            for (String s:idStrList){
+                //seq表示where 的id  id 表示set 的id
+                pcObdBox.setId(Integer.parseInt(idStrList[idStrList.length-1]));
+                pcObdBox.setSeq(Integer.parseInt(s));
+                if(s.equals(idStrList[idStrList.length-1])){
+                    list.add(Integer.parseInt(s));
+                    dataManagementMapper.updateCount(pcObdBox);
+                }
+            }
+        }
+        dataManagementMapper.deleteCount(list);
     }
 
 }

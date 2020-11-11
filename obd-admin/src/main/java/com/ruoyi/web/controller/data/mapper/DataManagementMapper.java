@@ -128,4 +128,29 @@ public interface DataManagementMapper {
      * @return {@link List<PcObdBox>}
      */
     List<PcObdBox> selectBoxListByEntity(PcObdBox pcObdBox);
+
+    /**
+     * 查找重复数据
+     *
+     * @return {@link List<PcObdBox>}
+     */
+    List<PcObdBox> selectCount();
+
+    /**
+     * 将重复数据转移
+     *
+     * @param pcObdBox pc obd盒子
+     * @return int
+     */
+    int updateCount(PcObdBox pcObdBox);
+
+
+    /**
+     * 删除重复box
+     *
+     * @param list 盒子id
+     * @return int
+     */
+    int deleteCount(List<Integer> list);
+
 }

@@ -410,4 +410,29 @@
         (select @num := 0) num
     </select>
 
+    <select id="selectCount" resultMap="PcObdBoxMap" >
+        SELECT count(box_unique_id) AS obd_count, GROUP_CONCAT(id SEPARATOR '-') as box_name FROM pc_obd_box
+        GROUP BY box_unique_id
+        HAVING obd_count>1
+    </select>
+
+
+    <update id="updateCount" parameterType="com.ruoyi.web.controller.data.domain.PcObdBox">
+        UPDATE  pc_obd_info
+        <set>
+            <if test="boxId != null">
+                box_id = #{id},
+            </if>
+        </set>
+        WHERE box_id =#{seq}
+    </update>
+
+    <delete id="deleteCount" parameterType="list">
+        delete from pc_obd_box
+        where box_id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </delete>
+
 </mapper>

@@ -56,12 +56,13 @@ public class LoginServiceImpl implements LoginService {
     @Transactional
     public AjaxResult insertUser(String jobNumber,String phone,String wxOpenId,Integer authCode) throws ParseException {
 
+
         EmployeeUser employeeUser = loginMapper.selectEmployee(jobNumber, phone);
         if(employeeUser==null || (!employeeUser.getPhone().equals(phone) && !employeeUser.getJobNumber().equals(jobNumber))){
             return AjaxResult.success("104","资料库没有此工号或手机号",null);
         }
 
-        PhoneCode phoneCode = loginMapper.selectAuthCode();
+
         //判断手机号是否存在
         WxUser wxUser1 = loginMapper.selectPhone(phone);
         if(wxUser1!=null && wxUser1.getPhone().equals(phone)){
@@ -74,6 +75,7 @@ public class LoginServiceImpl implements LoginService {
             return AjaxResult.success("104","此工号已存在",null);
         }
 
+        PhoneCode phoneCode = loginMapper.selectAuthCode(phone);
         //判断验证码是否超时  超过5分钟
         SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
         Date createTime = phoneCode.getCreateTime();
@@ -92,6 +94,7 @@ public class LoginServiceImpl implements LoginService {
             return AjaxResult.success("104","验证码已超时",null);
         }
 
+
         //判断验证码是否正确
         if(phoneCode != null && phoneCode.getAuthCode().equals(authCode)){
             WxUser wxUser = new WxUser();
@@ -103,6 +106,7 @@ public class LoginServiceImpl implements LoginService {
         }else{
             return AjaxResult.success("104","验证码错误",null);
         }
+
     }
 
     /**
@@ -141,7 +145,7 @@ public class LoginServiceImpl implements LoginService {
         }
 
         //判断验证码是否超时  超过5分钟
-        PhoneCode phoneCode = loginMapper.selectAuthCode();
+        PhoneCode phoneCode = loginMapper.selectAuthCode(phone);
         SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
         Date createTime = phoneCode.getCreateTime();
         String startTimeStr = sdf.format(createTime.getTime());

@@ -43,7 +43,7 @@ public interface LoginMapper {
      * @param
      * @return
      */
-    public PhoneCode selectAuthCode();
+    public PhoneCode selectAuthCode(String phone);
 
     /**
      * 判断手机号

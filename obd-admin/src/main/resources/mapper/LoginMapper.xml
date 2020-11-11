@@ -44,7 +44,8 @@
 
     <!-- 查询最后一个验证码 -->
     <select id="selectAuthCode" resultMap="phoneCodeMap">
-        select auth_code,create_time from phone_code where id=(select MAX(id) from phone_code )
+        select phone,auth_code,create_time
+        from phone_code where id=(select MAX(id) from phone_code where phone=#{phone})
         /*SELECT auth_code FROM phone_code
         ORDER BY id DESC
         LIMIT 0,1*/

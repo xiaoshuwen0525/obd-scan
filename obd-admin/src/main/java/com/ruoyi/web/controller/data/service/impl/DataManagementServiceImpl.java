@@ -313,7 +313,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
                 //seq表示where 的id  id 表示set 的id
                 pcObdBox.setId(Integer.parseInt(idStrList[idStrList.length-1]));
                 pcObdBox.setSeq(Integer.parseInt(s));
-                if(s.equals(idStrList[idStrList.length-1])){
+                if(!s.equals(idStrList[idStrList.length-1])){
                     list.add(Integer.parseInt(s));
                     dataManagementMapper.updateCount(pcObdBox);
                 }

@@ -420,7 +420,7 @@
     <update id="updateCount" parameterType="com.ruoyi.web.controller.data.domain.PcObdBox">
         UPDATE  pc_obd_info
         <set>
-            <if test="boxId != null">
+            <if test="id != null">
                 box_id = #{id},
             </if>
         </set>
@@ -429,7 +429,7 @@
 
     <delete id="deleteCount" parameterType="list">
         delete from pc_obd_box
-        where box_id in
+        where id in
         <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
             #{item}
         </foreach>

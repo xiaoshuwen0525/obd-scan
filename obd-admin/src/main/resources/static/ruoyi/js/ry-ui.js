@@ -413,7 +413,7 @@ var table = {
                     content: $('#' + currentId).html(),
                     btn: ['<i class="fa fa-check"></i> 导入', '<i class="fa fa-remove"></i> 取消'],
                     // 弹层外区域关闭
-                    shadeClose: true,
+                    shadeClose: false,
                     btn1: function (index, layero) {
                         var file = layero.find('#file').val();
                         if (file == '' || (!$.common.endWith(file, '.xls') && !$.common.endWith(file, '.xlsx'))) {

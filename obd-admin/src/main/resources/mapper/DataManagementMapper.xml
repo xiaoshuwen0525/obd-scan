@@ -60,7 +60,7 @@
     </sql>
 
     <select id="selectAllBoxName" resultMap="PcObdBoxMap">
-        select box_name,box_unique_id from pc_obd_box GROUP BY box_name
+        select box_name,box_unique_id from pc_obd_box GROUP BY box_name LIMIT 100
     </select>
 
 

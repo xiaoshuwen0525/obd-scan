@@ -85,7 +85,7 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">归属设备：</label>
                     <div class="col-sm-8">
-                        <select class="form-control" maxlength="30" name="boxBelong" th:with="list=${boxNameList}">
+                        <select class="form-control" data-live-search="true" maxlength="30" name="boxBelong" th:with="list=${boxNameList}">
                             <option th:text="${o.boxBelong}"></option>
                             <option th:each="box : ${list}" th:text="${box.boxName}" th:value="${box.boxUniqueId}"></option>
                         </select>
@@ -123,6 +123,18 @@
             $.operate.saveTab(prefix + "/updateBaseData", data);
         }
     }
+
+   // function  searchBoxNameList() {
+   //      var abc = "";
+   //      $.operate.get(prefix+"/searchBoxNameList","福州",abc)
+   //      console.log(abc);
+   //  }
+  $('.form-control').onclick(function () {
+      // var abc = "";
+      //      $.operate.get(prefix+"/searchBoxNameList","福州",abc)
+        console.log(abc);
+
+  })
 </script>
 </body>
 </html>

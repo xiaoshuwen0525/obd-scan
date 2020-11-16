@@ -44,12 +44,12 @@ public class DataManagementController extends BaseController {
     @GetMapping("/baseUpdate/{id}")
     public String baseUpdateById(@PathVariable("id") int id, ModelMap mmap) {
         DerivedEntity derivedEntity = new DerivedEntity();
-        List<PcObdBox> pcObdBoxes = new ArrayList<>();
+        //List<PcObdBox> pcObdBoxes = new ArrayList<>();
         derivedEntity.setBoxId(id);
         List<DerivedEntity> derivedEntities = new ArrayList<>();
         try {
             derivedEntities = dataManagementService.selectObdByEntity(derivedEntity);
-            pcObdBoxes = dataManagementService.selectAllBoxName();
+            //pcObdBoxes = dataManagementService.selectAllBoxName();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,9 +72,20 @@ public class DataManagementController extends BaseController {
             count++;
         }
         mmap.put("obd", pcObdInfos);
-        mmap.put("boxNameList", pcObdBoxes);
+        //mmap.put("boxNameList", pcObdBoxes);
         mmap.put("obdSize", pcObdInfos.size());
         return prefix + "/baseUpdate";
+    }
+
+    @GetMapping("/searchBoxNameList")
+    public List<PcObdBox> searchBoxNameList() {
+        List<PcObdBox> pcObdBoxes = new ArrayList<>();
+        try {
+            pcObdBoxes = dataManagementService.selectAllBoxName();
+        } catch (Exception e) {
+            return pcObdBoxes;
+        }
+        return pcObdBoxes;
     }
 
 

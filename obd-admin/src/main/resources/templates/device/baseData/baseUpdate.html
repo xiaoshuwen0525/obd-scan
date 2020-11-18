@@ -4,6 +4,53 @@
     <th:block th:include="include :: header('修改基础数据')"/>
     <th:block th:include="include :: select2-css"/>
 </head>
+<style>
+    #boxNames {
+        background: #FFFFFF none;
+        border: 1px solid #e5e6e7;
+        border-radius: 1px;
+        color: inherit;
+        display: block;
+        padding: 6px 12px;
+        -webkit-transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+        transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    #searchs {
+        width: 100%;
+        border-top: none;
+    }
+
+    #BoxSelect {
+        position: absolute;
+        background: #FFFFFF none;
+        border: 1px solid #e5e6e7;
+        border-radius: 1px;
+        color: inherit;
+        font-size: 14px;
+        width: 100%;
+        height: 200px;
+        z-index: 2;
+    }
+
+    .line {
+        background: #FFFFFF none;
+        border-radius: 1px;
+        color: inherit;
+        display: block;
+        padding: 6px 12px;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .hover {
+        background: #007ab8;
+        color: #fff;
+        cursor: pointer;
+    }
+</style>
 <body>
 <div class="main-content">
     <form class="form-horizontal" id="form-base-edit">
@@ -67,7 +114,7 @@
                     </div>
                 </div>
             </div>
-            <input name="obdSize" th:value="${obdSize}" type="hidden">
+            <!--            <input name="obdSize" th:value="${obdSize}" type="hidden">-->
         </div>
         <h4 class="form-header h4">OBD基础信息</h4>
         <div class="row" th:each="o:${obd}">
@@ -85,10 +132,10 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">归属设备：</label>
                     <div class="col-sm-8">
-                        <select class="form-control" data-live-search="true" maxlength="30" name="boxBelong" th:with="list=${boxNameList}">
-                            <option th:text="${o.boxBelong}"></option>
-                            <option th:each="box : ${list}" th:text="${box.boxName}" th:value="${box.boxUniqueId}"></option>
-                        </select>
+                        <input type="text" id="boxNames" name="boxBelong" autocomplete="off" th:value="${o.boxBelong}"/>
+                        <input type="hidden" id="boxUniqueId" name="boxUniqueId" value="null"/>
+                        <div id="searchs">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -122,19 +169,61 @@
             var data = $("#form-base-edit").serializeArray();
             $.operate.saveTab(prefix + "/updateBaseData", data);
         }
+
     }
 
-   // function  searchBoxNameList() {
-   //      var abc = "";
-   //      $.operate.get(prefix+"/searchBoxNameList","福州",abc)
-   //      console.log(abc);
-   //  }
-  $('.form-control').onclick(function () {
-      // var abc = "";
-      //      $.operate.get(prefix+"/searchBoxNameList","福州",abc)
-        console.log(abc);
+    $(function () {
+        $("#searchs").hide();
+        //无刷新技术获取通道信息keyup监听事件
+        $("#boxNames").keyup(function (event) {
+            //如果敲击回车
+            if (event.keyCode == 13) {
+                $.ajax({
+                    async: false,
+                    data: {boxName: $("#boxNames").val()},
+                    url: prefix + '/searchBoxNameList',
+                    type: 'post',
+                    datatype: 'json',
+                    success: function (msg) {
+                        $("#searchs").show();
+                        //转化为json对象
+                        var getdata = msg;
+                        var Content = "<select multiple=\"multiple\" name='boxBelong' id='BoxSelect'>";
+                        if (getdata.length <= 0) {
+                            Content += "<option th:text=\"${o.boxBelong}\" id=\"boxOption\"></option>";
+                        } else {
+                            //获取getdata数据中的数量遍历对象
+                            for (var i = 0; i < getdata.length; i++) {
+                                Content += "<option value=" + getdata[i].boxUniqueId + " class='line'>" + getdata[i].boxName + "</option>";
+                            }
+                        }
+                        Content += "</select>";
+                        //清空
+                        $("#searchs").empty();
+                        $("#searchs").append(Content);
+                        $(".line").hover(function () {
+                                $(this).addClass("hover");
 
-  })
+                            },
+                            function () {
+                                $(this).removeClass("hover");
+                            });
+                        //单击选择事件
+                        $(".line").click(function () {
+                            $("#boxNames").val($(this).text());
+                            $("#boxUniqueId").val($(this).val());
+                            $("#searchs").empty();
+                        });
+                    }
+                });
+            }
+        });
+        //加载事件隐藏
+        $(document).click(function () {
+            $("#searchs").hide()
+        });
+    })
+
 </script>
 </body>
 </html>

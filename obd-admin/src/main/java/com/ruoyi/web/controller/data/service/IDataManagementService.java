@@ -70,7 +70,7 @@ public interface IDataManagementService
      *
      * @return {@link List<PcObdBox>}
      */
-    List<PcObdBox> selectAllBoxName();
+    List<PcObdBox> selectAllBoxName(String boxName);
 
     /**
      * 根据boxid查询obd

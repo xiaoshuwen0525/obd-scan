@@ -253,12 +253,12 @@ public class DataManagementServiceImpl implements IDataManagementService {
      * @return {@link List<PcObdBox>}
      */
     @Override
-    public List<PcObdBox> selectAllBoxName() {
+    public List<PcObdBox> selectAllBoxName(String boxName) {
         List<PcObdBox> pcObdBoxs = new ArrayList<>();
         try {
-            pcObdBoxs = dataManagementMapper.selectAllBoxName();
+            pcObdBoxs = dataManagementMapper.selectAllBoxName(boxName);
         } catch (Exception e) {
-            e.printStackTrace();
+            return pcObdBoxs;
         }
         return pcObdBoxs;
     }

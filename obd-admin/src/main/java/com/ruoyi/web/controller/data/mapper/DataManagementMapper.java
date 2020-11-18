@@ -37,7 +37,7 @@ public interface DataManagementMapper {
      *
      * @return {@link List<PcObdBox>}
      */
-    List<PcObdBox> selectAllBoxName();
+    List<PcObdBox> selectAllBoxName(String boxName);
 
 
     /**

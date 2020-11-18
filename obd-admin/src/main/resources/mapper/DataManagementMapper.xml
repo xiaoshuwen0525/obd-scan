@@ -59,8 +59,8 @@
       id, box_code, label_code, box_name, area, business_bureau, camp_service, job_number, img_url, status, exception_type, exception_info, create_time
     </sql>
 
-    <select id="selectAllBoxName" resultMap="PcObdBoxMap">
-        select box_name,box_unique_id from pc_obd_box GROUP BY box_name LIMIT 100
+    <select id="selectAllBoxName" resultMap="PcObdBoxMap" parameterType="string">
+        select box_name,box_unique_id from pc_obd_box where box_name like concat('%',#{boxName},'%') GROUP BY box_name LIMIT 50
     </select>
 
 

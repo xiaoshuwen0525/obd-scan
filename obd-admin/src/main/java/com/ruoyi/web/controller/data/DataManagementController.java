@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.data;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -73,17 +74,19 @@ public class DataManagementController extends BaseController {
         }
         mmap.put("obd", pcObdInfos);
         //mmap.put("boxNameList", pcObdBoxes);
-        mmap.put("obdSize", pcObdInfos.size());
+        //mmap.put("obdSize", pcObdInfos.size());
         return prefix + "/baseUpdate";
     }
 
-    @GetMapping("/searchBoxNameList")
-    public List<PcObdBox> searchBoxNameList() {
+    @PostMapping("/searchBoxNameList")
+    @ResponseBody
+    public List<PcObdBox> searchBoxNameList(String boxName) {
+        System.out.println("===================");
+        System.out.println(boxName);
+        System.out.println("===================");
         List<PcObdBox> pcObdBoxes = new ArrayList<>();
-        try {
-            pcObdBoxes = dataManagementService.selectAllBoxName();
-        } catch (Exception e) {
-            return pcObdBoxes;
+        if (StringUtils.isNotBlank(boxName)) {
+            pcObdBoxes = dataManagementService.selectAllBoxName(boxName);
         }
         return pcObdBoxes;
     }

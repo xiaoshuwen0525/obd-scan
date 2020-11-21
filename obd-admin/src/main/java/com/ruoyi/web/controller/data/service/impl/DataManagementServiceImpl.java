@@ -1,12 +1,15 @@
 package com.ruoyi.web.controller.data.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.text.Convert;
+import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.data.domain.*;
 import com.ruoyi.web.controller.data.mapper.DataManagementMapper;
 import com.ruoyi.web.controller.data.service.IDataManagementService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,44 +127,49 @@ public class DataManagementServiceImpl implements IDataManagementService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateBaseData(List<BaseUpdate> baseUpdates) {
+    public int updateBaseData(BaseDataVo baseDataVo) {
         int j = 0;
-        Pattern pattern = Pattern.compile("[0-9]*");
-        if (!CollectionUtils.isEmpty(baseUpdates)) {
+        List<BaseUpdate> baseUpdates = new ArrayList<>();
+        BaseUpdate baseUpdate0 = new BaseUpdate();
+        BeanUtils.copyProperties(baseDataVo, baseUpdate0);
+        //更新机箱
+        j = dataManagementMapper.updateBaseData(baseUpdate0);
+        if (!CollectionUtils.isEmpty(baseDataVo.getBaseUpdateList())) {
+            baseUpdates = baseDataVo.getBaseUpdateList();
             lock.lock();
             try {
                 for (BaseUpdate baseUpdate : baseUpdates) {
                     int i = 0;
-                    //是否为纯数字
-                    boolean matches = pattern.matcher(baseUpdate.getBoxBelong()).matches();
-                    //如果obdBelong被修改了，则传过来的值会变更为boxUniqueId
+                    //如果obdBelong被修改了，则传过来的boxUniqueId值不为空
                     PcObdBox pcObdBox = new PcObdBox();
-                    if (matches){
+                    PcObdInfo pcObdInfo = new PcObdInfo();
+                    if (StringUtils.isNotBlank(baseUpdate.getBoxUniqueId())) {
                         try {
-                            pcObdBox = dataManagementMapper.selectByBoxUniqueId(baseUpdate.getBoxBelong());
+                            pcObdBox = dataManagementMapper.selectByBoxUniqueId(baseUpdate.getBoxUniqueId());
                         } catch (Exception e) {
-                            System.out.println("机箱唯一ID查询出多个数据，无法判定修改哪一个");
-                            return 0;
+                            throw new BusinessException("对应机箱名称不唯一,无法判定更新对象");
                         }
-                        PcObdInfo pcObdInfo = new PcObdInfo();
-                        //指定要更新的obd设备
-                        pcObdInfo.setId(baseUpdate.getId());
-                        //更新obd的设备归属名称
-                        pcObdInfo.setBoxBelong(pcObdBox.getBoxName());
-                        //更新obd的设备归属机箱的唯一ID
-                        pcObdInfo.setBoxUniqueId(pcObdBox.getBoxUniqueId());
-                        //更新obd的关联机箱主键ID
-                        pcObdInfo.setBoxId(pcObdBox.getId());
-                        //如果有更新obd名称则同步更新
-                        pcObdInfo.setObdName(baseUpdate.getObdName());
-                        //如果有更新端口数则同步更新
-                        pcObdInfo.setPortCount(baseUpdate.getPortCount());
-                        i = dataManagementMapper.updatePcObdInfoForBaseData(pcObdInfo);
-                    }else{
-                        //obd归属设备未变更，则boxBelong等于boxName
-                        baseUpdate.setBoxBelong(baseUpdate.getBoxName());
-                        i = dataManagementMapper.updateBaseData(baseUpdate);
+                    } else {
+                        try {
+                            pcObdBox.setId(baseUpdate.getBoxId());
+                            pcObdBox = dataManagementMapper.selectBoxListByEntity(pcObdBox).get(0);
+                        } catch (Exception e) {
+                            throw new BusinessException("对应机箱名称不唯一,无法判定更新对象");
+                        }
                     }
+                    //指定要更新的obd设备
+                    pcObdInfo.setId(baseUpdate.getId());
+                    //更新obd的设备归属名称
+                    pcObdInfo.setBoxBelong(pcObdBox.getBoxName());
+                    //更新obd的关联机箱主键ID
+                    pcObdInfo.setBoxId(pcObdBox.getId());
+                    //更新obd的设备归属机箱的唯一ID
+                    pcObdInfo.setBoxUniqueId(pcObdBox.getBoxUniqueId());
+                    //如果有更新obd名称则同步更新
+                    pcObdInfo.setObdName(baseUpdate.getObdName());
+                    //如果有更新端口数则同步更新
+                    pcObdInfo.setPortCount(baseUpdate.getPortCount());
+                    i = dataManagementMapper.updatePcObdInfoForBaseData(pcObdInfo);
                     j++;
                     if (i <= 0) {
                         j = 0;
@@ -221,7 +229,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
         } finally {
             lock.unlock();
         }
-        return i+j;
+        return i + j;
 
     }
 
@@ -292,7 +300,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
         String s = "";
         String startStr = String.valueOf(str.charAt(0));
         if (s.equals(startStr)) {
-            str = str.substring(1,str.length());
+            str = str.substring(1, str.length());
         }
         return str;
 
@@ -307,13 +315,13 @@ public class DataManagementServiceImpl implements IDataManagementService {
         //obdCount 表示 条数 box_name 表示 id
         List<PcObdBox> pcObdBoxes = dataManagementMapper.selectCount();
         List<Integer> list = new ArrayList<>();
-        for (PcObdBox pcObdBox:pcObdBoxes){
+        for (PcObdBox pcObdBox : pcObdBoxes) {
             String[] idStrList = pcObdBox.getBoxName().split("-");
-            for (String s:idStrList){
+            for (String s : idStrList) {
                 //seq表示where 的id  id 表示set 的id
-                pcObdBox.setId(Integer.parseInt(idStrList[idStrList.length-1]));
+                pcObdBox.setId(Integer.parseInt(idStrList[idStrList.length - 1]));
                 pcObdBox.setSeq(Integer.parseInt(s));
-                if(!s.equals(idStrList[idStrList.length-1])){
+                if (!s.equals(idStrList[idStrList.length - 1])) {
                     list.add(Integer.parseInt(s));
                     dataManagementMapper.updateCount(pcObdBox);
                 }

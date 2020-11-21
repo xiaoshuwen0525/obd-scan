@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.controller.data.domain.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * idata管理服务
@@ -36,10 +37,10 @@ public interface IDataManagementService
     /**
      * 更新基础数据
      *
-     * @param baseUpdates 基础更新
+     * @param baseDataVo 基础更新
      * @return int
      */
-    int updateBaseData(List<BaseUpdate> baseUpdates);
+    int updateBaseData(BaseDataVo baseDataVo);
 
     /**
      * 删除obd通过id

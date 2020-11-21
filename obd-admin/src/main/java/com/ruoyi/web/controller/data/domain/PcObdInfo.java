@@ -49,4 +49,7 @@ public class PcObdInfo implements Serializable {
      */
     private String obdUniqueId;
 
+    //前端专用-obd索引
+    private int obdIndex;
+
 }

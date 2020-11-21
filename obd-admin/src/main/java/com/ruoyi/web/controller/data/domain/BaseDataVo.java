@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.data.domain;
 
 import com.ruoyi.common.utils.StringUtils;
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,10 @@ public class BaseDataVo {
 
     private List<Integer> portCount;
 
+    private List<String> boxUniqueId;
+
     private List<BaseUpdate> baseUpdateList;
+
 
     public void makeBaseUpdateList() {
         List<BaseUpdate> baseUpdates = new ArrayList<>();
@@ -53,9 +57,14 @@ public class BaseDataVo {
             baseUpdate.setBoxBelong(boxBelong.get(i));
             baseUpdate.setObdName(obdName.get(i));
             baseUpdate.setPortCount(portCount.get(i));
+            if (CollectionUtils.isEmpty(boxUniqueId)) {
+                baseUpdate.setBoxUniqueId(null);
+            } else {
+                baseUpdate.setBoxUniqueId(boxUniqueId.get(i));
+            }
             baseUpdate.setId(id.get(i));
             baseUpdates.add(baseUpdate);
-            }
+        }
         this.baseUpdateList = baseUpdates;
     }
 

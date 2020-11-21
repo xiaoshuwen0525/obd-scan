@@ -43,6 +43,7 @@
         <result property="campService" column="camp_service" jdbcType="VARCHAR"/>
         <result property="obdId" column="obd_id" jdbcType="INTEGER"/>
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
         <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
         <result property="portCount" column="port_count" jdbcType="INTEGER"/>
@@ -51,7 +52,7 @@
     </resultMap>
 
     <sql id="pc_obd">
-      box_code, label_code, box_name, area, business_bureau, camp_service, obd_id, box_id, box_belong, obd_name, port_count, box_unique_id, obd_unique_id
+      id, box_code, label_code, box_name, area, business_bureau, camp_service, obd_id, box_id, box_belong, obd_name, port_count, box_unique_id, obd_unique_id
     </sql>
 
 
@@ -328,7 +329,7 @@
                 and obd_id = #{obdId,jdbcType=INTEGER}
             </if>
             <if test="boxId != null">
-                and box_id = #{boxId,jdbcType=INTEGER}
+                and id = #{boxId,jdbcType=INTEGER}
             </if>
             <if test="boxBelong != null and boxBelong != ''">
                 and box_belong = #{boxBelong,jdbcType=VARCHAR}
@@ -363,7 +364,7 @@
     <select id="selectBoxListByEntity" resultMap="PcObdBoxMap"
             parameterType="com.ruoyi.web.controller.data.domain.PcObdBox">
         select *, (@num := @num + 1) as num from (select
-        t1.id, t1.box_code, t1.label_code, t1.box_name, t1.area, t1.business_bureau, t1.camp_service, t1.job_number, t1.img_url, t1.status, t1.exception_type, t1.exception_info, t1.create_time, count(t2.id) obd_count
+        t1.id, t1.box_unique_id, t1.box_code, t1.label_code, t1.box_name, t1.area, t1.business_bureau, t1.camp_service, t1.job_number, t1.img_url, t1.status, t1.exception_type, t1.exception_info, t1.create_time, count(t2.id) obd_count
         from pc_obd_box t1 LEFT JOIN pc_obd_info t2 on t1.id = t2.box_id
         <where>
             <if test="id != null">

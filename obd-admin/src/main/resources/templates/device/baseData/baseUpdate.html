@@ -5,7 +5,7 @@
     <th:block th:include="include :: select2-css"/>
 </head>
 <style>
-    #boxNames {
+    .boxNames {
         background: #FFFFFF none;
         border: 1px solid #e5e6e7;
         border-radius: 1px;
@@ -18,7 +18,7 @@
         font-size: 14px;
     }
 
-    #searchs {
+    .searchs {
         width: 100%;
         border-top: none;
     }
@@ -114,10 +114,10 @@
                     </div>
                 </div>
             </div>
-            <!--            <input name="obdSize" th:value="${obdSize}" type="hidden">-->
+            <input id="obdSize" name="obdSize" th:value="${obdSize}" type="hidden">
         </div>
         <h4 class="form-header h4">OBD基础信息</h4>
-        <div class="row" th:each="o:${obd}">
+        <div class="row" th:each="o,oStat:${obd}">
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-sm-4 control-label">OBD名称：</label>
@@ -132,9 +132,11 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">归属设备：</label>
                     <div class="col-sm-8">
-                        <input type="text" id="boxNames" name="boxBelong" autocomplete="off" th:value="${o.boxBelong}"/>
-                        <input type="hidden" id="boxUniqueId" name="boxUniqueId" value="null"/>
-                        <div id="searchs">
+                        <input type="text" th:id="'boxNames'+${oStat.index}" th:class="boxNames" name="boxBelong"
+                               autocomplete="off"
+                               th:value="${o.boxBelong}"/>
+                        <input type="hidden" th:id="'boxUniqueId'+${oStat.index}" name="boxUniqueId" value=""/>
+                        <div th:id="'searchs'+${oStat.index}" th:class="searchs">
                         </div>
                     </div>
                 </div>
@@ -165,27 +167,48 @@
     var prefix = ctx + "device/baseData";
 
     function submitHandler() {
-        if ($.validate.form()) {
-            var data = $("#form-base-edit").serializeArray();
-            $.operate.saveTab(prefix + "/updateBaseData", data);
+        var length = $("#obdSize").val()
+        if (length !== 0) {
+            for (var j = 0; j < length; j++) {
+                var val = $("#boxNames" + j).val();
+                if (val == null || val === "") {
+                    $.modal.alertWarning("归属设备不能为空")
+                    return;
+                }
+            }
+            if ($.validate.form()) {
+                var data = $("#form-base-edit").serializeArray();
+                $.operate.saveTab(prefix + "/updateBaseData", data);
+            }
         }
-
     }
 
     $(function () {
-        $("#searchs").hide();
+        var length = $("#obdSize").val()
+        if (length !== 0) {
+            for (var j = 0; j < length; j++) {
+                selectHandler(j);
+            }
+        }
+    })
+
+    //防止右键粘贴
+    window.document.oncontextmenu = function(){ return false; };
+
+    function selectHandler(j) {
+        $("#searchs" + j).hide();
         //无刷新技术获取通道信息keyup监听事件
-        $("#boxNames").keyup(function (event) {
-            //如果敲击回车
-            if (event.keyCode == 13) {
+        $("#boxNames" + j).keyup(function (event) {
+            if (event.keyCode==13|| event.keyCode == 32 || (event.ctrlKey && event.keyCode==86)) {
+                $("#boxUniqueId" + j).val("")
                 $.ajax({
                     async: false,
-                    data: {boxName: $("#boxNames").val()},
+                    data: {boxName: $("#boxNames" + j).val()},
                     url: prefix + '/searchBoxNameList',
                     type: 'post',
                     datatype: 'json',
                     success: function (msg) {
-                        $("#searchs").show();
+                        $("#searchs" + j).show();
                         //转化为json对象
                         var getdata = msg;
                         var Content = "<select multiple=\"multiple\" name='boxBelong' id='BoxSelect'>";
@@ -199,30 +222,30 @@
                         }
                         Content += "</select>";
                         //清空
-                        $("#searchs").empty();
-                        $("#searchs").append(Content);
+                        $("#searchs" + j).empty();
+                        $("#searchs" + j).append(Content);
                         $(".line").hover(function () {
                                 $(this).addClass("hover");
-
                             },
                             function () {
                                 $(this).removeClass("hover");
                             });
                         //单击选择事件
                         $(".line").click(function () {
-                            $("#boxNames").val($(this).text());
-                            $("#boxUniqueId").val($(this).val());
-                            $("#searchs").empty();
+                            $("#boxNames" + j).val($(this).text());
+                            flag = true;
+                            $("#boxUniqueId" + j).val($(this).val());
+                            $("#searchs" + j).empty();
                         });
                     }
                 });
+                //加载事件隐藏
+                $(document).click(function () {
+                    $("#searchs" + j).hide()
+                });
             }
         });
-        //加载事件隐藏
-        $(document).click(function () {
-            $("#searchs").hide()
-        });
-    })
+    }
 
 </script>
 </body>

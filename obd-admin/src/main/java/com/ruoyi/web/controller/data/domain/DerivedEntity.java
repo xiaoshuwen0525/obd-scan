@@ -83,4 +83,7 @@ public class DerivedEntity {
     /** boxId */
     private Integer boxId;
 
+    /** 机箱自增id */
+    private Integer id;
+
 }

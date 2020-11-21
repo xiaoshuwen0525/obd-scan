@@ -5,8 +5,11 @@ import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.interceptor.RepeatSubmitInterceptor;
+import com.ruoyi.framework.interceptor.impl.SameUrlDataInterceptor;
 import com.ruoyi.web.controller.data.domain.*;
 import com.ruoyi.web.controller.data.service.IDataManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: 曾志伟，小洪
@@ -27,6 +33,10 @@ import java.util.List;
 public class DataManagementController extends BaseController {
 
     private final String prefix = "device/baseData";
+
+    private static Long lastVisitTime = 1L;
+
+    private static int visitCount = 1;
 
     @Autowired
     private IDataManagementService dataManagementService;
@@ -45,17 +55,15 @@ public class DataManagementController extends BaseController {
     @GetMapping("/baseUpdate/{id}")
     public String baseUpdateById(@PathVariable("id") int id, ModelMap mmap) {
         DerivedEntity derivedEntity = new DerivedEntity();
-        //List<PcObdBox> pcObdBoxes = new ArrayList<>();
         derivedEntity.setBoxId(id);
         List<DerivedEntity> derivedEntities = new ArrayList<>();
         try {
             derivedEntities = dataManagementService.selectObdByEntity(derivedEntity);
-            //pcObdBoxes = dataManagementService.selectAllBoxName();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (derivedEntities == null) {
-            return prefix + "/baseUpdate";
+        if (derivedEntities == null ) {
+            throw new BusinessException("该机箱数据异常，请联系管理员查看");
         }
         int count = 0;
         List<PcObdInfo> pcObdInfos = new ArrayList<>();
@@ -64,8 +72,11 @@ public class DataManagementController extends BaseController {
             if (count == 0) {
                 PcObdBox pcObdBox = new PcObdBox();
                 BeanUtil.copyProperties(entity, pcObdBox);
-                pcObdBox.setId(entity.getBoxId());
+                pcObdBox.setId(entity.getId());
                 mmap.put("box", pcObdBox);
+            }
+            if (entity.getObdId() == null){
+                break;
             }
             BeanUtil.copyProperties(entity, pcObdInfo);
             pcObdInfo.setId(entity.getObdId());
@@ -73,21 +84,34 @@ public class DataManagementController extends BaseController {
             count++;
         }
         mmap.put("obd", pcObdInfos);
-        //mmap.put("boxNameList", pcObdBoxes);
-        //mmap.put("obdSize", pcObdInfos.size());
+        mmap.put("obdSize", pcObdInfos.size());
         return prefix + "/baseUpdate";
     }
 
     @PostMapping("/searchBoxNameList")
     @ResponseBody
     public List<PcObdBox> searchBoxNameList(String boxName) {
-        System.out.println("===================");
-        System.out.println(boxName);
-        System.out.println("===================");
         List<PcObdBox> pcObdBoxes = new ArrayList<>();
         if (StringUtils.isNotBlank(boxName)) {
             pcObdBoxes = dataManagementService.selectAllBoxName(boxName);
         }
+        //限制接口短时间内的多次访问
+        //if (visitCount == 1) {
+        //    //第一次调用该接口的时候记录访问时间
+        //    lastVisitTime = System.currentTimeMillis();
+        //    if (StringUtils.isNotBlank(boxName)) {
+        //        pcObdBoxes = dataManagementService.selectAllBoxName(boxName);
+        //    }
+        //    visitCount = 2;
+        //} else {
+        //    Long currentVisitTime = System.currentTimeMillis();
+        //    Long time = currentVisitTime - lastVisitTime;
+        //    if (time <= 300) {
+        //        visitCount = 0;
+        //    } else {
+        //        visitCount = 1;
+        //    }
+        //}
         return pcObdBoxes;
     }
 
@@ -132,8 +156,8 @@ public class DataManagementController extends BaseController {
         baseDataVo.makeBaseUpdateList();
         int i;
         try {
-            i = dataManagementService.updateBaseData(baseDataVo.getBaseUpdateList());
-            if (i > 0) {
+            i = dataManagementService.updateBaseData(baseDataVo);
+            if (i > 0 ) {
                 return AjaxResult.success("更新成功");
             }
         } catch (Exception e) {
@@ -144,6 +168,7 @@ public class DataManagementController extends BaseController {
 
     @PostMapping("/deletePcObdBoxById")
     @ResponseBody
+    @RepeatSubmit
     public AjaxResult deletePcObdBoxByIds(String ids) {
         if (StringUtils.isBlank(ids)) {
             return AjaxResult.error("数据有误，请联系管理员");

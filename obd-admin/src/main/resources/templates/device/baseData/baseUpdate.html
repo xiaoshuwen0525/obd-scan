@@ -5,6 +5,11 @@
     <th:block th:include="include :: select2-css"/>
 </head>
 <style>
+    #notic{
+        margin-top: 200px;
+        margin-left: 50px;
+    }
+
     .boxNames {
         background: #FFFFFF none;
         border: 1px solid #e5e6e7;
@@ -160,6 +165,12 @@
         <button class="btn btn-sm btn-danger" onclick="closeItem()" type="button"><i class="fa fa-reply-all"></i>关 闭
         </button>
     </div>
+    <div id="notic">
+    <p>注意：</p>
+    <p>1、归属设备值发生变化时，需下拉选择数据库中已存在的机箱进行关联</p>
+    <p>2、归属设备值不发生改变或非下拉框选择的机箱时，保存后该值不发生变化</p>
+    <p>3、归属设备下拉选框触发条件：空格、回车、Ctrl+V、Delete键、Backspace键</p>
+    </div>
 </div>
 <th:block th:include="include :: footer"/>
 <th:block th:include="include :: select2-js"/>
@@ -199,7 +210,8 @@
         $("#searchs" + j).hide();
         //无刷新技术获取通道信息keyup监听事件
         $("#boxNames" + j).keyup(function (event) {
-            if (event.keyCode==13|| event.keyCode == 32 || (event.ctrlKey && event.keyCode==86)) {
+            //空格，回车，回退, delete， ctrv+v
+            if (event.keyCode == 8 || event.keyCode==13|| event.keyCode == 32 || event.keyCode == 46 || (event.ctrlKey && event.keyCode==86)) {
                 $("#boxUniqueId" + j).val("")
                 $.ajax({
                     async: false,

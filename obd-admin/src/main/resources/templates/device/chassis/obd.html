@@ -1,53 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-	<th:block th:include="include :: header('OBD')" />
+    <th:block th:include="include :: header('OBD')"/>
 </head>
 <body class="gray-bg">
-    <div class="container-div">
-		<div class="row">
+<div class="container-div">
+    <div class="row">
 
-	        <div class="col-sm-12 select-table table-striped">
-				<input type="hidden" id="id" th:value="${id}">
-	            <table id="bootstrap-table"></table>
-	        </div>
-    	</div>
+        <div class="col-sm-12 select-table table-striped">
+            <input type="hidden" id="id" th:value="${id}">
+            <table id="bootstrap-table"></table>
+        </div>
     </div>
-    <th:block th:include="include :: footer" />
-    <script th:inline="javascript">
-        var prefix = ctx + "device/chassis/obd";
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "device/chassis/obd";
 
-        $(function() {
-            var options = {
-                url: prefix + "/list/"+$('#id').val(),
-				queryUrl: prefix + "/port/{id}",
-                modalName: "端口",
-                columns: [
-				{
-					field : 'seq',
-					title : '序号' 
-				},
-				{
-					field : 'obdName',
-					title : 'OBD名称'
-				},
-				{
-		            field: 'status',
-		            title: 'OBD状态',
-		        },
-		        {
-		            title: '操作',
-		            align: 'center',
-		            formatter: function(value, row, index) {
-		            	var actions = [];
-		            	actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看端口</a> ');
-						return actions.join('');
-		            }
-		        }
-		        ]
-            };
-            $.table.init(options);
-        });
-    </script>
+    $(function () {
+        var options = {
+            url: prefix + "/list/" + $('#id').val(),
+            queryUrl: prefix + "/port/{id}",
+            modalName: "端口",
+            columns: [
+                {
+                    field: 'seq',
+                    title: '序号'
+                },
+                {
+                    field: 'obdName',
+                    title: 'OBD名称'
+                },
+                {
+                    field: 'obdUniqueId',
+                    title: 'OBD唯一编号'
+                },
+                {
+                    field: 'status',
+                    title: 'OBD状态',
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-edit"></i>查看端口</a> ');
+                        return actions.join('');
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+</script>
 </body>
 </html>

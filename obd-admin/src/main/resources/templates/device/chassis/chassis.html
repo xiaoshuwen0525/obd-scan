@@ -64,8 +64,15 @@
 					title : '机箱ID'
 				},
 				{
-					field : 'seq',
-					title : '序号'
+					field : 'index',
+					title: '序号',
+					formatter: function(value, row, index) {
+						return $.table.serialNumber(index);
+					}
+				},
+				{
+					field : 'boxName',
+					title : '机箱名称'
 				},
 				{
 					field : 'boxCode',

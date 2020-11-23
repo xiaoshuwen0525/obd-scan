@@ -52,6 +52,8 @@
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
         <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
         <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
+        <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
         <result property="portCount" column="port_count" jdbcType="INTEGER"/>
     </resultMap>
 
@@ -127,7 +129,7 @@
 
     <!--通过boxCode或labelCode查询obd信息-->
     <select id="selectBaseDataByCode" resultMap="PcObdViewResultMap" >
-        select box_id, obd_id, port_count, box_belong, obd_name from pc_obd_view
+        select box_id, obd_id, port_count, box_belong, obd_name,box_unique_id,obd_unique_id from pc_obd_view
         <where>
             <if test="code != null and code != ''">
                 box_code = #{code} or label_code = #{code}

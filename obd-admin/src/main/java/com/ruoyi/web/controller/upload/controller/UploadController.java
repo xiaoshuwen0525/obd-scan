@@ -156,6 +156,7 @@ public class UploadController extends BaseController {
     public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request) {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
         log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber);
+        log.info("参数 obdInfoVOList:" + obdInfoVOList);
         String undefined = "undefined";
         ObdBoxVO obdBoxVO = new ObdBoxVO();
         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {

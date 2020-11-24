@@ -1,10 +1,7 @@
 package com.ruoyi.web.controller.data.mapper;
 
 
-import com.ruoyi.web.controller.data.domain.BaseUpdate;
-import com.ruoyi.web.controller.data.domain.DerivedEntity;
-import com.ruoyi.web.controller.data.domain.PcObdBox;
-import com.ruoyi.web.controller.data.domain.PcObdInfo;
+import com.ruoyi.web.controller.data.domain.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -152,5 +149,13 @@ public interface DataManagementMapper {
      * @return int
      */
     int deleteCount(List<Integer> list);
+
+    /**
+     * 插入obd端口数据
+     *
+     * @param list pc obd端口信息
+     * @return int
+     */
+    int insertPcObdPort(List<ImportPortEntity> list);
 
 }

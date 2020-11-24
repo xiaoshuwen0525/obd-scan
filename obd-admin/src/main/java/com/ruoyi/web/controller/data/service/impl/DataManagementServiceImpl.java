@@ -105,6 +105,25 @@ public class DataManagementServiceImpl implements IDataManagementService {
     }
 
     /**
+     * 插入obd
+     *
+     * @param userList 用户列表
+     * @return {@link AjaxResult}
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult insertPcObdPort(List<ImportPortEntity> userList) {
+        try {
+            dataManagementMapper.insertPcObdPort(userList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.success("插入成功");
+    }
+
+
+
+    /**
      * 更新obd盒子
      *
      * @param pcObdBox pc obd盒子

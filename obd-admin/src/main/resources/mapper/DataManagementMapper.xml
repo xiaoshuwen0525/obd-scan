@@ -436,4 +436,14 @@
         </foreach>
     </delete>
 
+    <insert id="insertPcObdPort" keyProperty="id" useGeneratedKeys="true" parameterType="com.ruoyi.web.controller.data.domain.ImportPortEntity">
+        INSERT INTO pc_obd_port (obd_unique_id, obd_name, port_id, port_code )
+        VALUES
+        <foreach item="item" collection="list" separator="," open="" close="" index="index">
+            (#{item.obdUniqueId},#{item.obdName}, #{item.portId},#{item.portCode})
+        </foreach>
+        on duplicate key update
+        port_id = VALUES (port_id),port_code = VALUES(port_code),obd_unique_id = VALUES(obd_unique_id),obd_name = VALUES(obd_name)
+    </insert>
+
 </mapper>

@@ -25,6 +25,14 @@ public interface IDataManagementService
      */
     AjaxResult insertPcObd(List<ImportEntity> userList);
 
+    /**
+     * 插入pcObdPort
+     *
+     * @param userList 用户列表
+     * @return int
+     */
+    AjaxResult insertPcObdPort(List<ImportPortEntity> userList);
+
 
     /**
      * 更新obd盒子

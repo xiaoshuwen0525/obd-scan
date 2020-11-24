@@ -137,6 +137,17 @@ public class DataManagementController extends BaseController {
     }
 
     /**
+     * 导入端口数据
+     */
+    @PostMapping("/importPortData")
+    @ResponseBody
+    public AjaxResult importPortData(MultipartFile file) throws Exception {
+        ExcelUtil<ImportPortEntity> util = new ExcelUtil<ImportPortEntity>(ImportPortEntity.class);
+        List<ImportPortEntity> userList = util.importExcel(file.getInputStream());
+        return dataManagementService.insertPcObdPort(userList);
+    }
+
+    /**
      * 导出数据
      */
     @PostMapping("/export")

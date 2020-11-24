@@ -116,9 +116,9 @@ public class DataManagementServiceImpl implements IDataManagementService {
         try {
             dataManagementMapper.insertPcObdPort(userList);
         } catch (Exception e) {
-            e.printStackTrace();
+            return AjaxResult.error("数据导入失败");
         }
-        return AjaxResult.success("插入成功");
+        return AjaxResult.success("数据导入成功");
     }
 
 

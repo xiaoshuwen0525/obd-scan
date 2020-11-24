@@ -101,12 +101,6 @@ public class ObdView extends BaseEntity {
     private Integer portId;
 
     /**
-     * 序号：取值范围（1-8）
-     */
-    @Excel(name = "端口序号")
-    private Integer portSer;
-
-    /**
      * obd端口串码
      */
     @Excel(name = "OBD端口串码")
@@ -127,7 +121,13 @@ public class ObdView extends BaseEntity {
     @Excel(name = "OBD唯一ID")
     private String obdUniqueId;
 
-    @Excel(name = "OBDD端口唯一ID")
+    @Excel(name = "OBD端口唯一ID")
     private String portUniqueId;
+
+    /**
+     * 序号：取值范围（1-8）
+     */
+    @Excel(name = "端口序号")
+    private Integer portSer;
 
 }

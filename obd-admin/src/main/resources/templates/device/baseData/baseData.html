@@ -45,10 +45,13 @@
 				<i class="fa fa-remove"></i> 删除
 			</a>
 			<a class="btn btn-info"  onclick="$.table.importExcel()">
-				<i class="fa fa-upload"></i> 导入
+				<i class="fa fa-upload"></i> 基础数据导入
 			</a>
 			<a class="btn btn-warning" onclick="$.table.exportExcel()">
-				<i class="fa fa-download"></i> 导出
+				<i class="fa fa-download"></i> 基础数据导出
+			</a>
+			<a class="btn btn-danger"  onclick="$.table.importPortExcel()">
+				<i class="fa fa-upload"></i> 端口数据导入
 			</a>
 		</div>
 		<div class="col-sm-12 select-table table-striped">
@@ -68,8 +71,10 @@
 			queryUrl: prefix + "/selectByBoxId/{id}",
 			removeUrl: prefix + "/deletePcObdBoxById",
 			importUrl: prefix + "/importData",
+			importPortUrl: prefix + "/importPortData",
 			exportUrl: prefix + "/export",
-			modalName: "基础数据",
+			modalName: "基础",
+			modalPortName: "端口",
 			columns: [
 				{
 					checkbox: true

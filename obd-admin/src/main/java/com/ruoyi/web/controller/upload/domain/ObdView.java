@@ -127,4 +127,7 @@ public class ObdView extends BaseEntity {
     @Excel(name = "OBD唯一ID")
     private String obdUniqueId;
 
+    @Excel(name = "OBDD端口唯一ID")
+    private String portUniqueId;
+
 }

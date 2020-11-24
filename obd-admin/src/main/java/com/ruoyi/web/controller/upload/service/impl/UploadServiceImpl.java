@@ -54,15 +54,38 @@ public class UploadServiceImpl implements IUploadService {
         try {
             if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
                 ObdBoxVO boxVO = uploadMapper.selectPcObdByCode(obdBoxVO.getBoxCode());
-                if (boxVO.getLabelCode().equals(obdBoxVO.getBoxCode())) {
-                    labelCode = obdBoxVO.getBoxCode();
-                    boxCode = boxVO.getBoxCode();
-                } else if (boxVO.getBoxCode().equals(obdBoxVO.getBoxCode())) {
-                    boxCode = obdBoxVO.getBoxCode();
-                    labelCode = boxVO.getLabelCode();
-                } else {
+
+                if (StringUtils.isNotBlank(boxVO.getLabelCode())) {
+                    if (boxVO.getLabelCode().equals(obdBoxVO.getBoxCode())) {
+                        labelCode = obdBoxVO.getBoxCode();
+                        boxCode = boxVO.getBoxCode();
+                    }else {
+                        if (StringUtils.isNotBlank(boxVO.getBoxCode())){
+                            if (boxVO.getBoxCode().equals(obdBoxVO.getBoxCode())) {
+                                boxCode = obdBoxVO.getBoxCode();
+                                labelCode = boxVO.getLabelCode();
+                            }
+                        }
+                    }
+                }
+                else if (StringUtils.isNotBlank(boxVO.getBoxCode())) {
+                    if (boxVO.getBoxCode().equals(obdBoxVO.getBoxCode())) {
+                        boxCode = obdBoxVO.getBoxCode();
+                        labelCode = boxVO.getLabelCode();
+                    }else {
+                        if(StringUtils.isNotBlank(boxVO.getLabelCode())){
+                            if (boxVO.getLabelCode().equals(obdBoxVO.getBoxCode())) {
+                                labelCode = obdBoxVO.getBoxCode();
+                                boxCode = boxVO.getBoxCode();
+                            }
+                        }
+                    }
+                }
+                else {
                     return AjaxResult.error("该串码找不到对应数据");
                 }
+
+
                 boxUniqueId = boxVO.getBoxUniqueId();
                 ObdBox obdBox = new ObdBox();
                 obdBox.setBoxCode(boxCode);

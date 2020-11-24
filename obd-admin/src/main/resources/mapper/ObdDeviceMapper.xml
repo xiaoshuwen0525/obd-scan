@@ -35,6 +35,7 @@
         <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
         <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
         <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="portUniqueId" column="port_unique_id" jdbcType="VARCHAR"/>
         <result property="portId" column="port_id" jdbcType="VARCHAR"/>
         <result property="portSer" column="port_ser" jdbcType="VARCHAR"/>
         <result property="portCode" column="port_code" jdbcType="VARCHAR"/>
@@ -275,7 +276,7 @@
 
     <select id="selectExportObd" resultMap="ObdViewMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdView" >
         SELECT id,box_code,label_code,job_number,img_url,status,exception_type,exception_info,create_time,obd_status,box_belong,
-        obd_name,port_id,port_ser,port_code,port_status,obd_unique_id,box_unique_id
+        obd_name,port_id,port_ser,port_code,port_status,obd_unique_id,box_unique_id,port_unique_id
         FROM obd_view
         <where>
             <if test="jobNumber != null and jobNumber != ''">

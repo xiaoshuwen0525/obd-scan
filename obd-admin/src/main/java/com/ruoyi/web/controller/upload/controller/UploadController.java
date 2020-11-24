@@ -77,23 +77,43 @@ public class UploadController extends BaseController {
         String labelCode = null;
         boxCode = boxCode.substring(1, boxCode.length() - 1);
         ObdBoxVO boxVO = uploadService.selectPcObdByCode(boxCode);
-         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
-             if (boxVO.getLabelCode().equals(boxCode)) {
+        if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
+            if (StringUtils.isNotBlank(boxVO.getLabelCode())) {
+                if (boxVO.getLabelCode().equals(boxCode)) {
                     labelCode = boxCode;
                     boxCode1 = boxVO.getBoxCode();
-             } else if (boxVO.getBoxCode().equals(boxCode)) {
+                }else {
+                    if (StringUtils.isNotBlank(boxVO.getBoxCode())){
+                        if (boxVO.getBoxCode().equals(boxCode)) {
+                            boxCode1 = boxCode;
+                            labelCode = boxVO.getLabelCode();
+                        }
+                    }
+                }
+            }
+            else if (StringUtils.isNotBlank(boxVO.getBoxCode())) {
+                if (boxVO.getBoxCode().equals(boxCode)) {
                     boxCode1 = boxCode;
                     labelCode = boxVO.getLabelCode();
-             }else {
-                 return AjaxResult.warn("该串码找不到对应数据");
-             }
-         }
+                }else {
+                    if(StringUtils.isNotBlank(boxVO.getLabelCode())){
+                        if (boxVO.getLabelCode().equals(boxCode)) {
+                            labelCode = boxCode;
+                            boxCode1 = boxVO.getBoxCode();
+                        }
+                    }
+                }
+            }
+            else {
+                return AjaxResult.error("该串码找不到对应数据");
+            }
+        }
 
         obdBoxVO.setId(boxId);
-         obdBoxVO.setBoxCode(boxCode1);
-         obdBoxVO.setLabelCode(labelCode);
-         obdBoxVO.setBoxUniqueId(boxVO.getBoxUniqueId());
-         obdBoxVO.setBoxName(boxVO.getBoxName());
+        obdBoxVO.setBoxCode(boxCode1);
+        obdBoxVO.setLabelCode(labelCode);
+        obdBoxVO.setBoxUniqueId(boxVO.getBoxUniqueId());
+        obdBoxVO.setBoxName(boxVO.getBoxName());
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
         obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
         log.info("参数 obdInfoListVO:" + obdInfoListVO.toString());
@@ -119,14 +139,34 @@ public class UploadController extends BaseController {
         String boxCode1 = null;
         String labelCode = null;
         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
-            if (boxVO.getLabelCode().equals(boxCode)) {
-                labelCode = boxCode;
-                boxCode1 = boxVO.getBoxCode();
-            } else if (boxVO.getBoxCode().equals(boxCode)) {
-                boxCode1 = boxCode;
-                labelCode = boxVO.getLabelCode();
-            }else {
-                return AjaxResult.warn("该串码找不到对应数据");
+            if (StringUtils.isNotBlank(boxVO.getLabelCode())) {
+                if (boxVO.getLabelCode().equals(boxCode)) {
+                    labelCode = boxCode;
+                    boxCode1 = boxVO.getBoxCode();
+                }else {
+                    if (StringUtils.isNotBlank(boxVO.getBoxCode())){
+                        if (boxVO.getBoxCode().equals(boxCode)) {
+                            boxCode1 = boxCode;
+                            labelCode = boxVO.getLabelCode();
+                        }
+                    }
+                }
+            }
+            else if (StringUtils.isNotBlank(boxVO.getBoxCode())) {
+                if (boxVO.getBoxCode().equals(boxCode)) {
+                    boxCode1 = boxCode;
+                    labelCode = boxVO.getLabelCode();
+                }else {
+                    if(StringUtils.isNotBlank(boxVO.getLabelCode())){
+                        if (boxVO.getLabelCode().equals(boxCode)) {
+                            labelCode = boxCode;
+                            boxCode1 = boxVO.getBoxCode();
+                        }
+                    }
+                }
+            }
+            else {
+                return AjaxResult.error("该串码找不到对应数据");
             }
         }
         obdPicture.setBoxCode(boxCode1);
@@ -156,7 +196,6 @@ public class UploadController extends BaseController {
     public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request) {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
         log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber);
-        log.info("参数 obdInfoVOList:" + obdInfoVOList);
         String undefined = "undefined";
         ObdBoxVO obdBoxVO = new ObdBoxVO();
         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {

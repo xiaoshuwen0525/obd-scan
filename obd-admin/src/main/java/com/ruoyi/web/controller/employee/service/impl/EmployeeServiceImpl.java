@@ -49,7 +49,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int insertEmployee(EmployeeUser employeeUser) {
         String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
         Pattern pattern = Pattern.compile(regex);
@@ -104,7 +104,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int deleteEmployee(List<Integer> ids) {
 
         int i = 0;
@@ -119,37 +119,30 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
     /**
      * 导入
-     *
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult importUser(List<ImportUser> userList) {
 
         try {
             if (userList != null && userList.size() != 0) {
-                List<EmployeeUser> list = new ArrayList<>();
-                for (ImportUser importUserList : userList) {
+                for (ImportUser importUser : userList) {
                     EmployeeUser employeeUser = new EmployeeUser();
-                    employeeUser.setJobNumber(importUserList.getJobNumber());
-                    employeeUser.setUserName(importUserList.getUserName());
-                    employeeUser.setPhone(importUserList.getPhone());
+                    employeeUser.setJobNumber(importUser.getJobNumber());
+                    employeeUser.setUserName(importUser.getUserName());
+                    employeeUser.setPhone(importUser.getPhone());
 
-                    EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(importUserList.getJobNumber());
-                    if(employeeUser2!=null && employeeUser2.getJobNumber().equals(importUserList.getJobNumber())){
+                    EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(importUser.getJobNumber());
+                    if(employeeUser2!=null && employeeUser2.getJobNumber().equals(importUser.getJobNumber())){
                         continue;
                     }
-                    EmployeeUser employeeUser3 = employeeMapper.selectPhone(importUserList.getPhone());
-                    if(employeeUser3!=null && employeeUser3.getPhone().equals(importUserList.getPhone())){
+                    EmployeeUser employeeUser3 = employeeMapper.selectPhone(importUser.getPhone());
+                    if(employeeUser3!=null && employeeUser3.getPhone().equals(importUser.getPhone())){
                         continue;
                     }
-
-                    list.add(employeeUser);
+                    employeeMapper.importUser(employeeUser);
                 }
-                if(list != null && list.size()==0){
-                    return AjaxResult.warn("已存在此用户名或员工号或手机号");
-                }
-                employeeMapper.importUser(list);
                 return AjaxResult.success("导入成功");
 
             } else {

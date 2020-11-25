@@ -216,8 +216,8 @@
 
     <modules>
 	    <module>obd-admin</module>
-		<module>obd-framework</module>
 		<module>obd-system</module>
+		<module>obd-framework</module>
 		<module>obd-quartz</module>
 		<module>obd-generator</module>
         <module>obd-common</module>

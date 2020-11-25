@@ -143,7 +143,6 @@ public class EmployeeController extends BaseController {
         int i;
         try {
             i = employeeService.deleteEmployee(idList);
-            System.out.println(i);
             if (i > 0) {
                 return AjaxResult.success("删除成功");
             }

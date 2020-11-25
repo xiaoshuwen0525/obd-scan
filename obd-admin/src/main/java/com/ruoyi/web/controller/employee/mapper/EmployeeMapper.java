@@ -50,7 +50,7 @@ public interface EmployeeMapper {
      * 导入
      * @return
      */
-    int importUser(List<EmployeeUser> employeeUsers);
+    int importUser(EmployeeUser employeeUsers);
 
     EmployeeUser selectUserName(String userName);
     EmployeeUser selectJobNumber(String jobNumber);

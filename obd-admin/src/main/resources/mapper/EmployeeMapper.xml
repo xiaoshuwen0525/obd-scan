@@ -49,10 +49,7 @@
         insert into employee_user
         (user_name,job_number,phone)
         values
-        <foreach item="item" collection="list" separator="," open="" close="" index="index">
-            (#{item.userName},#{item.jobNumber},#{item.phone})
-        </foreach>
-
+        (#{userName},#{jobNumber},#{phone})
     </insert>
 
     <select id="selectUserName" resultMap="employeeUserMap">

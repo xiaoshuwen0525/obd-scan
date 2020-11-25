@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.employee.service.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.text.Convert;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.employee.domain.EmployeeUser;
 import com.ruoyi.web.controller.employee.domain.ImportUser;
 import com.ruoyi.web.controller.employee.mapper.EmployeeMapper;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * 员工用户资料 服务层 实现
  */
@@ -48,9 +51,9 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Override
     @Transactional
     public int insertEmployee(EmployeeUser employeeUser) {
-
-        EmployeeUser employeeUser1 = employeeMapper.selectUserName(employeeUser.getUserName());
-        if(employeeUser1!=null && employeeUser1.getUserName().equals(employeeUser.getUserName())){
+        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
+        Pattern pattern = Pattern.compile(regex);
+        if(!pattern.matcher(employeeUser.getPhone()).matches()){
             return 301;
         }
         EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(employeeUser.getJobNumber());
@@ -72,19 +75,22 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateEmployee(EmployeeUser employeeUser) {
-
+        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
+        Pattern pattern = Pattern.compile(regex);
+        if(!pattern.matcher(employeeUser.getPhone()).matches()){
+            return 301;
+        }
         List<EmployeeUser> employeeUsers = employeeMapper.selectEmployee();
         for (EmployeeUser user : employeeUsers) {
-            if(employeeUser.getUserName().equals(user.getUserName()) &&
-                    employeeUser.getId() != user.getId()){
-                return 301;
-            }
-            if(employeeUser.getJobNumber().equals(user.getJobNumber()) &&
-                    employeeUser.getId() != user.getId()){
+            if(StringUtils.isEmpty(employeeUser.getUserName())){
+                return 400;
+            }else if(StringUtils.isEmpty(employeeUser.getJobNumber())){
+                return 401;
+            }else if(employeeUser.getJobNumber().equals(user.getJobNumber()) &&
+                    !employeeUser.getId().equals(user.getId())){
                 return 302;
-            }
-            if(employeeUser.getPhone().equals(user.getPhone()) &&
-                    employeeUser.getId() != user.getId()){
+            }else if(employeeUser.getPhone().equals(user.getPhone()) &&
+                    !employeeUser.getId().equals(user.getId())){
                 return 303;
             }
 
@@ -129,10 +135,6 @@ public class EmployeeServiceImpl implements IEmployeeService {
                     employeeUser.setUserName(importUserList.getUserName());
                     employeeUser.setPhone(importUserList.getPhone());
 
-                    EmployeeUser employeeUser1 = employeeMapper.selectUserName(importUserList.getUserName());
-                    if(employeeUser1!=null && employeeUser1.getUserName().equals(importUserList.getUserName())){
-                        continue;
-                    }
                     EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(importUserList.getJobNumber());
                     if(employeeUser2!=null && employeeUser2.getJobNumber().equals(importUserList.getJobNumber())){
                         continue;

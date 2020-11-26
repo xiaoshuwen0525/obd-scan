@@ -28,6 +28,24 @@ public class ObdView extends BaseEntity {
      */
     private Integer id;
 
+    /**
+     * 区域
+     */
+    @Excel(name = "区域")
+    private String area;
+
+    /**
+     * 业务局
+     */
+    @Excel(name = "业务局")
+    private String businessBureau;
+
+    /**
+     * 营服中心
+     */
+    @Excel(name = "营服中心")
+    private String campService;
+
     @Excel(name = "机箱唯一ID")
     private String boxUniqueId;
 

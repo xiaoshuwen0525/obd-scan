@@ -40,6 +40,9 @@
         <result property="portSer" column="port_ser" jdbcType="VARCHAR"/>
         <result property="portCode" column="port_code" jdbcType="VARCHAR"/>
         <result property="portStatus" column="port_status" jdbcType="VARCHAR"/>
+        <result property="area" column="area" jdbcType="VARCHAR"/>
+        <result property="campService" column="camp_service" jdbcType="VARCHAR"/>
+        <result property="businessBureau" column="business_bureau" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.data.domain.DerivedEntity" id="PcObdViewResultMap">
@@ -276,7 +279,7 @@
 
     <select id="selectExportObd" resultMap="ObdViewMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdView" >
         SELECT id,box_code,label_code,job_number,img_url,status,exception_type,exception_info,create_time,obd_status,box_belong,
-        obd_name,port_id,port_ser,port_code,port_status,obd_unique_id,box_unique_id,port_unique_id
+        obd_name,port_id,port_ser,port_code,port_status,obd_unique_id,box_unique_id,port_unique_id,area,camp_service,business_bureau
         FROM obd_view
         <where>
             <if test="jobNumber != null and jobNumber != ''">

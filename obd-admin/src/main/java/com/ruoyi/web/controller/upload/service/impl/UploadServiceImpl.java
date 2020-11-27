@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.upload.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 
+import cn.hutool.core.util.PageUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -355,7 +356,7 @@ public class UploadServiceImpl implements IUploadService {
                         obdBox.setExceptionType("正常");
                     }
                 }
-                int totalPage = uploadMapper.countByJobNumber(jobNumber);
+                int totalPage = PageUtil.totalPage(uploadMapper.countByJobNumber(jobNumber),pageSize);
 
                 if (pageNum > totalPage) {
                     List<ObdBoxVO> list = new ArrayList();

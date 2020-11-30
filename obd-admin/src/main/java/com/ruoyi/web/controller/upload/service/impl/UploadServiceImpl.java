@@ -428,6 +428,7 @@ public class UploadServiceImpl implements IUploadService {
     public AjaxResult updateObd(ObdBoxVO obdBoxVO) {
         //lock.lock();
         try {
+            List<ObdPicture> obdPictureList = new ArrayList<>();
             if (!"".equals(obdBoxVO.getBoxCode()) && obdBoxVO.getBoxCode() != null && obdBoxVO.getId() > 0) {
                 ObdBox obdBox = new ObdBox();
                 obdBox.setId(obdBoxVO.getId());
@@ -440,6 +441,12 @@ public class UploadServiceImpl implements IUploadService {
                 obdBox.setBoxCode(obdBoxVO.getBoxCode());
                 obdBox.setLabelCode(obdBoxVO.getLabelCode());
                 obdBox.setCreateTime(new Date());
+                obdPictureList = uploadMapper.selectObdPicture(obdBox);
+                if(obdPictureList.size()!=0){
+                    for (ObdPicture picture:obdPictureList){
+                        obdBox.setImgUrl(picture.getImgUrl());
+                    }
+                }
                 uploadMapper.updateObdBox(obdBox);
             }
             int infoCount = 1;
@@ -524,6 +531,11 @@ public class UploadServiceImpl implements IUploadService {
                     }
                 }
                 infoCount++;
+            }
+            if(obdPictureList.size()!=0){
+                for (ObdPicture picture:obdPictureList){
+                    uploadMapper.deleteByPicture(picture);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

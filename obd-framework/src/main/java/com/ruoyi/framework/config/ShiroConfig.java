@@ -256,6 +256,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/logout", "logout");
         // 不需要拦截的访问
         filterChainDefinitionMap.put("/device/**", "anon");
+        filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/upload/**", "anon,captchaValidate");
         filterChainDefinitionMap.put("/wechat/**", "anon,captchaValidate");
         filterChainDefinitionMap.put("/login/**", "anon,captchaValidate");

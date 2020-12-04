@@ -86,10 +86,8 @@ public class LoginController extends BaseController {
         if(authCode == null){
             return AjaxResult.success("104","验证码不能为空",null);
         }
-        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
-        Pattern pattern = Pattern.compile(regex);
-        if(!pattern.matcher(phone).matches()){
-            return AjaxResult.success("104","手机号格式不正确",null);
+        if(phone.length() != 11){
+            return AjaxResult.warn("手机号格式不正确");
         }
 
         AjaxResult ajaxResult = null;
@@ -113,10 +111,8 @@ public class LoginController extends BaseController {
         if(StringUtils.isBlank(phone)){
             return AjaxResult.success("104","手机号不能为空",null);
         }
-        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
-        Pattern pattern = Pattern.compile(regex);
-        if(!pattern.matcher(phone).matches()){
-            return AjaxResult.success("104","手机号格式不正确",null);
+        if(phone.length() != 11){
+            return AjaxResult.warn("手机号格式不正确");
         }
 
         Integer authCode = (int)((Math.random()*9+1)*1000);

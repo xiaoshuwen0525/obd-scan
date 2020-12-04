@@ -129,10 +129,8 @@ public class WeChatController extends BaseController {
         if (phone.equals(newPhone)) {
             return AjaxResult.warn("新的手机号码与原手机号码一致");
         }
-        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
-        Pattern pattern = Pattern.compile(regex);
-        if (!pattern.matcher(newPhone).matches()) {
-            return AjaxResult.warn("新手机号格式不正确");
+        if(newPhone.length() != 11){
+            return AjaxResult.warn("手机号格式不正确");
         }
         int phoneNumberExist = obdDeviceService.isPhoneNumberExist(newPhone);
         if (phoneNumberExist > 0) {

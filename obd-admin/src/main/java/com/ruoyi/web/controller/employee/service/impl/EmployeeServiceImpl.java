@@ -51,11 +51,6 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertEmployee(EmployeeUser employeeUser) {
-        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
-        Pattern pattern = Pattern.compile(regex);
-        if(!pattern.matcher(employeeUser.getPhone()).matches()){
-            return 301;
-        }
         EmployeeUser employeeUser2 = employeeMapper.selectJobNumber(employeeUser.getJobNumber());
         if(employeeUser2!=null && employeeUser2.getJobNumber().equals(employeeUser.getJobNumber())){
             return 302;
@@ -75,11 +70,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateEmployee(EmployeeUser employeeUser) {
-        String regex = "^((13[0-9])|(17[0-1,6-8])|(15[^4,\\\\D])|(18[0-9]))\\d{8}$";
-        Pattern pattern = Pattern.compile(regex);
-        if(!pattern.matcher(employeeUser.getPhone()).matches()){
-            return 301;
-        }
+
         List<EmployeeUser> employeeUsers = employeeMapper.selectEmployee();
         for (EmployeeUser user : employeeUsers) {
             if(StringUtils.isEmpty(employeeUser.getUserName())){

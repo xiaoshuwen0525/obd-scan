@@ -75,19 +75,16 @@ public class EmployeeController extends BaseController {
     @PostMapping("/insertEmployee")
     @ResponseBody
     public AjaxResult insertEmployee(EmployeeUser employeeUser){
+        if(employeeUser.getPhone().length() != 11){
+            return AjaxResult.warn("手机号格式不正确");
+        }
         int i;
         try {
             i = employeeService.insertEmployee(employeeUser);
-            if (i == 301) {
-                return AjaxResult.warn("手机号格式不正确");
-            }else if (i == 302) {
+            if (i == 302) {
                 return AjaxResult.warn("工号已存在");
             }else if (i == 303) {
                 return AjaxResult.warn("手机号已存在");
-            }else if(i == 400){
-                return AjaxResult.warn("用户名不能为空");
-            }else if(i == 401){
-                return AjaxResult.warn("工号不能为空");
             }
             if (i > 0) {
                 return AjaxResult.success("新增成功");
@@ -106,12 +103,14 @@ public class EmployeeController extends BaseController {
     @PostMapping("/updateEmployee")
     @ResponseBody
     public AjaxResult updateEmployee(EmployeeUser employeeUser){
+        if(employeeUser.getPhone().length() != 11){
+            return AjaxResult.warn("手机号格式不正确");
+        }
+
         int i;
         try {
             i = employeeService.updateEmployee(employeeUser);
-            if (i == 301) {
-                return AjaxResult.warn("手机号格式不正确");
-            }else if (i == 302) {
+            if (i == 302) {
                 return AjaxResult.warn("工号已存在");
             }else if (i == 303) {
                 return AjaxResult.warn("手机号已存在");

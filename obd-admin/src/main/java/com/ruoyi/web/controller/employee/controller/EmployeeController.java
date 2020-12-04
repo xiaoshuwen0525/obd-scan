@@ -75,6 +75,9 @@ public class EmployeeController extends BaseController {
     @PostMapping("/insertEmployee")
     @ResponseBody
     public AjaxResult insertEmployee(EmployeeUser employeeUser){
+        if (!employeeUser.getPhone().matches("[0-9]+")) {
+            return AjaxResult.warn("手机号格式不正确");
+        }
         if(employeeUser.getPhone().length() != 11){
             return AjaxResult.warn("手机号格式不正确");
         }
@@ -103,6 +106,10 @@ public class EmployeeController extends BaseController {
     @PostMapping("/updateEmployee")
     @ResponseBody
     public AjaxResult updateEmployee(EmployeeUser employeeUser){
+
+        if (!employeeUser.getPhone().matches("[0-9]+")) {
+            return AjaxResult.warn("手机号格式不正确");
+        }
         if(employeeUser.getPhone().length() != 11){
             return AjaxResult.warn("手机号格式不正确");
         }

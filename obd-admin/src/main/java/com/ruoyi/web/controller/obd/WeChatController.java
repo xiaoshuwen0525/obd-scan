@@ -129,6 +129,9 @@ public class WeChatController extends BaseController {
         if (phone.equals(newPhone)) {
             return AjaxResult.warn("新的手机号码与原手机号码一致");
         }
+        if (!newPhone.matches("[0-9]+")) {
+            return AjaxResult.warn("手机号格式不正确");
+        }
         if(newPhone.length() != 11){
             return AjaxResult.warn("手机号格式不正确");
         }

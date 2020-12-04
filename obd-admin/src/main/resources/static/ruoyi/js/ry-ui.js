@@ -1415,6 +1415,21 @@ var table = {
                     $.modal.openBindPhone(table.options.modalName + "修改", $.operate.queryUrl(id));
                 }
             },
+            // 修改备注信息
+            editRemarks: function (id) {
+                table.set();
+                if ($.common.isEmpty(id) && table.options.type == table_type.bootstrapTreeTable) {
+                    var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+                    if ($.common.isEmpty(row)) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    var url = table.options.editRemarksUrl.replace("{id}", row[table.options.uniqueId]);
+                    $.modal.openBindPhone("备注信息修改", url);
+                } else {
+                    $.modal.openBindPhone("备注信息修改", $.operate.remarksUrl(id));
+                }
+            },
             // 修改信息，以tab页展现
             editTab: function (id) {
                 table.set();
@@ -1444,6 +1459,21 @@ var table = {
                         return;
                     }
                     url = table.options.queryUrl.replace("{id}", id);
+                }
+                return url;
+            },
+            // 修改备注信息--obd专用
+            remarksUrl: function (id) {
+                var url = "/404.html";
+                if ($.common.isNotEmpty(id)) {
+                    url = table.options.editRemarksUrl.replace("{id}", id);
+                } else {
+                    var id = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                    if (id.length == 0) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    url = table.options.editRemarksUrl.replace("{id}", id);
                 }
                 return url;
             },

@@ -18,6 +18,14 @@ public interface IObdDeviceService {
     List<ObdBoxVO> boxSearch(String boxCode);
 
     /**
+     * 机箱搜索通过机箱自增主键查询备注信息
+     *
+     * @param id 机箱码
+     * @return ObdBoxVO
+     */
+    ObdBoxVO boxRemarksById(String id);
+
+    /**
      * 根据jobNumber机箱查询
      * */
     List<ObdBoxVO> jobNumberSearch(String jobNumber);
@@ -95,4 +103,11 @@ public interface IObdDeviceService {
      */
     List<ObdView> selectExportObd(ObdView obdView);
 
+    /**
+     * 更新机箱备注信息
+     *
+     * @param id,remarks 备注信息
+     * @return int
+     */
+    int updateRemakers(String id, String remarks);
 }

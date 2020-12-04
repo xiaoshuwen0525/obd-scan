@@ -35,7 +35,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     private ObdDeviceMapper obdDeviceMapper;
 
     /**
-     * 机箱搜索
+     * 机箱搜索通过boxCode
      *
      * @param boxCode 机箱码
      * @return {@link List<ObdBoxVO>}
@@ -46,7 +46,20 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             return obdDeviceMapper.boxSearch(boxCode);
         }
         return null;
+    }
 
+    /**
+     * 机箱搜索通过机箱自增主键查询备注信息
+     *
+     * @param id 机箱码
+     * @return {@link List<ObdBoxVO>}
+     */
+    @Override
+    public ObdBoxVO boxRemarksById(String id) {
+        if (StringUtils.isNotBlank(id)) {
+            return obdDeviceMapper.boxRemarksById(id);
+        }
+        return null;
     }
 
     /**
@@ -112,16 +125,10 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      * @return int
      */
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public int bindPhone(String jobNumber, String phone, String newPhone) {
-        int i = 0;
         //绑定新手机号码
-        try {
-            i = obdDeviceMapper.bindPhone(jobNumber, phone, newPhone);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return i;
+        return obdDeviceMapper.bindPhone(jobNumber, phone, newPhone);
     }
 
     /**
@@ -131,7 +138,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      * @return {@link String}
      */
     @Override
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public String unBindPhone(String id) {
         int i = 0;
         //解绑手机号
@@ -176,37 +183,46 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     /**
      * 搜索条件
      *
-     * @param jobNumber 员工编号
-     * @param phone     电话
-     * @param code   串码
-     * @param status    状态
+     * @param jobNumber  员工编号
+     * @param phone      电话
+     * @param code       串码
+     * @param checkState 状态
      * @return {@link List<ObdBoxVO>}
      */
     @Override
-    public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String code, String status) {
+    public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String code, String checkState) {
         //查询机箱信息
-        List<ObdBoxVO> obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, code, status);
-        if (obdBoxVOS == null) {
-            return null;
+        List<ObdBoxVO> obdBoxVOS = new ArrayList<>();
+        try {
+            obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, code, checkState);
+        } catch (Exception e) {
+            return obdBoxVOS;
         }
-        //根据状态码转换为字符
         for (ObdBoxVO obdBox : obdBoxVOS) {
-            if ("0".equals(obdBox.getStatus())) {
-                if ("0".equals(obdBox.getExceptionType())) {
-                    obdBox.setStatus("正常");
-                    obdBox.setExceptionType("正常");
-                } else if ("1".equals(obdBox.getExceptionType())) {
-                    obdBox.setStatus("异常");
-                    obdBox.setExceptionType("OBD异常");
-                } else if ("2".equals(obdBox.getExceptionType())) {
-                    obdBox.setStatus("异常");
-                    obdBox.setExceptionType("端口异常");
-                }
+            if ("1".equals(obdBox.getCheckState())) {
+                obdBox.setCheckState("合格");
             } else {
-                obdBox.setStatus("异常");
-                obdBox.setExceptionType("机箱异常");
+                obdBox.setCheckState("不合格");
             }
         }
+        ////根据状态码转换为字符
+        //for (ObdBoxVO obdBox : obdBoxVOS) {
+        //    if ("0".equals(obdBox.getStatus())) {
+        //        if ("0".equals(obdBox.getExceptionType())) {
+        //            obdBox.setStatus("正常");
+        //            obdBox.setExceptionType("正常");
+        //        } else if ("1".equals(obdBox.getExceptionType())) {
+        //            obdBox.setStatus("异常");
+        //            obdBox.setExceptionType("OBD异常");
+        //        } else if ("2".equals(obdBox.getExceptionType())) {
+        //            obdBox.setStatus("异常");
+        //            obdBox.setExceptionType("端口异常");
+        //        }
+        //    } else {
+        //        obdBox.setStatus("异常");
+        //        obdBox.setExceptionType("机箱异常");
+        //    }
+        //}
         return obdBoxVOS;
     }
 
@@ -234,18 +250,18 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     @Override
     public ObdBoxVO selectAllInfoByCode(String code) {
         ObdBoxVO obdBoxVO = new ObdBoxVO();
-        if(StringUtils.isEmpty(code)){
+        if (StringUtils.isEmpty(code)) {
             return obdBoxVO;
         }
         List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
         List<ObdPortInfoVO> obdPortInfoVOS;
         obdPortInfoVOS = obdDeviceMapper.selectAllInfoByCode(code);
-        if (obdPortInfoVOS == null || obdPortInfoVOS.size()==0){
+        if (obdPortInfoVOS == null || obdPortInfoVOS.size() == 0) {
             return null;
         }
         HashSet<String> obd = new HashSet<>();
         for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
-            if (obdPortInfoVO.getId()!=0){
+            if (obdPortInfoVO.getId() != 0) {
                 //这里的id取值为机箱的唯一id
                 obdBoxVO.setId(obdPortInfoVO.getId());
             }
@@ -254,7 +270,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         for (String s : obd) {
             List<ObdPortInfoVO> obdPortInfoVOS1 = new ArrayList<>();
             for (ObdPortInfoVO obdPortInfoVO : obdPortInfoVOS) {
-                if (s.equals(obdPortInfoVO.getObdId().toString())){
+                if (s.equals(obdPortInfoVO.getObdId().toString())) {
                     ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
                     //这里的seq取值为port唯一id
                     obdPortInfoVO1.setSeq(obdPortInfoVO.getSeq());
@@ -287,11 +303,11 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
         List<DerivedEntity> derivedEntities;
         derivedEntities = obdDeviceMapper.selectBaseDataByCode(code);
-        if (derivedEntities == null || derivedEntities.size()==0){
+        if (derivedEntities == null || derivedEntities.size() == 0) {
             return null;
         }
         for (DerivedEntity derivedEntitie : derivedEntities) {
-            if (derivedEntitie.getBoxId()!=0){
+            if (derivedEntitie.getBoxId() != 0) {
                 //这里的id取值为机箱的唯一id
                 obdBoxVO.setId(derivedEntitie.getBoxId());
             }
@@ -306,7 +322,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             obdInfoVOS.add(obdInfoVO);
             List<ObdPortInfoVO> obdPortInfoVOS1 = new ArrayList<>();
             int portCount = derivedEntitie.getPortCount();
-            if (portCount!=0){
+            if (portCount != 0) {
                 for (int i = 1; i <= portCount; i++) {
                     //此处用于添加端口相关属性
                     ObdPortInfoVO obdPortInfoVO1 = new ObdPortInfoVO();
@@ -315,7 +331,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
                     obdPortInfoVO1.setPortCode("");
                     obdPortInfoVOS1.add(obdPortInfoVO1);
                 }
-            }else{
+            } else {
                 obdPortInfoVOS1.add(null);
             }
             obdInfoVO.setObdPortInfoVOList(obdPortInfoVOS1);
@@ -330,36 +346,28 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         try {
             obdViews = obdDeviceMapper.selectExportObd(obdView);
             for (ObdView obd : obdViews) {
-                if ("0".equals(obd.getStatus())) {
-                    if ("0".equals(obd.getExceptionType())) {
-                        obd.setStatus("正常");
-                        obd.setExceptionType("正常");
-                    } else if ("1".equals(obd.getExceptionType())) {
-                        obd.setStatus("异常");
-                        obd.setExceptionType("OBD异常");
-                    } else if ("2".equals(obd.getExceptionType())) {
-                        obd.setStatus("异常");
-                        obd.setExceptionType("端口异常");
-                    }
+                if ("1".equals(obd.getCheckState())) {
+                    obd.setCheckState("合格");
                 } else {
-                    obd.setStatus("异常");
-                    obd.setExceptionType("机箱异常");
-                }
-                if("0".equals(obd.getObdStatus())){
-                    obd.setObdStatus("正常");
-                }else {
-                    obd.setObdStatus("异常");
-                }
-                if ("0".equals(obd.getPortStatus())){
-                    obd.setPortStatus("正常");
-                }else {
-                    obd.setPortStatus("异常");
+                    obd.setCheckState("不合格");
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return obdViews;
+    }
+
+    /**
+     * 更新机箱备注信息
+     *
+     * @param id,remarks 备注信息
+     * @return int
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateRemakers(String id, String remarks) {
+        return obdDeviceMapper.updateRemarks(id, remarks);
     }
 
     /**

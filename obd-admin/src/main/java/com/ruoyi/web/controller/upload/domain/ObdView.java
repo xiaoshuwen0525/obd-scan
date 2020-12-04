@@ -64,23 +64,20 @@ public class ObdView extends BaseEntity {
     /**
      * 数据状态：0:正常 1:异常
      */
-    @Excel(name = "机箱状态")
     private String Status;
 
     /**
      * 异常类型：1：盒子异常；2：OBD异常
      */
-    @Excel(name = "异常类型")
     private String exceptionType;
 
     /**
      * 异常信息
      */
-    @Excel(name = "异常信息")
     private String exceptionInfo;
 
     /**
-     * 异常信息
+     * 图片地址
      */
     private String imgUrl;
 
@@ -110,7 +107,6 @@ public class ObdView extends BaseEntity {
     /**
      * 数据状态0：正常1：异常
      */
-    @Excel(name = "OBD状态")
     private String obdStatus;
 
     /**
@@ -127,7 +123,6 @@ public class ObdView extends BaseEntity {
     /**
      * 数据状态0：正常1：异常
      */
-    @Excel(name = "端口状态")
     private String portStatus;
 
     @Excel(name = "归属设备")
@@ -147,5 +142,18 @@ public class ObdView extends BaseEntity {
      */
     @Excel(name = "端口序号")
     private Integer portSer;
+
+    /**
+     * 审核状态
+     */
+    @Excel(name = "审核状态")
+    private String checkState;
+
+    /**
+     * 备注信息
+     */
+    @Excel(name = "备注信息")
+    private String remarks;
+
 
 }

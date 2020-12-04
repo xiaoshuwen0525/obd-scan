@@ -17,6 +17,8 @@
         <result property="exceptionType" column="exception_type" jdbcType="VARCHAR"/>
         <result property="exceptionInfo" column="exception_info" jdbcType="VARCHAR"/>
         <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
+        <result property="checkState" column="check_state" jdbcType="VARCHAR"/>
+        <result property="remarks" column="remarks" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
@@ -24,6 +26,8 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
         <result property="labelCode" column="label_code" jdbcType="VARCHAR"/>
+        <result property="checkState" column="check_state" jdbcType="VARCHAR"/>
+        <result property="remarks" column="remarks" jdbcType="VARCHAR"/>
         <result property="jobNumber" column="job_number" jdbcType="VARCHAR"/>
         <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
@@ -105,6 +109,20 @@
          from obd_box, (select @num := 0) row_number
         where box_code = #{boxCode,jdbcType=VARCHAR}
     </select>
+
+    <!--通过机箱自增主键ID查询备注信息-->
+    <select id="boxRemarksById" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
+        select
+        remarks
+        from obd_box
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+
+    <!--更新备注信息-->
+    <update id="updateRemarks">
+        update obd_box set remarks = #{remarks} where id = #{id}
+    </update>
 
     <!--通过盒子id查询obd列表-->
     <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
@@ -248,8 +266,8 @@
     <!--条件查询-->
     <select id="searchByCondition" resultMap="ObdBoxVOMap">
         select
-        t1.id, t2.box_name, t1.box_code, t1.label_code, t1.img_url, t1.status, t1.exception_type, t1.exception_info, t1.job_number, t1.create_time,
-        t2.area,t2.camp_service
+        t1.id, t2.box_name, t1.box_code, t1.label_code, t1.img_url, t1.job_number, t1.create_time,
+        t2.area,t2.camp_service, t1.remarks, t1.check_state
         from obd_box t1 join pc_obd_box t2 on (t1.box_unique_id = t2.box_unique_id)
         <where>
             <if test="jobNumber != null and jobNumber != ''">
@@ -261,26 +279,18 @@
             <if test="code != null and code != ''">
                 and t1.box_code like concat('%', #{code},'%') or t1.label_code like concat('%', #{code},'%')
             </if>
+            <if test="checkState != null and checkState != ''">
+                and t1.check_state = #{checkState}
+            </if>
             and 1 = 1
-            GROUP BY t1.id HAVING
-            <choose>
-                <when test="status == ''">
-                    1 = 1
-                </when>
-                <when test="status == 0">
-                    t1.status = 0 and exception_type = 0
-                </when>
-                <when test="status == 1">
-                    t1.exception_type !=0
-                </when>
-            </choose>
+            GROUP BY t1.id
         </where>
         order by t1.create_time desc
     </select>
 
     <select id="selectExportObd" resultMap="ObdViewMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdView" >
         SELECT id,box_code,label_code,job_number,img_url,status,exception_type,exception_info,create_time,obd_status,box_belong,
-        obd_name,port_id,port_ser,port_code,port_status,obd_unique_id,box_unique_id,port_unique_id,area,camp_service,business_bureau
+        obd_name,port_id,port_ser,port_code,port_status,obd_unique_id,box_unique_id,port_unique_id,area,camp_service,business_bureau,remarks,check_state
         FROM obd_view
         <where>
             <if test="jobNumber != null and jobNumber != ''">
@@ -291,6 +301,9 @@
             </if>
             <if test="code != null and code != ''">
                 and box_code like concat('%', #{code},'%') or label_code like concat('%', #{code},'%')
+            </if>
+            <if test="checkState != null and checkState != ''">
+                and check_state = #{checkState}
             </if>
         </where>
     </select>

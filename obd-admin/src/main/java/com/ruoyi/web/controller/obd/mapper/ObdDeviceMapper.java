@@ -17,6 +17,11 @@ public interface ObdDeviceMapper {
     List<ObdBoxVO> boxSearch(String boxCode);
 
     /**
+    * 根据boxCode机箱查询备注信息
+    * */
+    ObdBoxVO boxRemarksById(String id);
+
+    /**
      * 根据jobNumber机箱查询
      * */
     List<ObdBoxVO> jobNumberSearch(String jobNumber);
@@ -42,6 +47,14 @@ public interface ObdDeviceMapper {
     int bindPhone(@Param("jobNumber") String jobNumber, @Param("phone")String phone, @Param("newPhone")String newPhone);
 
     /**
+     * 更新机箱备注信息
+     *
+     * @param id,remarks 备注信息
+     * @return int
+     */
+    int updateRemarks(@Param("id") String id, @Param("remarks") String remarks);
+
+    /**
      * 解绑手机号码
      * */
     int unBindPhone(@Param("id") String id);
@@ -49,7 +62,7 @@ public interface ObdDeviceMapper {
     /**
      * 查询所有机箱信息
      */
-    List<ObdBoxVO> searchByCondition(@Param("jobNumber") String jobNumber, @Param("phone")String phone, @Param("code")String code,  @Param("status")String status);
+    List<ObdBoxVO> searchByCondition(@Param("jobNumber") String jobNumber, @Param("phone")String phone, @Param("code")String code,  @Param("checkState")String checkState);
 
     /**
      * 查询微信用户相关信息

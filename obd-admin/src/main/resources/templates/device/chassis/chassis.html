@@ -20,7 +20,7 @@
 							机箱串码/标签码：<input type="text" name="code"/>
 						</li>
 						<li>
-							机箱状态：<select name="status" th:with="type=${@dict.getType('obd_error_type')}">
+							审核状态：<select name="checkState" th:with="type=${@dict.getType('obd_check_state')}">
 							<option value="">所有</option>
 							<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
 						</select>
@@ -56,6 +56,7 @@
 			obdImageUrl: prefix + "/pcShowImg/{id}",
 			searchUrl:prefix + "/searchByCondition",
 			exportUrl: prefix + "/export",
+			editRemarksUrl: prefix + "/remarks/{id}",
 			modalName: "OBD",
 			imageName: "整治图片展示",
 			columns: [
@@ -91,17 +92,14 @@
 					title : '倒灌标签'
 				},
 				{
-					field: 'status',
-					title: '机箱状态',
+					field: 'checkState',
+					title: '审核状态',
 				},
 				{
-					field: 'exceptionType',
-					title: '异常类型',
+					field: 'remarks',
+					title: '备注信息',
 				},
 				{
-					field: 'exceptionInfo',
-					title: '异常信息',
-				},{
 					field: 'jobNumber',
 					title: '员工编号',
 				},{
@@ -113,6 +111,7 @@
 					align: 'center',
 					formatter: function(value, row, index) {
 						var actions = [];
+						actions.push('<a class="btn btn-info btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.editRemarks(\'' + row.id + '\')"><i class="fa fa-edit"></i>备注</a> ');
 						actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-search"></i>查看OBD</a> ');
 						actions.push('<a class="btn btn-warning btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryImage(\'' + row.id + '\')"><i class="fa fa-search"></i>查看整治图片</a> ');
 						return actions.join('');

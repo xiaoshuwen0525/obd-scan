@@ -91,6 +91,16 @@ public class ObdBoxVO {
      */
     private String boxUniqueId;
 
+    /**
+     * 审核状态
+     */
+    private String checkState;
+
+    /**
+     * 备注信息
+     */
+    private String remarks;
+
 
 
 }

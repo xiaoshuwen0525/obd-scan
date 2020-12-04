@@ -9,22 +9,17 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
-import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdView;
 import com.ruoyi.web.controller.upload.service.impl.UploadServiceImpl;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +82,43 @@ public class DeviceController extends BaseController {
     }
 
     /**
+     * 跳转备注编辑页面并携带当前机箱ID
+     */
+    @GetMapping("/remarks/{id}")
+    public String editRemakers(@PathVariable("id") String id, ModelMap mmap) {
+        ObdBoxVO obdBoxVOS = null;
+        try {
+            obdBoxVOS = obdDeviceService.boxRemarksById(id);
+        } catch (Exception e) {
+            return prefix + "/remarks";
+        }
+        mmap.put("id", id);
+        if (obdBoxVOS != null) {
+            if (obdBoxVOS.getRemarks() != null) {
+                mmap.put("remarks", obdBoxVOS.getRemarks());
+            } else {
+                mmap.put("remarks", "");
+            }
+        }
+        return prefix + "/remarks";
+    }
+
+    /**
+     * 更新备注信息
+     */
+    @PostMapping("/remarks/update")
+    @ResponseBody
+    public AjaxResult updateRemakers(String id, String remarks) {
+        if (StringUtils.isNotBlank(id) && remarks != null) {
+            int i = obdDeviceService.updateRemakers(id,remarks);
+            if (i > 0) {
+                return AjaxResult.success("更新成功");
+            }
+        }
+        return AjaxResult.error("请求参数有误");
+    }
+
+    /**
      * 根据机箱唯一ID查询端口列表
      */
     @PostMapping("/obd/list/{id}")
@@ -131,14 +163,14 @@ public class DeviceController extends BaseController {
      */
     @PostMapping("/searchByCondition")
     @ResponseBody
-    public TableDataInfo searchByCondition(String jobNumber, String phone, String code, String status) {
+    public TableDataInfo searchByCondition(String jobNumber, String phone, String code, String checkState) {
         List<ObdBoxVO> obdBoxVOS = new ArrayList<>();
         if ("undefined".equals(code)) {
             return getDataTable(obdBoxVOS);
         }
         try {
             startPage();
-            obdBoxVOS = obdDeviceService.searchByCondition(jobNumber, phone, code, status);
+            obdBoxVOS = obdDeviceService.searchByCondition(jobNumber, phone, code, checkState);
         } catch (Exception e) {
             return getDataTable(obdBoxVOS);
         }
@@ -150,19 +182,19 @@ public class DeviceController extends BaseController {
      */
     @GetMapping("/pcShowImg/{id}")
     public String pcShowImg(@PathVariable("id") String id, ModelMap mmap) {
-        if (StringUtils.isNotEmpty(id)){
+        if (StringUtils.isNotEmpty(id)) {
             ObdBoxVO boxVO = new ObdBoxVO();
             try {
                 boxVO = uploadService.selectBoxById(id);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (StringUtils.isNotEmpty(boxVO.getImgUrl())){
+            if (StringUtils.isNotEmpty(boxVO.getImgUrl())) {
                 mmap.put("image", boxVO.getImgUrl());
-            }else{
+            } else {
                 mmap.put("image", "static/obdImg/b06045afe09ac9868b1dab8b5ec3108.jpg");
             }
-        }else{
+        } else {
             mmap.put("image", "static/obdImg/83bbabd27184ef8eaa3037b1ba9eb22.jpg");
         }
         return prefix + "/image";

@@ -38,6 +38,12 @@
 			<a class="btn btn-warning" onclick="$.table.exportExcel()">
 				<i class="fa fa-download"></i> 导出
 			</a>
+			<a class="btn btn-primary" onclick="$.operate.check_yes()">
+				<i class="fa fa-check-square-o"></i> 合格
+			</a>
+			<a class="btn btn-danger" onclick="$.operate.check_no()">
+				<i class="fa fa-remove"></i> 不合格
+			</a>
 		</div>
 		<div class="col-sm-12 select-table table-striped">
 			<table id="bootstrap-table"></table>
@@ -50,9 +56,10 @@
 
 	$(function() {
 		var options = {
-			// url: prefix + "/list",
 			url: prefix + "/searchByCondition",
 			queryUrl: prefix + "/obd/{id}",
+			checkYesUrl: prefix + "/checkYes",
+			checkNoUrl: prefix + "/checkNo",
 			obdImageUrl: prefix + "/pcShowImg/{id}",
 			searchUrl:prefix + "/searchByCondition",
 			exportUrl: prefix + "/export",
@@ -60,6 +67,9 @@
 			modalName: "OBD",
 			imageName: "整治图片展示",
 			columns: [
+				{
+					checkbox: true
+				},
 				{
 					field : 'id',
 					title : '机箱ID'
@@ -94,10 +104,15 @@
 				{
 					field: 'checkState',
 					title: '审核状态',
+					align: 'center'
 				},
 				{
 					field: 'remarks',
 					title: '备注信息',
+					align: 'center',
+					formatter: function(value, row, index) {
+						return $.table.tooltip(value, 10, "open");
+					}
 				},
 				{
 					field: 'jobNumber',

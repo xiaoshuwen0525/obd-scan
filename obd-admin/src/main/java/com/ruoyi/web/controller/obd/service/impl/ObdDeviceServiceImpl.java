@@ -1,6 +1,9 @@
 package com.ruoyi.web.controller.obd.service.impl;
 
+import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysRole;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.web.controller.data.domain.BaseDataVo;
 import com.ruoyi.web.controller.data.domain.BaseUpdate;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
@@ -11,6 +14,7 @@ import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdView;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +37,23 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
 
     @Autowired
     private ObdDeviceMapper obdDeviceMapper;
+
+
+    /**
+     * 批量修改审核状态
+     *
+     * @param ids
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateCheckState(String ids, int state) {
+        Long[] boxIds = Convert.toLongArray(ids);
+        if (boxIds.length == 0) {
+            return 0;
+        }
+        return obdDeviceMapper.updateCheckState(boxIds, state);
+    }
 
     /**
      * 机箱搜索通过boxCode
@@ -201,8 +222,10 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         for (ObdBoxVO obdBox : obdBoxVOS) {
             if ("1".equals(obdBox.getCheckState())) {
                 obdBox.setCheckState("合格");
-            } else {
+            } else if ("0".equals(obdBox.getCheckState())){
                 obdBox.setCheckState("不合格");
+            }else{
+                obdBox.setCheckState("-");
             }
         }
         ////根据状态码转换为字符
@@ -348,8 +371,10 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             for (ObdView obd : obdViews) {
                 if ("1".equals(obd.getCheckState())) {
                     obd.setCheckState("合格");
-                } else {
+                } else if("0".equals(obd.getCheckState())){
                     obd.setCheckState("不合格");
+                }else{
+                    obd.setCheckState("-");
                 }
             }
         } catch (Exception e) {

@@ -344,7 +344,7 @@ var table = {
             // 导出数据
             exportExcel: function (formId) {
                 table.set();
-                $.modal.confirm("确定导出所有" + table.options.modalName + "数据吗？", function () {
+                $.modal.confirm("确定导出" + table.options.modalName + "数据吗？", function () {
                     var currentId = $.common.isEmpty(formId) ? $('form').attr('id') : formId;
                     var params = $("#" + table.options.id).bootstrapTable('getOptions');
                     var dataParam = $("#" + currentId).serializeArray();
@@ -1171,7 +1171,34 @@ var table = {
                     $.operate.submit(url, "post", "json", data);
                 });
             },
-
+            // 批量审核状态为合格
+            check_yes: function () {
+                table.set();
+                var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                if (rows.length == 0) {
+                    $.modal.alertWarning("请至少选择一条记录");
+                    return;
+                }
+                $.modal.confirm("审核选中的" + rows.length + "条数据状态为[合格]吗?", function () {
+                    var url = table.options.checkYesUrl;
+                    var data = {"ids": rows.join()};
+                    $.operate.submit(url, "post", "json", data);
+                });
+            },
+            // 批量审核状态为不合格
+            check_no: function () {
+                table.set();
+                var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                if (rows.length == 0) {
+                    $.modal.alertWarning("请至少选择一条记录");
+                    return;
+                }
+                $.modal.confirm("审核选中的" + rows.length + "条数据状态为[不合格]吗?", function () {
+                    var url = table.options.checkNoUrl;
+                    var data = {"ids": rows.join()};
+                    $.operate.submit(url, "post", "json", data);
+                });
+            },
             //弹出 分配 框
             redeploy: function (orderState) {
                 table.set();

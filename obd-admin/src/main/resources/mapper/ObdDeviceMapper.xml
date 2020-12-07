@@ -110,6 +110,15 @@
         where box_code = #{boxCode,jdbcType=VARCHAR}
     </select>
 
+
+    <update id="updateCheckState">
+        update obd_box set check_state = #{state}
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
     <!--通过机箱自增主键ID查询备注信息-->
     <select id="boxRemarksById" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         select
@@ -279,11 +288,19 @@
             <if test="code != null and code != ''">
                 and t1.box_code like concat('%', #{code},'%') or t1.label_code like concat('%', #{code},'%')
             </if>
-            <if test="checkState != null and checkState != ''">
-                and t1.check_state = #{checkState}
-            </if>
             and 1 = 1
             GROUP BY t1.id
+            <choose>
+                <when test="checkState == '0'.toString()">
+                    having t1.check_state = '0'
+                </when>
+                <when test="checkState == '1'.toString()">
+                    having t1.check_state = '1'
+                </when>
+                <when test="checkState == '2'.toString() ">
+                    having t1.check_state is null
+                </when>
+            </choose>
         </where>
         order by t1.create_time desc
     </select>
@@ -302,9 +319,17 @@
             <if test="code != null and code != ''">
                 and box_code like concat('%', #{code},'%') or label_code like concat('%', #{code},'%')
             </if>
-            <if test="checkState != null and checkState != ''">
-                and check_state = #{checkState}
-            </if>
+            <choose>
+                <when test="checkState == '0'.toString()">
+                    and check_state = '0'
+                </when>
+                <when test="checkState == '1'.toString()">
+                    and check_state = '1'
+                </when>
+                <when test="checkState == '2'.toString() ">
+                    and check_state is null
+                </when>
+            </choose>
         </where>
     </select>
 

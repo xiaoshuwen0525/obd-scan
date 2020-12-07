@@ -13,6 +13,13 @@ import java.util.List;
 public interface IObdDeviceService {
 
     /**
+     * 批量修改审核状态
+     * @param ids
+     * @return
+     */
+    int updateCheckState(String ids,int state);
+
+    /**
      * 根据boxCode机箱查询
      * */
     List<ObdBoxVO> boxSearch(String boxCode);

@@ -9,17 +9,21 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysRole;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdPortInfoVO;
 import com.ruoyi.web.controller.upload.domain.ObdView;
 import com.ruoyi.web.controller.upload.service.impl.UploadServiceImpl;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +114,7 @@ public class DeviceController extends BaseController {
     @ResponseBody
     public AjaxResult updateRemakers(String id, String remarks) {
         if (StringUtils.isNotBlank(id) && remarks != null) {
-            int i = obdDeviceService.updateRemakers(id,remarks);
+            int i = obdDeviceService.updateRemakers(id, remarks);
             if (i > 0) {
                 return AjaxResult.success("更新成功");
             }
@@ -210,6 +214,71 @@ public class DeviceController extends BaseController {
         List<ObdView> obdViewList = obdDeviceService.selectExportObd(obdView);
         ExcelUtil<ObdView> util = new ExcelUtil<ObdView>(ObdView.class);
         return util.exportExcel(obdViewList, "整治数据");
+    }
+
+
+    /**
+     * 批量审核状态为合格
+     *
+     * @param ids
+     * @return
+     */
+    @PostMapping("/checkYes")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult checkYes(String ids) {
+        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+        List<SysRole> roles = principal.getRoles();
+        for (SysRole role : roles) {
+            if ("1".equals(role.getDataScope())){
+                if (StringUtils.isBlank(ids)) {
+                    return AjaxResult.error("数据有误，请联系管理员");
+                }
+                int i;
+                try {
+                    i = obdDeviceService.updateCheckState(ids, 1);
+                    if (i > 0) {
+                        return AjaxResult.success("状态更新成功");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return AjaxResult.error("操作失败，请重试");
+            }
+        }
+        return AjaxResult.error("仅支持管理员操作");
+    }
+
+    /**
+     * 批量审核状态为不合格
+     *
+     * @param ids
+     * @return
+     */
+    @PostMapping("/checkNo")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult checkNo(String ids) {
+        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+        List<SysRole> roles = principal.getRoles();
+        for (SysRole role : roles) {
+            if ("1".equals(role.getDataScope())){
+                if (StringUtils.isBlank(ids)) {
+                    return AjaxResult.error("数据有误，请联系管理员");
+                }
+                int i;
+                try {
+                    i = obdDeviceService.updateCheckState(ids, 0);
+                    if (i > 0) {
+                        return AjaxResult.success("状态更新成功");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return AjaxResult.error("操作失败，请重试");
+            }
+        }
+        return AjaxResult.error("仅支持管理员操作");
     }
 
 }

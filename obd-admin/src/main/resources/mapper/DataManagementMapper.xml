@@ -211,22 +211,22 @@
     <update id="updateBaseData" parameterType="com.ruoyi.web.controller.data.domain.BaseUpdate">
         update pc_obd_box t1, pc_obd_info t2
         <set>
-            <if test="boxCode != null and boxCode != ''">
+            <if test="boxCode != null">
                 t1.box_code = #{boxCode},
             </if>
-            <if test="labelCode != null and labelCode != ''">
+            <if test="labelCode != null">
                 t1.label_code = #{labelCode},
             </if>
-            <if test="boxName != null and boxName != ''">
+            <if test="boxName != null">
                 t1.box_name = #{boxName},
             </if>
-            <if test="area != null and area != ''">
+            <if test="area != null">
                 t1.area = #{area},
             </if>
-            <if test="businessBureau != null and businessBureau != ''">
+            <if test="businessBureau != null">
                 t1.business_bureau = #{businessBureau},
             </if>
-            <if test="campService != null and campService != ''">
+            <if test="campService != null">
                 t1.camp_service = #{campService},
             </if>
             <if test="obdName != null and obdName != ''">
@@ -260,10 +260,10 @@
             <if test="boxBelong != null and boxBelong != ''">
                 box_belong = #{boxBelong},
             </if>
-            <if test=" boxUniqueId != null and boxUniqueId != '' ">
+            <if test=" boxUniqueId != null">
                 box_unique_id = #{boxUniqueId,jdbcType=VARCHAR},
             </if>
-            <if test="obdName != null and obdName != ''">
+            <if test="obdName != null">
                 obd_name = #{obdName},
             </if>
             <if test="portCount != null">

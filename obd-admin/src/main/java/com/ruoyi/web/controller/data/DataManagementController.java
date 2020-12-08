@@ -15,6 +15,7 @@ import com.ruoyi.web.controller.data.service.IDataManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,7 +63,7 @@ public class DataManagementController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (derivedEntities == null ) {
+        if (derivedEntities == null) {
             throw new BusinessException("该机箱数据异常，请联系管理员查看");
         }
         int count = 0;
@@ -75,7 +76,7 @@ public class DataManagementController extends BaseController {
                 pcObdBox.setId(entity.getId());
                 mmap.put("box", pcObdBox);
             }
-            if (entity.getObdId() == null){
+            if (entity.getObdId() == null) {
                 break;
             }
             BeanUtil.copyProperties(entity, pcObdInfo);
@@ -164,11 +165,24 @@ public class DataManagementController extends BaseController {
         if (baseDataVo == null) {
             return AjaxResult.error("不允许全部置空");
         }
-        baseDataVo.makeBaseUpdateList();
+        if ("".equals(StringUtils.trim(baseDataVo.getBoxCode())) &&
+                "".equals(StringUtils.trim(baseDataVo.getLabelCode())) &&
+                "".equals(StringUtils.trim(baseDataVo.getCampService())) &&
+                "".equals(StringUtils.trim(baseDataVo.getArea())) &&
+                "".equals(StringUtils.trim(baseDataVo.getBoxName())) &&
+                "".equals(StringUtils.trim(baseDataVo.getBusinessBureau()))) {
+            return AjaxResult.error("机箱信息不允许全部置空或输入空格");
+        }
+        //OBD部分信息为空的情况下需按情况调用方法避免产生空指针错误
+        if (CollectionUtils.isEmpty(baseDataVo.getObdName())||CollectionUtils.isEmpty(baseDataVo.getPortCount())){
+            baseDataVo.makeBaseUpdateListNull();
+        }else{
+            baseDataVo.makeBaseUpdateList();
+        }
         int i;
         try {
             i = dataManagementService.updateBaseData(baseDataVo);
-            if (i > 0 ) {
+            if (i > 0) {
                 return AjaxResult.success("更新成功");
             }
         } catch (Exception e) {

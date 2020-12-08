@@ -187,7 +187,11 @@ public class DataManagementServiceImpl implements IDataManagementService {
                     //如果有更新obd名称则同步更新
                     pcObdInfo.setObdName(baseUpdate.getObdName());
                     //如果有更新端口数则同步更新
-                    pcObdInfo.setPortCount(baseUpdate.getPortCount());
+                    if (baseUpdate.getPortCount() == null){
+                        pcObdInfo.setPortCount(0);
+                    }else{
+                        pcObdInfo.setPortCount(baseUpdate.getPortCount());
+                    }
                     i = dataManagementMapper.updatePcObdInfoForBaseData(pcObdInfo);
                     j++;
                     if (i <= 0) {

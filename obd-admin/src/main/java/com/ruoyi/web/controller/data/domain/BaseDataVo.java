@@ -68,4 +68,29 @@ public class BaseDataVo {
         this.baseUpdateList = baseUpdates;
     }
 
+    public void makeBaseUpdateListNull() {
+        List<BaseUpdate> baseUpdates = new ArrayList<>();
+        for (int i = 0; i < obdSize; i++) {
+            BaseUpdate baseUpdate = new BaseUpdate();
+            baseUpdate.setBoxId(boxId);
+            baseUpdate.setArea(area);
+            baseUpdate.setCampService(campService);
+            baseUpdate.setBusinessBureau(businessBureau);
+            baseUpdate.setLabelCode(labelCode);
+            baseUpdate.setBoxCode(boxCode);
+            baseUpdate.setBoxName(boxName);
+            baseUpdate.setBoxBelong(boxBelong.get(i));
+            baseUpdate.setObdName("");
+            baseUpdate.setPortCount(0);
+            if (CollectionUtils.isEmpty(boxUniqueId)) {
+                baseUpdate.setBoxUniqueId(null);
+            } else {
+                baseUpdate.setBoxUniqueId(boxUniqueId.get(i));
+            }
+            baseUpdate.setId(id.get(i));
+            baseUpdates.add(baseUpdate);
+        }
+        this.baseUpdateList = baseUpdates;
+    }
+
 }

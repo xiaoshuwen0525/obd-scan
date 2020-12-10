@@ -27,6 +27,7 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
         <result property="boxName" column="box_name" jdbcType="VARCHAR"/>
+        <result property="checkState" column="check_state" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdBox" id="ObdBoxMap">
@@ -189,15 +190,17 @@
     <!--通过工号查询盒子列表-->
     <select id="pageByJobNumber" resultMap="ObdBoxVOMap" >
         SELECT
-        id, box_code,label_code, img_url, status, exception_type, exception_info, job_number, create_time
+        b.id, b.box_code,b.label_code, b.img_url, b.status, b.exception_type, b.exception_info, b.job_number, b.create_time,b.check_state,
+        i.box_name
         FROM
-        obd_box
+        obd_box b
+        LEFT  JOIN pc_obd_box i on i.box_unique_id = b.box_unique_id
         <where>
             <if test="jobNumber != null and jobNumber != ''">
-                and job_number = #{jobNumber,jdbcType=VARCHAR}
+                and b.job_number = #{jobNumber,jdbcType=VARCHAR}
             </if>
         </where>
-        order by create_time DESC
+        order by b.create_time DESC
     </select>
 
     <!--通过工号查询个数-->

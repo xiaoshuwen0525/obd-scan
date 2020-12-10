@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 /**
@@ -42,7 +43,7 @@ public class UploadServiceImpl implements IUploadService {
     private UploadMapper uploadMapper;
 
     private static final Logger log = LoggerFactory.getLogger(UploadServiceImpl.class);
-    //private ReentrantLock lock = new ReentrantLock();
+    private ReentrantLock lock = new ReentrantLock();
 
 
     @Override
@@ -114,13 +115,26 @@ public class UploadServiceImpl implements IUploadService {
 
                 obdBox.setCreateTime(new Date());
 
-                List<ObdBox> obdBoxList = uploadMapper.selectObdBox(obdBox);
-                if (obdBoxList.size() > 0) {
-                    for (ObdBox box:obdBoxList){
-                        uploadMapper.insertBoxHistory(box);
-                        uploadMapper.deleteByObdBox(box);
+                int lockFlag = 0;
+                lock.lock();
+                try {
+                    List<ObdBox> obdBoxList = uploadMapper.selectObdBox(obdBox);
+                    if (obdBoxList.size() > 0) {
+                        for (ObdBox box : obdBoxList) {
+                            uploadMapper.insertBoxHistory(box);
+                            uploadMapper.deleteByObdBox(box);
+                        }
                     }
+                }catch (Exception e ){
+                    e.printStackTrace();
+                    lockFlag = -1;
+                }finally {
+                    lock.unlock();
                 }
+                if(lockFlag == -1){
+                    return AjaxResult.error("保存失败,请重试");
+                }
+
                 uploadMapper.insertObdBox(obdBox);
                 obdBoxVO.setId(obdBox.getId());
             }
@@ -355,6 +369,14 @@ public class UploadServiceImpl implements IUploadService {
                     } else {
                         obdBox.setExceptionType("正常");
                     }
+                    if("0".equals(obdBox.getCheckState())){
+                        obdBox.setCheckState("不合格");
+                    }else  if("1".equals(obdBox.getCheckState())){
+                        obdBox.setCheckState("合格");
+                    }else {
+                        obdBox.setCheckState("一");
+                    }
+
                 }
                 int totalPage = PageUtil.totalPage(uploadMapper.countByJobNumber(jobNumber),pageSize);
 

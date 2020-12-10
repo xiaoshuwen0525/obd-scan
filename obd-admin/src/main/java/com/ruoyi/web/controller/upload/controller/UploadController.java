@@ -27,9 +27,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.regex.Pattern;
+
 
 /**
  * 图片上传
@@ -206,6 +204,7 @@ public class UploadController extends BaseController {
         } else {
             return AjaxResult.warn("工号不应为空");
         }
+        log.info("参数未转 obdInfoListVO:" + obdInfoVOList);
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
         obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
         log.info("参数 obdInfoListVO:" + obdInfoListVO.toString());

@@ -86,10 +86,9 @@ public class LoginController extends BaseController {
         if(authCode == null){
             return AjaxResult.success("104","验证码不能为空",null);
         }
-        if (!phone.matches("[0-9]+")) {
-            return AjaxResult.warn("手机号格式不正确");
-        }
-        if(phone.length() != 11){
+        String regex = "^1[3-9]\\d{9}$";
+        Pattern pattern = Pattern.compile(regex);
+        if (!pattern.matcher(phone).matches()) {
             return AjaxResult.warn("手机号格式不正确");
         }
 
@@ -114,10 +113,9 @@ public class LoginController extends BaseController {
         if(StringUtils.isBlank(phone)){
             return AjaxResult.success("104","手机号不能为空",null);
         }
-        if (!phone.matches("[0-9]+")) {
-            return AjaxResult.warn("手机号格式不正确");
-        }
-        if(phone.length() != 11){
+        String regex = "^1[3-9]\\d{9}$";
+        Pattern pattern = Pattern.compile(regex);
+        if (!pattern.matcher(phone).matches()) {
             return AjaxResult.warn("手机号格式不正确");
         }
 

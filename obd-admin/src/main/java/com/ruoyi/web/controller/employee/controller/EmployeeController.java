@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 员工用户资料 控制层
@@ -75,10 +77,10 @@ public class EmployeeController extends BaseController {
     @PostMapping("/insertEmployee")
     @ResponseBody
     public AjaxResult insertEmployee(EmployeeUser employeeUser){
-        if (!employeeUser.getPhone().matches("[0-9]+")) {
-            return AjaxResult.warn("手机号格式不正确");
-        }
-        if(employeeUser.getPhone().length() != 11){
+
+        String regex = "^1[3-9]\\d{9}$";
+        Pattern pattern = Pattern.compile(regex);
+        if (!pattern.matcher(employeeUser.getPhone()).matches()) {
             return AjaxResult.warn("手机号格式不正确");
         }
         int i;
@@ -107,10 +109,9 @@ public class EmployeeController extends BaseController {
     @ResponseBody
     public AjaxResult updateEmployee(EmployeeUser employeeUser){
 
-        if (!employeeUser.getPhone().matches("[0-9]+")) {
-            return AjaxResult.warn("手机号格式不正确");
-        }
-        if(employeeUser.getPhone().length() != 11){
+        String regex = "^1[3-9]\\d{9}$";
+        Pattern pattern = Pattern.compile(regex);
+        if (!pattern.matcher(employeeUser.getPhone()).matches()) {
             return AjaxResult.warn("手机号格式不正确");
         }
 

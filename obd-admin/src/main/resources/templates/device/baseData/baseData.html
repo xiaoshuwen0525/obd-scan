@@ -83,8 +83,11 @@
 					field : 'id',
 					title : '主键'
 				},{
-					field : 'seq',
-					title : '序号'
+					field : 'index',
+					title: '序号',
+					formatter: function(value, row, index) {
+						return $.table.serialNumber(index);
+					}
 				},
 				{
 					field : 'area',

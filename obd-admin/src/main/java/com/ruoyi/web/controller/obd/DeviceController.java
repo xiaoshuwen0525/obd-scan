@@ -6,6 +6,9 @@ import com.ruoyi.common.annotation.RepeatSubmit;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.exception.base.BaseException;
+import com.ruoyi.common.exception.user.UserException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
@@ -90,21 +93,27 @@ public class DeviceController extends BaseController {
      */
     @GetMapping("/remarks/{id}")
     public String editRemakers(@PathVariable("id") String id, ModelMap mmap) {
-        ObdBoxVO obdBoxVOS = null;
-        try {
-            obdBoxVOS = obdDeviceService.boxRemarksById(id);
-        } catch (Exception e) {
-            return prefix + "/remarks";
-        }
-        mmap.put("id", id);
-        if (obdBoxVOS != null) {
-            if (obdBoxVOS.getRemarks() != null) {
-                mmap.put("remarks", obdBoxVOS.getRemarks());
-            } else {
-                mmap.put("remarks", "");
-            }
-        }
-        return prefix + "/remarks";
+        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+        List<SysRole> roles = principal.getRoles();
+        for (SysRole role : roles) {
+            if ("1".equals(role.getDataScope())){
+                ObdBoxVO obdBoxVOS = null;
+                try {
+                    obdBoxVOS = obdDeviceService.boxRemarksById(id);
+                } catch (Exception e) {
+                    return prefix + "/remarks";
+                }
+                mmap.put("id", id);
+                if (obdBoxVOS != null) {
+                    if (obdBoxVOS.getRemarks() != null) {
+                        mmap.put("remarks", obdBoxVOS.getRemarks());
+                    } else {
+                        mmap.put("remarks", "");
+                    }
+                }
+                return prefix + "/remarks";
+            }}
+        throw new BusinessException("仅支持管理员操作") ;
     }
 
     /**

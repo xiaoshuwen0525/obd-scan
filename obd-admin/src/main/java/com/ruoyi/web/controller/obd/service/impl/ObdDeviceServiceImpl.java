@@ -333,6 +333,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             if (derivedEntitie.getBoxId() != 0) {
                 //这里的id取值为机箱的唯一id
                 obdBoxVO.setId(derivedEntitie.getBoxId());
+                obdBoxVO.setBoxUniqueId(derivedEntitie.getBoxUniqueId());
             }
             //此处用于添加obd相关属性
             ObdInfoVO obdInfoVO = new ObdInfoVO();

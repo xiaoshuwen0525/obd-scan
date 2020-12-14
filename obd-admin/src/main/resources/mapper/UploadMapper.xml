@@ -58,6 +58,8 @@
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="portCount" column="port_count" jdbcType="INTEGER"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
     </resultMap>
 
 
@@ -490,7 +492,7 @@
     <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
         SELECT
         (@num := @num + 1) as num,
-        i.id,i.box_id,i.status,b.box_code,i.port_count
+        i.id,i.box_id,i.status,b.box_code,i.port_count,i.box_unique_id
         FROM obd_info i
         INNER  JOIN obd_box b on  b.id = i.box_id,
         (select @num := 0) row_number
@@ -519,7 +521,7 @@
     <select id="selectBoxById" resultMap="ObdBoxVOMap" parameterType="java.lang.String">
         SELECT
         (@num := @num + 1) as num,
-        id, box_code,label_code,img_url, status, exception_type, exception_info, job_number, create_time
+        id, box_code,label_code,img_url, status, exception_type, exception_info, job_number, create_time,box_unique_id
         FROM
         obd_box, (select @num := 0) row_number
         <where>
@@ -578,15 +580,8 @@
     </select>
 
     <select id="selectObdBox" resultMap="ObdBoxMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdBox" >
-        SELECT id, box_code, img_url, status, exception_type, exception_info, job_number, create_time,label_code FROM obd_box
-        <where>
-            <if test="boxCode != null and boxCode != ''">
-                and  box_code = #{boxCode,jdbcType=VARCHAR}
-            </if>
-            <if test="labelCode != null and labelCode != ''">
-                and  label_code = #{labelCode,jdbcType=VARCHAR}
-            </if>
-        </where>
+        SELECT id, box_code, img_url, status, exception_type, exception_info, job_number, create_time,label_code,box_unique_id FROM obd_box
+       WHERE box_unique_id = #{boxUniqueId,jdbcType=VARCHAR}
     </select>
 
     <!--通过实体非空属性删除-->
@@ -693,7 +688,7 @@
 
     <select id="selectPcObdByCode" resultMap="ObdBoxVOMap" parameterType="java.lang.String" >
         SELECT id, box_code,job_number,label_code,box_unique_id,box_name  FROM pc_obd_box
-        where  box_code = #{boxCode,jdbcType=VARCHAR} or label_code = #{boxCode,jdbcType=VARCHAR}
+       where  box_unique_id =  #{boxUniqueId,jdbcType=VARCHAR}
     </select>
 
 </mapper>

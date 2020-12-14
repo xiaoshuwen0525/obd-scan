@@ -49,52 +49,20 @@ public class UploadServiceImpl implements IUploadService {
     @Override
     @Transactional
     public AjaxResult uploadInformation(ObdBoxVO obdBoxVO) {
+        List<ObdPicture> obdPictureList;
         String boxCode = null;
         String labelCode = null;
-        String boxUniqueId = null;
-        List<ObdPicture> obdPictureList;
         try {
             if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
-                ObdBoxVO boxVO = uploadMapper.selectPcObdByCode(obdBoxVO.getBoxCode());
-
-                if (StringUtils.isNotBlank(boxVO.getLabelCode())) {
-                    if (boxVO.getLabelCode().equals(obdBoxVO.getBoxCode())) {
-                        labelCode = obdBoxVO.getBoxCode();
-                        boxCode = boxVO.getBoxCode();
-                    }else {
-                        if (StringUtils.isNotBlank(boxVO.getBoxCode())){
-                            if (boxVO.getBoxCode().equals(obdBoxVO.getBoxCode())) {
-                                boxCode = obdBoxVO.getBoxCode();
-                                labelCode = boxVO.getLabelCode();
-                            }
-                        }
-                    }
-                }
-                else if (StringUtils.isNotBlank(boxVO.getBoxCode())) {
-                    if (boxVO.getBoxCode().equals(obdBoxVO.getBoxCode())) {
-                        boxCode = obdBoxVO.getBoxCode();
-                        labelCode = boxVO.getLabelCode();
-                    }else {
-                        if(StringUtils.isNotBlank(boxVO.getLabelCode())){
-                            if (boxVO.getLabelCode().equals(obdBoxVO.getBoxCode())) {
-                                labelCode = obdBoxVO.getBoxCode();
-                                boxCode = boxVO.getBoxCode();
-                            }
-                        }
-                    }
-                }
-                else {
-                    return AjaxResult.error("该串码找不到对应数据");
-                }
-
-
-                boxUniqueId = boxVO.getBoxUniqueId();
+                ObdBoxVO boxVO = uploadMapper.selectPcObdByCode(obdBoxVO.getBoxUniqueId());
                 ObdBox obdBox = new ObdBox();
-                obdBox.setBoxCode(boxCode);
-                obdBox.setLabelCode(labelCode);
+                obdBox.setBoxCode(boxVO.getBoxCode());
+                obdBox.setLabelCode(boxVO.getLabelCode());
                 obdBox.setId(obdBoxVO.getId());
                 obdBox.setJobNumber(obdBoxVO.getJobNumber());
-                obdBox.setBoxUniqueId(boxUniqueId);
+                obdBox.setBoxUniqueId(boxVO.getBoxUniqueId());
+                boxCode = boxVO.getBoxCode();
+                labelCode = boxVO.getLabelCode();
                 obdPictureList = uploadMapper.selectObdPicture(obdBox);
                 if(obdPictureList.size()!=0){
                     for (ObdPicture picture:obdPictureList){
@@ -177,33 +145,6 @@ public class UploadServiceImpl implements IUploadService {
                         }
                     }
                 }
-                if (obdInfoVO.getId() != null) {
-                    if (uploadMapper.countByPortStatus(obdInfoVO.getId()) > 0) {
-                        ObdInfo obdInfo = new ObdInfo();
-                        obdInfo.setId(obdInfoVO.getId());
-                        obdInfo.setStatus(1);
-                        uploadMapper.updateObdInfo(obdInfo);
-                        ObdBox obdBox1 = new ObdBox();
-                        obdBox1.setId((obdBoxVO.getId()));
-                        obdBox1.setExceptionType(2);
-                        if (StringUtils.isNoneBlank(obdBoxVO.getExceptionInfo())) {
-                            obdBox1.setExceptionInfo(obdBoxVO.getExceptionInfo() + ",且存在端口识别异常");
-                        } else {
-                            obdBox1.setExceptionInfo("存在端口识别异常");
-                        }
-                        uploadMapper.updateObdBox(obdBox1);
-                    }else {
-                        ObdInfo obdInfo1 = new ObdInfo();
-                        obdInfo1.setId(obdInfoVO.getId());
-                        obdInfo1.setStatus(0);
-                        uploadMapper.updateObdInfo(obdInfo1);
-                        ObdBox obdBox1 = new ObdBox();
-                        obdBox1.setId((obdBoxVO.getId()));
-                        obdBox1.setExceptionType(0);
-                        obdBox1.setExceptionInfo("");
-                        uploadMapper.updateObdBox(obdBox1);
-                    }
-                }
                 infoCount++;
             }
             ObdBox obdBox1 = new ObdBox();
@@ -236,8 +177,14 @@ public class UploadServiceImpl implements IUploadService {
 
     @Override
     public int uploadObdPicture(ObdPicture obdPicture, MultipartFile multipartFile, String boxCode) {
-        obdPicture.setImgUrl(uploadPicture(obdPicture.getJobNumber(), multipartFile));
-        int i = uploadMapper.insertPicture(obdPicture);
+        String s = uploadPicture(obdPicture.getJobNumber(), multipartFile);
+        int i = 0;
+        if(StringUtils.isNotEmpty(s)){
+            obdPicture.setImgUrl(s);
+            i = uploadMapper.insertPicture(obdPicture);
+        }else {
+            i = -1;
+        }
         return i;
     }
 

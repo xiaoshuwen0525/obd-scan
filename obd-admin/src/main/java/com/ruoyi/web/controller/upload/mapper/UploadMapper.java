@@ -213,12 +213,12 @@ public interface UploadMapper {
 
 
     /**
-     * 根据code找pcobd
+     * 根据boxUniqueId找pcobd
      *
-     * @param boxCode 框代码
+     * @param boxUniqueId 框代码
      * @return {@link ObdBoxVO}
      */
-    ObdBoxVO selectPcObdByCode(@Param("boxCode") String  boxCode);
+    ObdBoxVO selectPcObdByCode(@Param("boxUniqueId") String  boxUniqueId);
 
 
 }

@@ -70,50 +70,22 @@ public class UploadController extends BaseController {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
         log.info("参数 boxCode:" + boxCode + ",boxId:" + boxId);
         String undefined = "undefined";
-        ObdBoxVO obdBoxVO = new ObdBoxVO();
-        String boxCode1 = null;
-        String labelCode = null;
-        boxCode = boxCode.substring(1, boxCode.length() - 1);
-        ObdBoxVO boxVO = uploadService.selectPcObdByCode(boxCode);
-        if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
-            if (StringUtils.isNotBlank(boxVO.getLabelCode())) {
-                if (boxVO.getLabelCode().equals(boxCode)) {
-                    labelCode = boxCode;
-                    boxCode1 = boxVO.getBoxCode();
-                }else {
-                    if (StringUtils.isNotBlank(boxVO.getBoxCode())){
-                        if (boxVO.getBoxCode().equals(boxCode)) {
-                            boxCode1 = boxCode;
-                            labelCode = boxVO.getLabelCode();
-                        }
-                    }
-                }
-            }
-            else if (StringUtils.isNotBlank(boxVO.getBoxCode())) {
-                if (boxVO.getBoxCode().equals(boxCode)) {
-                    boxCode1 = boxCode;
-                    labelCode = boxVO.getLabelCode();
-                }else {
-                    if(StringUtils.isNotBlank(boxVO.getLabelCode())){
-                        if (boxVO.getLabelCode().equals(boxCode)) {
-                            labelCode = boxCode;
-                            boxCode1 = boxVO.getBoxCode();
-                        }
-                    }
-                }
-            }
-            else {
-                return AjaxResult.error("该串码找不到对应数据");
-            }
-        }
 
+        ObdBoxVO obdBoxVO = new ObdBoxVO();
+        ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
+        String boxUniqueId = obdInfoListVO.getObdInfoVOList().get(0).getBoxUniqueId();
+        if(StringUtils.isBlank(boxUniqueId) || undefined.equals(boxUniqueId)){
+            return AjaxResult.warn("机箱唯一id不应为空");
+        }
+        ObdBoxVO boxVO = uploadService.selectPcObdByCode(boxUniqueId);
+        String boxCode1 = boxVO.getBoxCode();
+        String labelCode = boxVO.getLabelCode();
         obdBoxVO.setId(boxId);
         obdBoxVO.setBoxCode(boxCode1);
         obdBoxVO.setLabelCode(labelCode);
         obdBoxVO.setBoxUniqueId(boxVO.getBoxUniqueId());
         obdBoxVO.setBoxName(boxVO.getBoxName());
-        ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
-        obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
+ obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
         log.info("参数 obdInfoListVO:" + obdInfoListVO.toString());
         AjaxResult ajaxResult;
         try {
@@ -128,45 +100,18 @@ public class UploadController extends BaseController {
     @PostMapping("/uploadPicture")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult uploadPicture(MultipartFile file, String boxCode, String jobNumber, HttpServletRequest request) throws IOException {
+    public AjaxResult uploadPicture(String boxUniqueId,MultipartFile file, String boxCode, String jobNumber, HttpServletRequest request) throws IOException {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
-        log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber + ",file:" + file);
+        log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber + ",file:" + file+",boxUniqueId:"+boxUniqueId);
         String undefined = "undefined";
         ObdPicture obdPicture = new ObdPicture();
-        ObdBoxVO boxVO = uploadService.selectPcObdByCode(boxCode);
-        String boxCode1 = null;
-        String labelCode = null;
-        if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
-            if (StringUtils.isNotBlank(boxVO.getLabelCode())) {
-                if (boxVO.getLabelCode().equals(boxCode)) {
-                    labelCode = boxCode;
-                    boxCode1 = boxVO.getBoxCode();
-                }else {
-                    if (StringUtils.isNotBlank(boxVO.getBoxCode())){
-                        if (boxVO.getBoxCode().equals(boxCode)) {
-                            boxCode1 = boxCode;
-                            labelCode = boxVO.getLabelCode();
-                        }
-                    }
-                }
-            }
-            else if (StringUtils.isNotBlank(boxVO.getBoxCode())) {
-                if (boxVO.getBoxCode().equals(boxCode)) {
-                    boxCode1 = boxCode;
-                    labelCode = boxVO.getLabelCode();
-                }else {
-                    if(StringUtils.isNotBlank(boxVO.getLabelCode())){
-                        if (boxVO.getLabelCode().equals(boxCode)) {
-                            labelCode = boxCode;
-                            boxCode1 = boxVO.getBoxCode();
-                        }
-                    }
-                }
-            }
-            else {
-                return AjaxResult.error("该串码找不到对应数据");
-            }
+        if(StringUtils.isBlank(boxUniqueId) || undefined.equals(boxUniqueId)){
+            return AjaxResult.warn("机箱唯一id不应为空");
         }
+        ObdBoxVO boxVO = uploadService.selectPcObdByCode(boxUniqueId);
+        String boxCode1 = boxVO.getBoxCode();
+        String labelCode = boxVO.getLabelCode();
+
         obdPicture.setBoxCode(boxCode1);
         obdPicture.setLabelCode(labelCode);
         if (StringUtils.isNotBlank(jobNumber) && !undefined.equals(jobNumber)) {
@@ -174,14 +119,14 @@ public class UploadController extends BaseController {
         } else {
             return AjaxResult.warn("工号不应为空");
         }
-        String s = "更新成功";
+        String s = "保存图片成功";
         try {
             int i = uploadService.uploadObdPicture(obdPicture, file, boxCode);
             if (i <= 0) {
                 int a = 1 / 0;
             }
         } catch (Exception e) {
-            return AjaxResult.error("更新失败");
+            return AjaxResult.error("保存图片失败，请重试");
         }
         return AjaxResult.success("200", "操作成功", s);
     }
@@ -191,9 +136,9 @@ public class UploadController extends BaseController {
     @PostMapping("/uploadInformation")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult uploadInformation(String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request) {
+    public AjaxResult uploadInformation(String boxUniqueId,String obdInfoVOList, String boxCode, String jobNumber, HttpServletRequest request) {
         log.info("成功进入【" + request.getRequestURI() + "】接口");
-        log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber);
+        log.info("参数 boxCode:" + boxCode + ",jobNumber:" + jobNumber+",boxUniqueId:"+boxUniqueId);
         String undefined = "undefined";
         ObdBoxVO obdBoxVO = new ObdBoxVO();
         if (!undefined.equals(boxCode) && StringUtils.isNotBlank(boxCode)) {
@@ -204,6 +149,12 @@ public class UploadController extends BaseController {
         } else {
             return AjaxResult.warn("工号不应为空");
         }
+        if(StringUtils.isNotBlank(boxUniqueId) && !undefined.equals(boxUniqueId)){
+            obdBoxVO.setBoxUniqueId(boxUniqueId);
+        }else {
+            return AjaxResult.warn("机箱唯一id为空,请联系管理员");
+        }
+
         log.info("参数未转 obdInfoListVO:" + obdInfoVOList);
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
         obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());

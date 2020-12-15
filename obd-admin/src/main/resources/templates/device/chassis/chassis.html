@@ -38,12 +38,6 @@
 			<a class="btn btn-warning" onclick="$.table.exportExcel()">
 				<i class="fa fa-download"></i> 导出
 			</a>
-			<a class="btn btn-primary" onclick="$.operate.check_yes()">
-				<i class="fa fa-check-square-o"></i> 合格
-			</a>
-			<a class="btn btn-danger" onclick="$.operate.check_no()">
-				<i class="fa fa-remove"></i> 不合格
-			</a>
 		</div>
 		<div class="col-sm-12 select-table table-striped">
 			<table id="bootstrap-table"></table>
@@ -58,18 +52,12 @@
 		var options = {
 			url: prefix + "/searchByCondition",
 			queryUrl: prefix + "/obd/{id}",
-			checkYesUrl: prefix + "/checkYes",
-			checkNoUrl: prefix + "/checkNo",
 			obdImageUrl: prefix + "/pcShowImg/{id}",
 			searchUrl:prefix + "/searchByCondition",
 			exportUrl: prefix + "/export",
-			editRemarksUrl: prefix + "/remarks/{id}",
 			modalName: "OBD",
 			imageName: "整治图片展示",
 			columns: [
-				{
-					checkbox: true
-				},
 				{
 					field : 'id',
 					title : '机箱ID'
@@ -107,14 +95,6 @@
 					align: 'center'
 				},
 				{
-					field: 'remarks',
-					title: '备注信息',
-					align: 'center',
-					formatter: function(value, row, index) {
-						return $.table.tooltip(value, 10, "open");
-					}
-				},
-				{
 					field: 'jobNumber',
 					title: '员工编号',
 				},{
@@ -126,7 +106,6 @@
 					align: 'center',
 					formatter: function(value, row, index) {
 						var actions = [];
-						actions.push('<a class="btn btn-info btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.editRemarks(\'' + row.id + '\')"><i class="fa fa-edit"></i>备注</a> ');
 						actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryOBD(\'' + row.id + '\')"><i class="fa fa-search"></i>查看OBD</a> ');
 						actions.push('<a class="btn btn-warning btn-xs ' + '" href="javascript:void(0)" onclick="$.operate.queryImage(\'' + row.id + '\')"><i class="fa fa-search"></i>查看整治图片</a> ');
 						return actions.join('');

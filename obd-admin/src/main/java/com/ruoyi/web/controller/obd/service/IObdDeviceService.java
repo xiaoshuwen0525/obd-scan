@@ -17,7 +17,7 @@ public interface IObdDeviceService {
      * @param ids
      * @return
      */
-    int updateCheckState(String ids,int state);
+    int updateCheckState(String boxId,String ids,int state);
 
     /**
      * 根据boxCode机箱查询
@@ -31,6 +31,14 @@ public interface IObdDeviceService {
      * @return ObdBoxVO
      */
     ObdBoxVO boxRemarksById(String id);
+
+    /**
+     * 机箱搜索通过机箱自增主键查询备注信息
+     *
+     * @param id 机箱码
+     * @return ObdInfoVO
+     */
+    ObdInfoVO ObdRemarksById(String id);
 
     /**
      * 根据jobNumber机箱查询
@@ -117,4 +125,12 @@ public interface IObdDeviceService {
      * @return int
      */
     int updateRemakers(String id, String remarks);
+
+    /**
+     * 更新OBD备注信息
+     *
+     * @param id,remarks 备注信息
+     * @return int
+     */
+    int updateObdRemakers(String id, String remarks);
 }

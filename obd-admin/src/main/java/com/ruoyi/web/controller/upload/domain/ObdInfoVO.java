@@ -57,6 +57,11 @@ public class ObdInfoVO {
     private String status;
 
 
+    private String remarks;
+
+    private String checkState;
+
+
     private  Integer portCount;
 
     private String boxUniqueId;

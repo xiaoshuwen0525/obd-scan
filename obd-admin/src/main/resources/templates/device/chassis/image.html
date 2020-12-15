@@ -15,5 +15,9 @@
 <script th:inline="javascript">
     $("#pcImage").hide()
 	$("#image").attr("src",ctx+$("#pcImage").text())
+
+    function submitHandler() {
+        $.modal.close()
+    }
 </script>
 </html>

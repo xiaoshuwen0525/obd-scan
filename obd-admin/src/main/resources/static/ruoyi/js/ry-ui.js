@@ -1407,9 +1407,9 @@ var table = {
                         return;
                     }
                     var url = table.options.queryUrl.replace("{id}", row[table.options.uniqueId]);
-                    $.modal.open(table.options.modalName + "详情", url);
+                    $.modal.open(table.options.modalName + "详情", url,1000);
                 } else {
-                    $.modal.open(table.options.modalName + "详情", $.operate.queryUrl(id));
+                    $.modal.open(table.options.modalName + "详情", $.operate.queryUrl(id),1000);
                 }
             },
             // 查看OBD相关图片信息

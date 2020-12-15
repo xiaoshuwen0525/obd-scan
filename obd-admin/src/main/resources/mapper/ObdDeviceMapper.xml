@@ -75,7 +75,6 @@
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdInfoVO" id="ObdInfoVOMap">
-        <result property="seq" column="num" jdbcType="INTEGER"/>
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="boxId" column="box_id" jdbcType="INTEGER"/>
         <result property="boxCode" column="box_code" jdbcType="VARCHAR"/>
@@ -84,7 +83,8 @@
         <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
         <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
         <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
-        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="checkState" column="check_state" jdbcType="VARCHAR"/>
+        <result property="remarks" column="remarks" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.ruoyi.web.controller.upload.domain.ObdPortInfoVO" id="ObdPortInfoVOMap">
@@ -110,9 +110,18 @@
         where box_code = #{boxCode,jdbcType=VARCHAR}
     </select>
 
+    <!--通过ID列表查询机箱对象-->
+    <select id="selectObdBoxByIds" resultMap="ObdBoxVOMap">
+        select * from obd_box
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 
     <update id="updateCheckState">
-        update obd_box set check_state = #{state}
+        update obd_info set check_state = #{state}, remarks = ''
         where id in
         <foreach collection="array" item="id" open="(" separator="," close=")">
             #{id}
@@ -127,20 +136,31 @@
         where id = #{id,jdbcType=VARCHAR}
     </select>
 
+    <!--通过机箱自增主键ID查询备注信息-->
+    <select id="ObdRemarksById" resultMap="ObdInfoVOMap" parameterType="java.lang.String">
+        select
+        remarks
+        from obd_info
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
 
-    <!--更新备注信息-->
+
+    <!--更新机箱备注信息-->
     <update id="updateRemarks">
-        update obd_box set remarks = #{remarks} where id = #{id}
+        update obd_box set remarks = #{remarks} where id = #{boxId}
+    </update>
+
+    <!--更新obd备注信息-->
+    <update id="updateObdRemakers">
+        update obd_info set remarks = #{remarks} where id = #{obdId}
     </update>
 
     <!--通过盒子id查询obd列表-->
     <select id="selectInfoByBoxId" resultMap="ObdInfoVOMap" >
         SELECT
-        (@num := @num + 1) as num,
-        i.id,i.box_id,i.status,b.box_code,b.label_code,i.obd_name,i.obd_unique_id,i.box_unique_id
+        i.id,i.box_id,b.box_code,b.label_code,i.obd_name,i.obd_unique_id,i.box_unique_id,i.check_state,i.remarks
         FROM obd_info i
-        INNER  JOIN obd_box b on  b.id = i.box_id,
-        (select @num := 0) row_number
+        INNER  JOIN obd_box b on  b.id = i.box_id
         <where>
             <if test="boxId != null and boxId != ''">
                 and i.box_id = #{boxId,jdbcType=VARCHAR}
@@ -270,6 +290,11 @@
     <!--解绑手机号码-->
     <update id="unBindPhone">
         UPDATE wx_user a set phone = null WHERE a.id = #{id}
+    </update>
+
+    <!--更新机箱审核状态-->
+    <update id="updateBoxCheckState">
+        UPDATE obd_box set check_state = #{param2} WHERE id = #{param1}
     </update>
 
     <!--条件查询-->

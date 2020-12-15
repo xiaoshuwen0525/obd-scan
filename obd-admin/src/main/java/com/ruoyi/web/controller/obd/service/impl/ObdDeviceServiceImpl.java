@@ -18,6 +18,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,12 +48,34 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateCheckState(String ids, int state) {
-        Long[] boxIds = Convert.toLongArray(ids);
-        if (boxIds.length == 0) {
+    public int updateCheckState(String boxId, String ids, int state) {
+        Long[] obdIds = Convert.toLongArray(ids);
+        if (obdIds.length == 0) {
             return 0;
         }
-        return obdDeviceMapper.updateCheckState(boxIds, state);
+        int i = obdDeviceMapper.updateCheckState(obdIds, state);
+        int j = updateBoxState(boxId);
+        return i+j;
+    }
+
+    public int updateBoxState(String boxId) {
+        List<ObdInfoVO> obdInfoVOS = obdDeviceMapper.selectInfoByBoxId(boxId);
+        if (CollectionUtils.isEmpty(obdInfoVOS)) {
+            return 0;
+        }
+        int count = obdInfoVOS.size();
+        int yes = 0;
+        for (ObdInfoVO obdInfoVO : obdInfoVOS) {
+            if (("1").equals(obdInfoVO.getCheckState())) {
+                yes += 1;
+            }
+        }
+        int state = 0;
+        //全部合格
+        if (yes == count) {
+            state = 1;
+        }
+        return obdDeviceMapper.updateBoxCheckState(boxId, state);
     }
 
     /**
@@ -79,6 +102,20 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     public ObdBoxVO boxRemarksById(String id) {
         if (StringUtils.isNotBlank(id)) {
             return obdDeviceMapper.boxRemarksById(id);
+        }
+        return null;
+    }
+
+    /**
+     * OBD搜索通过OBD自增主键查询备注信息
+     *
+     * @param id 机箱码
+     * @return {@link List<ObdInfoVO>}
+     */
+    @Override
+    public ObdInfoVO ObdRemarksById(String id) {
+        if (StringUtils.isNotBlank(id)) {
+            return obdDeviceMapper.ObdRemarksById(id);
         }
         return null;
     }
@@ -222,9 +259,9 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         for (ObdBoxVO obdBox : obdBoxVOS) {
             if ("1".equals(obdBox.getCheckState())) {
                 obdBox.setCheckState("合格");
-            } else if ("0".equals(obdBox.getCheckState())){
+            } else if ("0".equals(obdBox.getCheckState())) {
                 obdBox.setCheckState("不合格");
-            }else{
+            } else {
                 obdBox.setCheckState("-");
             }
         }
@@ -258,8 +295,14 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     @Override
     public List<ObdInfoVO> infoByBoxId(String boxId) {
         List<ObdInfoVO> list = obdDeviceMapper.selectInfoByBoxId(boxId);
-        for (ObdInfoVO obdInfo : list) {
-            obdInfo.setStatus(changeStatus(obdInfo.getStatus()));
+        for (ObdInfoVO obdInfoVO : list) {
+            if ("1".equals(obdInfoVO.getCheckState())) {
+                obdInfoVO.setCheckState("合格");
+            } else if ("0".equals(obdInfoVO.getCheckState())) {
+                obdInfoVO.setCheckState("不合格");
+            } else {
+                obdInfoVO.setCheckState("-");
+            }
         }
         return list;
     }
@@ -372,9 +415,9 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             for (ObdView obd : obdViews) {
                 if ("1".equals(obd.getCheckState())) {
                     obd.setCheckState("合格");
-                } else if("0".equals(obd.getCheckState())){
+                } else if ("0".equals(obd.getCheckState())) {
                     obd.setCheckState("不合格");
-                }else{
+                } else {
                     obd.setCheckState("-");
                 }
             }
@@ -396,6 +439,19 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         return obdDeviceMapper.updateRemarks(id, remarks);
     }
 
+
+    /**
+     * 更新OBD备注信息
+     *
+     * @param id,remarks 备注信息
+     * @return int
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateObdRemakers(String id, String remarks) {
+        return obdDeviceMapper.updateObdRemakers(id, remarks);
+    }
+
     /**
      * 端口信息通过obd id
      *
@@ -404,11 +460,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      */
     @Override
     public List<ObdPortInfoVO> portByObdId(String obdId) {
-        List<ObdPortInfoVO> list = obdDeviceMapper.selectPortByObdId(obdId);
-        for (ObdPortInfoVO port : list) {
-            port.setStatus(changeStatus(port.getStatus()));
-        }
-        return list;
+        return obdDeviceMapper.selectPortByObdId(obdId);
     }
 
     /**
@@ -419,38 +471,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      */
     @Override
     public List<ObdBoxVO> selectBoxByJobNumber(String jobNumber) {
-        List<ObdBoxVO> list = obdDeviceMapper.selectBoxByJobNumber(jobNumber);
-        for (ObdBoxVO obdBox : list) {
-            if ("1".equals(obdBox.getExceptionType())) {
-                obdBox.setStatus(changeStatus("1"));
-                obdBox.setExceptionType("机箱异常");
-            } else if ("2".equals(obdBox.getExceptionType())) {
-                obdBox.setStatus(changeStatus("1"));
-                obdBox.setExceptionType("OBD异常");
-            } else {
-                obdBox.setStatus(changeStatus("0"));
-                obdBox.setExceptionType("正常");
-            }
-        }
-        return list;
+        return obdDeviceMapper.selectBoxByJobNumber(jobNumber);
     }
 
-
-    /**
-     * 将status改文字
-     *
-     * @param status 值
-     * @return 异常状态文字
-     */
-    private String changeStatus(String status) {
-        String zero = "0";
-        if (status != null && !"".equals(status)) {
-            if (status.equals(zero)) {
-                return "正常";
-            } else {
-                return "异常";
-            }
-        }
-        return status;
-    }
 }

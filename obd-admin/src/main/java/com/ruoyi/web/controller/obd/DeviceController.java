@@ -116,6 +116,35 @@ public class DeviceController extends BaseController {
         throw new BusinessException("仅支持管理员操作") ;
     }
 
+
+    /**
+     * 跳转备注编辑页面并携带当前OBD唯一ID
+     */
+    @GetMapping("obd/remarks/{id}")
+    public String editObdRemakers(@PathVariable("id") String id, ModelMap mmap) {
+        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+        List<SysRole> roles = principal.getRoles();
+        for (SysRole role : roles) {
+            if ("1".equals(role.getDataScope())){
+                ObdInfoVO obdInfoVO = null;
+                try {
+                    obdInfoVO = obdDeviceService.ObdRemarksById(id);
+                } catch (Exception e) {
+                    return prefix + "/remarks";
+                }
+                mmap.put("id", id);
+                if (obdInfoVO != null) {
+                    if (obdInfoVO.getRemarks() != null) {
+                        mmap.put("remarks", obdInfoVO.getRemarks());
+                    } else {
+                        mmap.put("remarks", "");
+                    }
+                }
+                return prefix + "/remarks";
+            }}
+        throw new BusinessException("仅支持管理员操作") ;
+    }
+
     /**
      * 更新备注信息
      */
@@ -124,6 +153,22 @@ public class DeviceController extends BaseController {
     public AjaxResult updateRemakers(String id, String remarks) {
         if (StringUtils.isNotBlank(id) && remarks != null) {
             int i = obdDeviceService.updateRemakers(id, remarks);
+            if (i > 0) {
+                return AjaxResult.success("更新成功");
+            }
+        }
+        return AjaxResult.error("请求参数有误");
+    }
+
+
+    /**
+     * 更新OBD备注信息
+     */
+    @PostMapping("obd/remarks/update")
+    @ResponseBody
+    public AjaxResult updateObdRemakers(String id, String remarks) {
+        if (StringUtils.isNotBlank(id) && remarks != null) {
+            int i = obdDeviceService.updateObdRemakers(id, remarks);
             if (i > 0) {
                 return AjaxResult.success("更新成功");
             }
@@ -232,10 +277,10 @@ public class DeviceController extends BaseController {
      * @param ids
      * @return
      */
-    @PostMapping("/checkYes")
+    @PostMapping("obd/checkYes/{id}")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult checkYes(String ids) {
+    public AjaxResult checkYes(@PathVariable("id")String boxId,String ids) {
         SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
         List<SysRole> roles = principal.getRoles();
         for (SysRole role : roles) {
@@ -245,7 +290,7 @@ public class DeviceController extends BaseController {
                 }
                 int i;
                 try {
-                    i = obdDeviceService.updateCheckState(ids, 1);
+                    i = obdDeviceService.updateCheckState(boxId, ids, 1);
                     if (i > 0) {
                         return AjaxResult.success("状态更新成功");
                     }
@@ -264,10 +309,10 @@ public class DeviceController extends BaseController {
      * @param ids
      * @return
      */
-    @PostMapping("/checkNo")
+    @PostMapping("obd/checkNo/{id}")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult checkNo(String ids) {
+    public AjaxResult checkNo(@PathVariable("id")String boxId, String ids) {
         SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
         List<SysRole> roles = principal.getRoles();
         for (SysRole role : roles) {
@@ -277,7 +322,7 @@ public class DeviceController extends BaseController {
                 }
                 int i;
                 try {
-                    i = obdDeviceService.updateCheckState(ids, 0);
+                    i = obdDeviceService.updateCheckState(boxId, ids, 0);
                     if (i > 0) {
                         return AjaxResult.success("状态更新成功");
                     }

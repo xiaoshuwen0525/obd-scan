@@ -13,12 +13,21 @@ public interface ObdDeviceMapper {
 
 
     /**
-     * 批量更新机箱审核状态
+     * 批量更新OBD审核状态
      *
      * @param boxIds boxIds
      * @return int
      */
     int updateCheckState(@Param("array") Long[] boxIds, @Param("state") int state);
+
+
+    /**
+     * 查询ObdBox根据ID列表
+     *
+     * @param boxId 盒子id
+     * @return ObdBoxVO
+     */
+    ObdBoxVO selectObdBoxByIds(Long boxId);
 
     /**
      * 根据boxCode机箱查询
@@ -29,6 +38,11 @@ public interface ObdDeviceMapper {
      * 根据boxCode机箱查询备注信息
      */
     ObdBoxVO boxRemarksById(String id);
+
+    /**
+     * 根据obd唯一ID查询备注信息
+     */
+    ObdInfoVO ObdRemarksById(String id);
 
     /**
      * 根据jobNumber机箱查询
@@ -61,7 +75,15 @@ public interface ObdDeviceMapper {
      * @param id,remarks 备注信息
      * @return int
      */
-    int updateRemarks(@Param("id") String id, @Param("remarks") String remarks);
+    int updateRemarks(@Param("boxId") String id, @Param("remarks") String remarks);
+
+    /**
+     * 更新OBD备注信息
+     *
+     * @param id,remarks 备注信息
+     * @return int
+     */
+    int updateObdRemakers(@Param("obdId") String id, @Param("remarks") String remarks);
 
     /**
      * 解绑手机号码
@@ -110,4 +132,13 @@ public interface ObdDeviceMapper {
      * @return {@link List<ObdView>}
      */
     List<ObdView> selectExportObd(ObdView obdView);
+
+
+    /**
+     * 更新机箱检查状态
+     *
+     * @param boxId 机箱id
+     * @return int
+     */
+    int updateBoxCheckState(String boxId, int state);
 }

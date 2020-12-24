@@ -70,7 +70,6 @@ public class WeChatController extends BaseController {
             return AjaxResult.warn("识别到的串码无效");
         }
         ObdBoxVO obdBoxVO = obdDeviceService.selectBaseDataByCode(code);
-        System.out.println("返回数据："+obdBoxVO.toString());
         if (obdBoxVO == null) {
             return AjaxResult.warn("该串码未能查询到对应数据");
         }

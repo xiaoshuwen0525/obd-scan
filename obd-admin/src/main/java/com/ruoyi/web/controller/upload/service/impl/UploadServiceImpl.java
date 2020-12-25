@@ -333,7 +333,6 @@ public class UploadServiceImpl implements IUploadService {
                     return pageInfo;
                 }
                 PageInfo<ObdBoxVO> pageInfo = new PageInfo<ObdBoxVO>(obdBoxList);
-                System.out.println("service selectObdByJobNumber pageInfo :" + pageInfo);
                 return pageInfo;
             }
         } catch (Exception e) {
@@ -580,6 +579,7 @@ public class UploadServiceImpl implements IUploadService {
      * @return path 图片路径
      */
     private String uploadPicture(String jobNumber, MultipartFile multipartFile) {
+        log.info("上传图片入参工号"+jobNumber+",图片"+multipartFile+",图片转换成名称"+multipartFile.getOriginalFilename());
         String path = "";
         String uploadPaths = uploadfile.replace("/", "\\");
         String folder = uploadPaths + File.separator + jobNumber + File.separator;
@@ -587,12 +587,15 @@ public class UploadServiceImpl implements IUploadService {
             FileUtil.mkdir(folder);
         }
         String fileName = multipartFile.getOriginalFilename();
+
         try {
             File upload = FileUtil.writeBytes(multipartFile.getBytes(), folder + fileName);
             if (upload.length() > 0) {
                 path = "static" + File.separator + "obdImg" + File.separator + jobNumber + File.separator+ fileName;
             }
+            log.info("图片上传成功"+path);
         } catch (Exception e) {
+            log.info("图片上传失败");
             return null;
         }
         return path.replace("\\", "/");

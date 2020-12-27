@@ -6,6 +6,7 @@ import com.ruoyi.system.domain.SysRole;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.web.controller.data.domain.BaseDataVo;
 import com.ruoyi.web.controller.data.domain.BaseUpdate;
+import com.ruoyi.web.controller.data.domain.CheckState;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.obd.mapper.ObdDeviceMapper;
 import com.ruoyi.web.controller.obd.service.IObdDeviceService;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * obd设备服务impl
@@ -39,6 +42,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     @Autowired
     private ObdDeviceMapper obdDeviceMapper;
 
+    private static final Lock lock = new ReentrantLock();
 
     /**
      * 批量修改审核状态
@@ -55,7 +59,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         }
         int i = obdDeviceMapper.updateCheckState(obdIds, state);
         int j = updateBoxState(boxId);
-        return i+j;
+        return i + j;
     }
 
     public int updateBoxState(String boxId) {
@@ -472,6 +476,54 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
     @Override
     public List<ObdBoxVO> selectBoxByJobNumber(String jobNumber) {
         return obdDeviceMapper.selectBoxByJobNumber(jobNumber);
+    }
+
+    /**
+     * 批量更新审核状态
+     *
+     * @param checkStates 审核状态
+     * @return int
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public int updateObdCheckStateData(List<CheckState> checkStates) {
+        if (CollectionUtils.isEmpty(checkStates)) {
+            return 0;
+        }
+        //整理有效数据
+        List<CheckState> checkStateList = new ArrayList<>();
+        ArrayList<String> boxIds = new ArrayList<>();
+        for (CheckState checkState : checkStates) {
+            if (StringUtils.isNotBlank(checkState.getObdUniqueId())) {
+                if ("合格".equals(checkState.getCheckState())) {
+                    checkState.setCheckState("1");
+                    checkState.setRemarks("");
+                } else if ("不合格".equals(checkState.getCheckState())) {
+                    checkState.setCheckState("0");
+                } else {
+                    checkState.setCheckState(null);
+                }
+                boxIds.add(checkState.getObdUniqueId());
+                checkStateList.add(checkState);
+            }
+        }
+        int j = 0;
+        int i = 0;
+        lock.lock();
+        try {
+            i = obdDeviceMapper.updateObdCheckStateData(checkStateList);
+            List<String> boxIdList = obdDeviceMapper.selectBoxIdByObdUniqueId(boxIds);
+            if (CollectionUtils.isEmpty(boxIdList)) {
+                return 0;
+            }
+
+            for (String boxID : boxIdList) {
+                j = updateBoxState(boxID);
+            }
+        } finally {
+            lock.unlock();
+        }
+
+        return i + j;
     }
 
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 基础数据管理
  * @author: 曾志伟，小洪
  * @date: 2020-10-23 10:45
  */
@@ -157,6 +158,26 @@ public class DataManagementController extends BaseController {
         List<DerivedEntity> derivedEntities = dataManagementService.selectObdByEntity(derivedEntity);
         ExcelUtil<DerivedEntity> util = new ExcelUtil<DerivedEntity>(DerivedEntity.class);
         return util.exportExcel(derivedEntities, "基础数据");
+    }
+
+    /**
+     * 端口数据导入模板
+     */
+    @GetMapping("/importPortDataTemplate")
+    @ResponseBody
+    public AjaxResult importPortDataTemplate() {
+        ExcelUtil<ImportPortEntity> util = new ExcelUtil<ImportPortEntity>(ImportPortEntity.class);
+        return util.importTemplateExcel("端口数据导入模板");
+    }
+
+    /**
+     * 基础数据导入模板
+     */
+    @GetMapping("/importTemplate")
+    @ResponseBody
+    public AjaxResult exportTemplate() {
+        ExcelUtil<ImportEntity> util = new ExcelUtil<ImportEntity>(ImportEntity.class);
+        return util.importTemplateExcel("基础数据导入模板");
     }
 
     @PostMapping("/updateBaseData")

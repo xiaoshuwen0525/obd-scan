@@ -58,7 +58,7 @@
         var options = {
             url: prefix + "/selectEmployeeList",
             updateUrl: prefix + "/editEmployee/{id}",
-            // updateUrl: prefix + "/editEmployee",
+            importTemplateUrl: prefix + "/importTemplate",
             searchUrl: prefix + "/selectEmployeeList",
             createUrl: prefix + "/addEmployee",
             removeUrl: prefix + "/deleteEmployee",
@@ -101,8 +101,13 @@
     <form enctype="multipart/form-data" class="mt20 mb10">
         <div class="col-xs-offset-1">
             <input type="file" id="file" name="file"/>
+            <div class="mt10 pt5">
+                <span style="color: #5e5e5e"> 整治人员资料导入模板:</span>
+                &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+            </div>
             <font color="red" class="pull-left mt10">
-                提示：仅允许导入“xls”或“xlsx”格式文件！
+                提示：导入模板的标题请勿修改！<br />
+                仅允许导入“xls”或“xlsx”格式文件！
             </font>
         </div>
     </form>

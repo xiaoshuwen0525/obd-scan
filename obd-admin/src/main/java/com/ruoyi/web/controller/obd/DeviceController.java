@@ -14,6 +14,9 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysRole;
 import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.web.controller.data.domain.CheckState;
+import com.ruoyi.web.controller.data.domain.ImportEntity;
+import com.ruoyi.web.controller.obd.service.IObdDeviceService;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
@@ -25,13 +28,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 设备 机箱操作处理
+ * 整治数据管理
  *
  * @author 曾志伟
  */
@@ -40,7 +44,7 @@ import java.util.List;
 public class DeviceController extends BaseController {
 
     @Autowired
-    private ObdDeviceServiceImpl obdDeviceService;
+    private IObdDeviceService obdDeviceService;
 
     @Autowired
     private UploadServiceImpl uploadService;
@@ -93,10 +97,10 @@ public class DeviceController extends BaseController {
      */
     @GetMapping("/remarks/{id}")
     public String editRemakers(@PathVariable("id") String id, ModelMap mmap) {
-        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+        SysUser principal = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<SysRole> roles = principal.getRoles();
         for (SysRole role : roles) {
-            if ("1".equals(role.getDataScope())){
+            if ("1".equals(role.getDataScope())) {
                 ObdBoxVO obdBoxVOS = null;
                 try {
                     obdBoxVOS = obdDeviceService.boxRemarksById(id);
@@ -112,8 +116,9 @@ public class DeviceController extends BaseController {
                     }
                 }
                 return prefix + "/remarks";
-            }}
-        throw new BusinessException("仅支持管理员操作") ;
+            }
+        }
+        throw new BusinessException("仅支持管理员操作");
     }
 
 
@@ -122,10 +127,10 @@ public class DeviceController extends BaseController {
      */
     @GetMapping("obd/remarks/{id}")
     public String editObdRemakers(@PathVariable("id") String id, ModelMap mmap) {
-        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+        SysUser principal = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<SysRole> roles = principal.getRoles();
         for (SysRole role : roles) {
-            if ("1".equals(role.getDataScope())){
+            if ("1".equals(role.getDataScope())) {
                 ObdInfoVO obdInfoVO = null;
                 try {
                     obdInfoVO = obdDeviceService.ObdRemarksById(id);
@@ -141,8 +146,9 @@ public class DeviceController extends BaseController {
                     }
                 }
                 return prefix + "/remarks";
-            }}
-        throw new BusinessException("仅支持管理员操作") ;
+            }
+        }
+        throw new BusinessException("仅支持管理员操作");
     }
 
     /**
@@ -280,11 +286,11 @@ public class DeviceController extends BaseController {
     @PostMapping("obd/checkYes/{id}")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult checkYes(@PathVariable("id")String boxId,String ids) {
-        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+    public AjaxResult checkYes(@PathVariable("id") String boxId, String ids) {
+        SysUser principal = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<SysRole> roles = principal.getRoles();
         for (SysRole role : roles) {
-            if ("1".equals(role.getDataScope())){
+            if ("1".equals(role.getDataScope())) {
                 if (StringUtils.isBlank(ids)) {
                     return AjaxResult.error("数据有误，请联系管理员");
                 }
@@ -312,11 +318,11 @@ public class DeviceController extends BaseController {
     @PostMapping("obd/checkNo/{id}")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult checkNo(@PathVariable("id")String boxId, String ids) {
-        SysUser principal = (SysUser)SecurityUtils.getSubject().getPrincipal();
+    public AjaxResult checkNo(@PathVariable("id") String boxId, String ids) {
+        SysUser principal = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<SysRole> roles = principal.getRoles();
         for (SysRole role : roles) {
-            if ("1".equals(role.getDataScope())){
+            if ("1".equals(role.getDataScope())) {
                 if (StringUtils.isBlank(ids)) {
                     return AjaxResult.error("数据有误，请联系管理员");
                 }
@@ -333,6 +339,32 @@ public class DeviceController extends BaseController {
             }
         }
         return AjaxResult.error("仅支持管理员操作");
+    }
+
+    /**
+     * 导入审核数据
+     */
+    @PostMapping("/importData")
+    @ResponseBody
+    public AjaxResult importChectStateData(MultipartFile file, boolean updateSupport) throws Exception {
+        ExcelUtil<CheckState> util = new ExcelUtil<CheckState>(CheckState.class);
+        List<CheckState> userList = util.importExcel(file.getInputStream());
+        int i = obdDeviceService.updateObdCheckStateData(userList);
+        if (i > 0) {
+            return AjaxResult.success("导入审核状态成功");
+        } else {
+            return AjaxResult.error("导入审核状态失败");
+        }
+    }
+
+    /**
+     * 审核数据导入模板
+     */
+    @GetMapping("/importTemplate")
+    @ResponseBody
+    public AjaxResult exportTemplate() {
+        ExcelUtil<CheckState> util = new ExcelUtil<CheckState>(CheckState.class);
+        return util.importTemplateExcel("审核数据导入模板");
     }
 
 }

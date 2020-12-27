@@ -7,7 +7,8 @@ spring:
         druid:
             # 涓诲簱鏁版嵁婧�
             master:
-                url: jdbc:mysql://121.201.2.89:888/obd-scan?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://121.201.2.89:888/obd-scan?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
+#                url: jdbc:mysql://127.0.0.1:888/obd-scan?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
                 username: root
                 password: MVtBgM9@cp
             # 浠庡簱鏁版嵁婧�

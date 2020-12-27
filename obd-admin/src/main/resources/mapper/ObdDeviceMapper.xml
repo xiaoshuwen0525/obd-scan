@@ -274,6 +274,21 @@
          from wx_user where phone = #{phone}
     </select>
 
+    <!--根据obd唯一ID获取BOX_ID列表-->
+    <select id="selectBoxIdByObdUniqueId" resultType="string" parameterType="java.util.List">
+        SELECT
+            box_id
+        FROM
+            obd_info
+        WHERE
+            obd_unique_id IN
+        <foreach collection="array" item="obdUniqueId" open="(" separator="," close=")">
+            #{obdUniqueId}
+        </foreach>
+        GROUP BY
+            box_id
+    </select>
+
     <!--绑定手机-->
     <update id="bindPhone">
         UPDATE wx_user SET phone = #{newPhone}
@@ -295,6 +310,17 @@
     <!--更新机箱审核状态-->
     <update id="updateBoxCheckState">
         UPDATE obd_box set check_state = #{param2} WHERE id = #{param1}
+    </update>
+
+    <!--更新OBD审核状态-->
+    <update id="updateObdCheckStateData" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE obd_info
+            SET check_state = #{item.checkState},
+            remarks = #{item.remarks}
+            WHERE
+            obd_unique_id = #{item.obdUniqueId}
+        </foreach>
     </update>
 
     <!--条件查询-->

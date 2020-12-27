@@ -385,10 +385,23 @@ var table = {
                     });
                 });
             },
-            // 下载模板
+            // 基础数据下载模板
             importTemplate: function () {
                 table.set();
                 $.get(table.options.importTemplateUrl, function (result) {
+                    if (result.code == web_status.SUCCESS) {
+                        window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                });
+            },
+            // 端口数据下载模板
+            importPortTemplate: function () {
+                table.set();
+                $.get(table.options.importPortTemplateUrl, function (result) {
                     if (result.code == web_status.SUCCESS) {
                         window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
                     } else if (result.code == web_status.WARNING) {
@@ -452,7 +465,7 @@ var table = {
             // 导入数据
             importPortExcel: function (formId) {
                 table.set();
-                var currentId = $.common.isEmpty(formId) ? 'importTpl' : formId;
+                var currentId = $.common.isEmpty(formId) ? 'importTplPort' : formId;
                 layer.open({
                     type: 1,
                     area: ['400px', '230px'],

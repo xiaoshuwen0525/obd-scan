@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.obd.service;
 
 import com.ruoyi.web.controller.data.domain.BaseDataVo;
+import com.ruoyi.web.controller.data.domain.CheckState;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
 import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
@@ -13,7 +14,14 @@ import java.util.List;
 public interface IObdDeviceService {
 
     /**
-     * 批量修改审核状态
+     * 批量修改OBD审核状态
+     * @param checkStates
+     * @return
+     */
+    int updateObdCheckStateData(List<CheckState> checkStates);
+
+    /**
+     * 批量修改机箱审核状态
      * @param ids
      * @return
      */

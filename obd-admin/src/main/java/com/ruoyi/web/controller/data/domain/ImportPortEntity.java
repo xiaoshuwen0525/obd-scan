@@ -14,25 +14,25 @@ public class ImportPortEntity {
     /**
      * obd唯一ID
      */
-    @Excel(name = "OBDID")
+    @Excel(name = "OBD唯一ID")
     private String obdUniqueId;
 
     /**
      * obd名称
      */
-    @Excel(name = "OBDNAME")
+    @Excel(name = "OBD名称")
     private String obdName;
 
     /**
      * 端口唯一id
      */
-    @Excel(name = "OBDPORTID")
+    @Excel(name = "端口唯一ID")
     private String portId;
 
     /**
      * 端口序号
      */
-    @Excel(name = "OBDPORTCODE")
+    @Excel(name = "端口序号")
     private String portCode;
 
 

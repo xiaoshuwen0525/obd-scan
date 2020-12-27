@@ -175,6 +175,18 @@ public class EmployeeController extends BaseController {
 
     }
 
+
+    /**
+     * 整治人员资料导入模板
+     */
+    @GetMapping("/importTemplate")
+    @ResponseBody
+    public AjaxResult exportTemplate() {
+        ExcelUtil<ImportUser> util = new ExcelUtil<ImportUser>(ImportUser.class);
+        return util.importTemplateExcel("整治人员资料导入模板");
+    }
+
+
     /**
      * 导出数据
      */

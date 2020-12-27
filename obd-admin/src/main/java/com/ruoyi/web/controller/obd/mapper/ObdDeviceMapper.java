@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.obd.mapper;
 
+import com.ruoyi.web.controller.data.domain.CheckState;
 import com.ruoyi.web.controller.data.domain.DerivedEntity;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.*;
@@ -141,4 +142,19 @@ public interface ObdDeviceMapper {
      * @return int
      */
     int updateBoxCheckState(String boxId, int state);
+
+    /**
+     * 批量修改OBD审核状态
+     * @param checkStates
+     * @return
+     */
+    int updateObdCheckStateData(@Param("list") List<CheckState> checkStates);
+
+    /**
+     * 根据obd唯一ID获取BOX_ID列表
+     *
+     * @param obdUniqueId obd唯一id列表
+     * @return {@link List<String>}
+     */
+    List<String> selectBoxIdByObdUniqueId(@Param("array") List<String> obdUniqueId);
 }

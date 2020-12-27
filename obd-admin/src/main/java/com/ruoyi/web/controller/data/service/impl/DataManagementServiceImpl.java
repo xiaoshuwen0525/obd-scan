@@ -43,7 +43,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
     private DataManagementMapper dataManagementMapper;
 
     /**
-     * 插入obd
+     * 导入obd
      *
      * @param userList 用户列表
      * @return {@link AjaxResult}
@@ -93,7 +93,7 @@ public class DataManagementServiceImpl implements IDataManagementService {
                 if (pcObdInfo.getBoxId() != null && pcObdInfo.getBoxId() != 0) {
                     list.add(pcObdInfo);
                 } else {
-                    return AjaxResult.warn("插入出错");
+                    return AjaxResult.warn("导入出错");
                 }
             }
             dataManagementMapper.insertPcObdInfo(list);
@@ -101,11 +101,11 @@ public class DataManagementServiceImpl implements IDataManagementService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return AjaxResult.success("插入成功");
+        return AjaxResult.success("导入成功");
     }
 
     /**
-     * 插入obd
+     * 导入端口数据
      *
      * @param userList 用户列表
      * @return {@link AjaxResult}
@@ -113,14 +113,16 @@ public class DataManagementServiceImpl implements IDataManagementService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult insertPcObdPort(List<ImportPortEntity> userList) {
+        lock.lock();
         try {
             dataManagementMapper.insertPcObdPort(userList);
         } catch (Exception e) {
             return AjaxResult.error("数据导入失败");
+        } finally {
+            lock.unlock();
         }
         return AjaxResult.success("数据导入成功");
     }
-
 
 
     /**
@@ -187,9 +189,9 @@ public class DataManagementServiceImpl implements IDataManagementService {
                     //如果有更新obd名称则同步更新
                     pcObdInfo.setObdName(baseUpdate.getObdName());
                     //如果有更新端口数则同步更新
-                    if (baseUpdate.getPortCount() == null){
+                    if (baseUpdate.getPortCount() == null) {
                         pcObdInfo.setPortCount(0);
-                    }else{
+                    } else {
                         pcObdInfo.setPortCount(baseUpdate.getPortCount());
                     }
                     i = dataManagementMapper.updatePcObdInfoForBaseData(pcObdInfo);

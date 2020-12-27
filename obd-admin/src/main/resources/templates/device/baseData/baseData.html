@@ -72,6 +72,8 @@
 			removeUrl: prefix + "/deletePcObdBoxById",
 			importUrl: prefix + "/importData",
 			importPortUrl: prefix + "/importPortData",
+			importTemplateUrl: prefix + "/importTemplate",
+			importPortTemplateUrl: prefix + "/importPortDataTemplate",
 			exportUrl: prefix + "/export",
 			modalName: "基础",
 			modalPortName: "端口",
@@ -143,13 +145,34 @@
 
 </script>
 </body>
-<!-- 导入区域 -->
+<!-- 基础数据导入区域 -->
 <script id="importTpl" type="text/template">
 	<form enctype="multipart/form-data" class="mt20 mb10">
 		<div class="col-xs-offset-1">
 			<input type="file" id="file" name="file"/>
+			<div class="mt10 pt5">
+					<span style="color: #5e5e5e"> 基础数据导入模板:</span>
+				&nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+			</div>
 			<font color="red" class="pull-left mt10">
-				提示：仅允许导入“xls”或“xlsx”格式文件！
+				提示：导入模板的标题请勿修改！<br />
+				     仅允许导入“xls”或“xlsx”格式文件！
+			</font>
+		</div>
+	</form>
+</script>
+<!-- 端口数据导入区域 -->
+<script id="importTplPort" type="text/template">
+	<form enctype="multipart/form-data" class="mt20 mb10">
+		<div class="col-xs-offset-1">
+			<input type="file" id="file" name="file"/>
+			<div class="mt10 pt5">
+				<span style="color: #5e5e5e"> 端口数据导入模板:</span>
+				&nbsp;	<a onclick="$.table.importPortTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+			</div>
+			<font color="red" class="pull-left mt10">
+				提示：导入模板的标题请勿修改！<br />
+				      仅允许导入“xls”或“xlsx”格式文件！
 			</font>
 		</div>
 	</form>

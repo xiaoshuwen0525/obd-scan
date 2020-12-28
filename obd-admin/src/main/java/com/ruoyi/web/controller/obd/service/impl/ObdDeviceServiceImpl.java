@@ -485,6 +485,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      * @return int
      */
     @Transactional(rollbackFor = Exception.class)
+    @Override
     public int updateObdCheckStateData(List<CheckState> checkStates) {
         if (CollectionUtils.isEmpty(checkStates)) {
             return 0;
@@ -506,24 +507,20 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
                 checkStateList.add(checkState);
             }
         }
-        int j = 0;
-        int i = 0;
         lock.lock();
         try {
-            i = obdDeviceMapper.updateObdCheckStateData(checkStateList);
+            obdDeviceMapper.updateObdCheckStateData(checkStateList);
             List<String> boxIdList = obdDeviceMapper.selectBoxIdByObdUniqueId(boxIds);
             if (CollectionUtils.isEmpty(boxIdList)) {
                 return 0;
             }
-
             for (String boxID : boxIdList) {
-                j = updateBoxState(boxID);
+                updateBoxState(boxID);
             }
         } finally {
             lock.unlock();
         }
-
-        return i + j;
+        return 1;
     }
 
 }

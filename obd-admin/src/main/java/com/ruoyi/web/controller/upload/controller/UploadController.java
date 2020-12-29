@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -123,7 +124,7 @@ public class UploadController extends BaseController {
         try {
             int i = uploadService.uploadObdPicture(obdPicture, file, boxCode);
             if (i <= 0) {
-                int a = 1 / 0;
+                throw new Exception("保存图片失败");
             }
         } catch (Exception e) {
             return AjaxResult.error("保存图片失败，请重试");

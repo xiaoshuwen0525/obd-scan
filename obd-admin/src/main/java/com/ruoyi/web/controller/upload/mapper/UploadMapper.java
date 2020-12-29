@@ -187,6 +187,8 @@ public interface UploadMapper {
      */
     int deleteByObdBox(ObdBox obdBox);
 
+    int deleteByBox(ObdBoxVO boxVO);
+
     /**
      * 插入图片
      *

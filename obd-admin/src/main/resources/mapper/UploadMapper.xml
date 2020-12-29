@@ -618,6 +618,15 @@
         </where>
     </delete>
 
+    <delete id="deleteByBox" parameterType="com.ruoyi.web.controller.upload.domain.ObdBoxVO">
+        delete from obd_box
+        <where>
+            <if test="id != null ">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+        </where>
+    </delete>
+
     <!--新增实体属性不为null的列-->
     <insert id="insertPicture"  parameterType="com.ruoyi.web.controller.upload.domain.ObdPicture" useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
         insert into obd_picture

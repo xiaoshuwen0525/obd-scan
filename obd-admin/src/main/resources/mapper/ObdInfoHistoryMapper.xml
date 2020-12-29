@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.upload.mapper.ObdInfoHistoryMapper">
+
+    <resultMap type="com.ruoyi.web.controller.upload.domain.ObdInfoHistory" id="ObdInfoHistoryResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="boxId" column="box_id" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="boxBelong" column="box_belong" jdbcType="VARCHAR"/>
+        <result property="obdName" column="obd_name" jdbcType="VARCHAR"/>
+        <result property="portCount" column="port_count" jdbcType="INTEGER"/>
+        <result property="boxUniqueId" column="box_unique_id" jdbcType="VARCHAR"/>
+        <result property="obdUniqueId" column="obd_unique_id" jdbcType="VARCHAR"/>
+        <result property="checkState" column="check_state" jdbcType="VARCHAR"/>
+        <result property="remarks" column="remarks" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="table_field">
+      id, box_id, status, box_belong, obd_name, port_count, box_unique_id, obd_unique_id, check_state, remarks      
+    </sql>
+       
+    <!--通过Id查询单个-->
+    <select id="selectById" resultMap="ObdInfoHistoryResultMap" parameterType="java.lang.Integer">
+        select
+          <include refid="table_field" />
+        from obd_info_history
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="selectByBoxId" resultMap="ObdInfoHistoryResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="table_field" />
+        from obd_info
+        where box_id = #{boxId,jdbcType=INTEGER}
+    </select>
+
+    <!--通过实体不为空的属性作为筛选条件查询单个-->
+    <select id="selectOneByEntity" resultMap="ObdInfoHistoryResultMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdInfoHistory">
+        select
+          <include refid="table_field" />
+        from obd_info_history
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="boxId != null">
+                and box_id = #{boxId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="boxBelong != null and boxBelong != ''">
+                and box_belong = #{boxBelong,jdbcType=VARCHAR}
+            </if>
+            <if test="obdName != null and obdName != ''">
+                and obd_name = #{obdName,jdbcType=VARCHAR}
+            </if>
+            <if test="portCount != null">
+                and port_count = #{portCount,jdbcType=INTEGER}
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != ''">
+                and box_unique_id = #{boxUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != ''">
+                and obd_unique_id = #{obdUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="checkState != null and checkState != ''">
+                and check_state = #{checkState,jdbcType=VARCHAR}
+            </if>
+            <if test="remarks != null and remarks != ''">
+                and remarks = #{remarks,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体不为空的属性作为筛选条件查询列表-->
+    <select id="selectListByEntity" resultMap="ObdInfoHistoryResultMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdInfoHistory">
+        select
+          <include refid="table_field" />
+        from obd_info_history
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="boxId != null">
+                and box_id = #{boxId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="boxBelong != null and boxBelong != ''">
+                and box_belong = #{boxBelong,jdbcType=VARCHAR}
+            </if>
+            <if test="obdName != null and obdName != ''">
+                and obd_name = #{obdName,jdbcType=VARCHAR}
+            </if>
+            <if test="portCount != null">
+                and port_count = #{portCount,jdbcType=INTEGER}
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != ''">
+                and box_unique_id = #{boxUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != ''">
+                and obd_unique_id = #{obdUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="checkState != null and checkState != ''">
+                and check_state = #{checkState,jdbcType=VARCHAR}
+            </if>
+            <if test="remarks != null and remarks != ''">
+                and remarks = #{remarks,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    
+    <!--通过Id列表作为筛选条件查询列表，列表长度不为0-->
+    <select id="selectListByIds" resultMap="ObdInfoHistoryResultMap" parameterType="list">
+        select
+          <include refid="table_field" />
+        from obd_info_history
+        where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </select>    
+    
+    <!--通过实体不为空的属性作为筛选条件模糊查询列表, % 需传值时自行组装-->
+    <select id="selectListLikeEntity" resultMap="ObdInfoHistoryResultMap" parameterType="com.ruoyi.web.controller.upload.domain.ObdInfoHistory">
+        select
+          <include refid="table_field" />
+        from obd_info_history
+        <where>
+            <if test="id != null">
+                and id  =  #{id,jdbcType=INTEGER}
+                
+            </if>
+            <if test="boxId != null">
+                and box_id  =  #{boxId,jdbcType=INTEGER}
+                
+            </if>
+            <if test="status != null">
+                and status  =  #{status,jdbcType=INTEGER}
+                
+            </if>
+            <if test="boxBelong != null and boxBelong != ''">
+                and box_belong  like  #{boxBelong,jdbcType=VARCHAR}
+                
+            </if>
+            <if test="obdName != null and obdName != ''">
+                and obd_name  like  #{obdName,jdbcType=VARCHAR}
+                
+            </if>
+            <if test="portCount != null">
+                and port_count  =  #{portCount,jdbcType=INTEGER}
+                
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != ''">
+                and box_unique_id  like  #{boxUniqueId,jdbcType=VARCHAR}
+                
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != ''">
+                and obd_unique_id  like  #{obdUniqueId,jdbcType=VARCHAR}
+                
+            </if>
+            <if test="checkState != null and checkState != ''">
+                and check_state  like  #{checkState,jdbcType=VARCHAR}
+                
+            </if>
+            <if test="remarks != null and remarks != ''">
+                and remarks  like  #{remarks,jdbcType=VARCHAR}
+                
+            </if>
+        </where>
+    </select>
+
+    <!--新增实体属性不为null的列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="com.ruoyi.web.controller.upload.domain.ObdInfoHistory">
+        insert into obd_info_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             id,
+          </if>
+          <if test="boxId != null">
+             box_id,
+          </if>
+          <if test="status != null">
+             status,
+          </if>
+          <if test="boxBelong != null and boxBelong != ''">
+             box_belong,
+          </if>
+          <if test="obdName != null and obdName != ''">
+             obd_name,
+          </if>
+          <if test="portCount != null">
+             port_count,
+          </if>
+          <if test="boxUniqueId != null and boxUniqueId != ''">
+             box_unique_id,
+          </if>
+          <if test="obdUniqueId != null and obdUniqueId != ''">
+             obd_unique_id,
+          </if>
+          <if test="checkState != null and checkState != ''">
+             check_state,
+          </if>
+          <if test="remarks != null and remarks != ''">
+             remarks,
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             #{id,jdbcType=INTEGER},
+          </if>
+          <if test="boxId != null">
+             #{boxId,jdbcType=INTEGER},
+          </if>
+          <if test="status != null">
+             #{status,jdbcType=INTEGER},
+          </if>
+          <if test="boxBelong != null and boxBelong != ''">
+             #{boxBelong,jdbcType=VARCHAR},
+          </if>
+          <if test="obdName != null and obdName != ''">
+             #{obdName,jdbcType=VARCHAR},
+          </if>
+          <if test="portCount != null">
+             #{portCount,jdbcType=INTEGER},
+          </if>
+          <if test="boxUniqueId != null and boxUniqueId != ''">
+             #{boxUniqueId,jdbcType=VARCHAR},
+          </if>
+          <if test="obdUniqueId != null and obdUniqueId != ''">
+             #{obdUniqueId,jdbcType=VARCHAR},
+          </if>
+          <if test="checkState != null and checkState != ''">
+             #{checkState,jdbcType=VARCHAR},
+          </if>
+          <if test="remarks != null and remarks != ''">
+             #{remarks,jdbcType=VARCHAR},
+          </if>
+        </trim>
+    </insert>
+
+    <!--批量新增所有列，列表长度不能为0，且列表id统一为null或者统一不为null-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true" parameterType="list">
+        insert into obd_info_history
+         (id, box_id, status, box_belong, obd_name, port_count, box_unique_id, obd_unique_id, check_state, remarks)
+        values
+        <foreach item="item" collection="list" separator="," open="" close="" index="index">
+         (#{item.id}, #{item.boxId}, #{item.status}, #{item.boxBelong}, #{item.obdName}, #{item.portCount}, #{item.boxUniqueId}, #{item.obdUniqueId}, #{item.checkState}, #{item.remarks})
+        </foreach>
+    </insert>
+
+    <!--通过主键修改实体属性不为null的列-->
+    <update id="update" parameterType="com.ruoyi.web.controller.upload.domain.ObdInfoHistory">
+        update obd_info_history
+        <set>
+            <if test="boxId != null">
+                box_id = #{boxId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="boxBelong != null and boxBelong != ''">
+                box_belong = #{boxBelong,jdbcType=VARCHAR},
+            </if>
+            <if test="obdName != null and obdName != ''">
+                obd_name = #{obdName,jdbcType=VARCHAR},
+            </if>
+            <if test="portCount != null">
+                port_count = #{portCount,jdbcType=INTEGER},
+            </if>
+            <if test="boxUniqueId != null and boxUniqueId != ''">
+                box_unique_id = #{boxUniqueId,jdbcType=VARCHAR},
+            </if>
+            <if test="obdUniqueId != null and obdUniqueId != ''">
+                obd_unique_id = #{obdUniqueId,jdbcType=VARCHAR},
+            </if>
+            <if test="checkState != null and checkState != ''">
+                check_state = #{checkState,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null and remarks != ''">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--通过主键修改实体列表，列表长度不能为0，注意：当实体属性为null时，对应的列也会别更新为null-->
+    <update id="updateBatch" parameterType="list">
+        update obd_info_history
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="box_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.boxId}
+                 </foreach>
+            </trim>
+            <trim prefix="status = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.status}
+                 </foreach>
+            </trim>
+            <trim prefix="box_belong = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.boxBelong}
+                 </foreach>
+            </trim>
+            <trim prefix="obd_name = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.obdName}
+                 </foreach>
+            </trim>
+            <trim prefix="port_count = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.portCount}
+                 </foreach>
+            </trim>
+            <trim prefix="box_unique_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.boxUniqueId}
+                 </foreach>
+            </trim>
+            <trim prefix="obd_unique_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.obdUniqueId}
+                 </foreach>
+            </trim>
+            <trim prefix="check_state = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.checkState}
+                 </foreach>
+            </trim>
+            <trim prefix="remarks = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.remarks}
+                 </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    
+    <!--通过主键删除-->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from obd_info_history where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--通过实体非空属性删除-->
+    <delete id="deleteByEntity" parameterType="com.ruoyi.web.controller.upload.domain.ObdInfoHistory">
+        delete from obd_info_history
+        <where>
+            <if test="boxId != null">
+                and box_id = #{boxId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="boxBelong != null">
+                and box_belong = #{boxBelong,jdbcType=VARCHAR}
+            </if>
+            <if test="obdName != null">
+                and obd_name = #{obdName,jdbcType=VARCHAR}
+            </if>
+            <if test="portCount != null">
+                and port_count = #{portCount,jdbcType=INTEGER}
+            </if>
+            <if test="boxUniqueId != null">
+                and box_unique_id = #{boxUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="obdUniqueId != null">
+                and obd_unique_id = #{obdUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="checkState != null">
+                and check_state = #{checkState,jdbcType=VARCHAR}
+            </if>
+            <if test="remarks != null">
+                and remarks = #{remarks,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </delete>
+    
+    <!--通过主键列表删除，列表长度不能为0-->
+    <delete id="deleteByIds" parameterType="list">
+        delete from obd_info_history where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--通过主键列表删除，列表长度不能为0-->
+    <delete id="deleteByBatch" parameterType="list">
+        delete from obd_info where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </delete>
+    
+    <select id="countAll" resultType="int">
+        select count(id) from obd_info_history
+    </select>
+    
+    <select id="countByEntity" parameterType="com.ruoyi.web.controller.upload.domain.ObdInfoHistory" resultType="int">
+        select count(id) from obd_info_history
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="boxId != null">
+                and box_id = #{boxId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="boxBelong != null">
+                and box_belong = #{boxBelong,jdbcType=VARCHAR}
+            </if>
+            <if test="obdName != null">
+                and obd_name = #{obdName,jdbcType=VARCHAR}
+            </if>
+            <if test="portCount != null">
+                and port_count = #{portCount,jdbcType=INTEGER}
+            </if>
+            <if test="boxUniqueId != null">
+                and box_unique_id = #{boxUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="obdUniqueId != null">
+                and obd_unique_id = #{obdUniqueId,jdbcType=VARCHAR}
+            </if>
+            <if test="checkState != null">
+                and check_state = #{checkState,jdbcType=VARCHAR}
+            </if>
+            <if test="remarks != null">
+                and remarks = #{remarks,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

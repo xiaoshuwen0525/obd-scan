@@ -9,6 +9,8 @@ import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.upload.domain.*;
+import com.ruoyi.web.controller.upload.mapper.ObdInfoHistoryMapper;
+import com.ruoyi.web.controller.upload.mapper.ObdPortHistoryMapper;
 import com.ruoyi.web.controller.upload.mapper.UploadMapper;
 import com.ruoyi.web.controller.upload.service.IUploadService;
 import org.slf4j.Logger;
@@ -41,6 +43,12 @@ public class UploadServiceImpl implements IUploadService {
 
     @Autowired
     private UploadMapper uploadMapper;
+
+    @Autowired
+    private ObdInfoHistoryMapper obdInfoHistoryMapper;
+
+    @Autowired
+    private ObdPortHistoryMapper obdPortHistoryMapper;
 
     private static final Logger log = LoggerFactory.getLogger(UploadServiceImpl.class);
     private ReentrantLock lock = new ReentrantLock();
@@ -83,12 +91,30 @@ public class UploadServiceImpl implements IUploadService {
 
                 obdBox.setCreateTime(new Date());
 
+                if(!isNullPort(obdBoxVO.getObdInfoVOList())){
+
+                    return AjaxResult.error("请至少扫描一个obd端口二维码");
+                }
+
                 int lockFlag = 0;
                 lock.lock();
                 try {
                     List<ObdBox> obdBoxList = uploadMapper.selectObdBox(obdBox);
                     if (obdBoxList.size() > 0) {
                         for (ObdBox box : obdBoxList) {
+                            List<ObdInfoHistory> obdInfoHistories = obdInfoHistoryMapper.selectByBoxId(box.getId());
+                            for (ObdInfoHistory obdInfoHistory:obdInfoHistories){
+                                List<ObdPortHistory> obdPortHistories = obdPortHistoryMapper.selectByObdId(obdInfoHistory.getId());
+                                if(StringUtils.isNotEmpty(obdPortHistories)){
+                                    obdPortHistoryMapper.insertBatch(obdPortHistories);
+                                    obdPortHistoryMapper.deleteByBatch(obdPortHistories);
+                                }
+                            }
+                            if(StringUtils.isNotEmpty(obdInfoHistories)){
+                                obdInfoHistoryMapper.insertBatch(obdInfoHistories);
+                                obdInfoHistoryMapper.deleteByBatch(obdInfoHistories);
+
+                            }
                             uploadMapper.insertBoxHistory(box);
                             uploadMapper.deleteByObdBox(box);
                         }
@@ -100,15 +126,11 @@ public class UploadServiceImpl implements IUploadService {
                     lock.unlock();
                 }
                 if(lockFlag == -1){
-                    return AjaxResult.error("保存失败,请重试");
+                    throw new RuntimeException();
                 }
 
                 uploadMapper.insertObdBox(obdBox);
                 obdBoxVO.setId(obdBox.getId());
-            }
-            if(!isNullPort(obdBoxVO.getObdInfoVOList())){
-
-                return AjaxResult.error("请至少扫描一个obd端口二维码");
             }
             int infoCount = 1;
             for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
@@ -124,6 +146,17 @@ public class UploadServiceImpl implements IUploadService {
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     if (!"".equals(obdPortInfo.getPortCode())) {
                         if (!isNumber(obdPortInfo.getPortCode())) {
+                            uploadMapper.deleteByBox(obdBoxVO);
+                            List<ObdInfoHistory> obdInfoHistories = obdInfoHistoryMapper.selectByBoxId(obdBoxVO.getId());
+                            for (ObdInfoHistory obdInfoHistory:obdInfoHistories){
+                                List<ObdPortHistory> obdPortHistories = obdPortHistoryMapper.selectByObdId(obdInfoHistory.getId());
+                                if(StringUtils.isNotEmpty(obdPortHistories)){
+                                    obdPortHistoryMapper.deleteByBatch(obdPortHistories);
+                                }
+                            }
+                            if(StringUtils.isNotEmpty(obdInfoHistories)){
+                                obdInfoHistoryMapper.deleteByBatch(obdInfoHistories);
+                            }
                             return AjaxResult.error("第" + infoCount + "个OBD的第" + obdPortInfo.getPortSer() + "端口二维码不对");
                         }
                         if (obdPortInfo.getPortCode() != null) {
@@ -157,8 +190,7 @@ public class UploadServiceImpl implements IUploadService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return  AjaxResult.error("上传失败");
+            throw new RuntimeException();
         }
         return AjaxResult.successOBD("操作成功");
     }
@@ -180,8 +212,13 @@ public class UploadServiceImpl implements IUploadService {
         String s = uploadPicture(obdPicture.getJobNumber(), multipartFile);
         int i = 0;
         if(StringUtils.isNotEmpty(s)){
-            obdPicture.setImgUrl(s);
-            i = uploadMapper.insertPicture(obdPicture);
+            try {
+                obdPicture.setImgUrl(s);
+                i = uploadMapper.insertPicture(obdPicture);
+            }catch (Exception e){
+                e.printStackTrace();
+                return -1;
+            }
         }else {
             i = -1;
         }
@@ -586,9 +623,8 @@ public class UploadServiceImpl implements IUploadService {
         if (!FileUtil.exist(folder)) {
             FileUtil.mkdir(folder);
         }
-        String fileName = multipartFile.getOriginalFilename();
-
         try {
+            String fileName = multipartFile.getOriginalFilename();
             File upload = FileUtil.writeBytes(multipartFile.getBytes(), folder + fileName);
             if (upload.length() > 0) {
                 path = "static" + File.separator + "obdImg" + File.separator + jobNumber + File.separator+ fileName;

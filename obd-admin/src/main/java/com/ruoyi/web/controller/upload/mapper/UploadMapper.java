@@ -222,5 +222,13 @@ public interface UploadMapper {
      */
     ObdBoxVO selectPcObdByCode(@Param("boxUniqueId") String  boxUniqueId);
 
+    /**
+     * 通过端口id删除
+     *
+     * @param id id
+     * @return int
+     */
+    int deleteByPortId(@Param("id") Integer id);
+
 
 }

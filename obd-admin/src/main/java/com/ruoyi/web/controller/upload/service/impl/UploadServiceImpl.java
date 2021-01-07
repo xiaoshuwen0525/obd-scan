@@ -4,6 +4,7 @@ package com.ruoyi.web.controller.upload.service.impl;
 import cn.hutool.core.io.FileUtil;
 
 import cn.hutool.core.util.PageUtil;
+import cn.hutool.http.HttpStatus;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -55,7 +56,7 @@ public class UploadServiceImpl implements IUploadService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult uploadInformation(ObdBoxVO obdBoxVO) {
         List<ObdPicture> obdPictureList;
         String boxCode = null;
@@ -87,6 +88,7 @@ public class UploadServiceImpl implements IUploadService {
                     obdBox.setExceptionInfo("盒子二维码识别不出");
                 } else {
                     obdBox.setStatus(0);
+
                 }
 
                 obdBox.setCreateTime(new Date());
@@ -429,7 +431,7 @@ public class UploadServiceImpl implements IUploadService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult updateObd(ObdBoxVO obdBoxVO) {
         //lock.lock();
         try {
@@ -558,6 +560,28 @@ public class UploadServiceImpl implements IUploadService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 通过端口id删除
+     *
+     * @param id id
+     * @return int
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public int deleteByPortId(Integer id) {
+        int i = 0;
+        lock.lock();
+        try {
+             i = uploadMapper.deleteByPortId(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }finally {
+            lock.unlock();
+        }
+        return i;
     }
 
 

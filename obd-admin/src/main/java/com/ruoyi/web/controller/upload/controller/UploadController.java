@@ -160,14 +160,26 @@ public class UploadController extends BaseController {
         ObdInfoListVO obdInfoListVO = JSONUtil.toBean("{obdInfoVOList:" + obdInfoVOList + "}", ObdInfoListVO.class);
         obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
         log.info("参数 obdInfoListVO:" + obdInfoListVO.toString());
-        AjaxResult ajaxResult;
-        try {
-            ajaxResult = uploadService.uploadInformation(obdBoxVO);
-        } catch (Exception e) {
-            return AjaxResult.error("更新失败");
-        }
-        return ajaxResult;
+        return uploadService.uploadInformation(obdBoxVO);
     }
+
+    @ApiOperation(value = "删除端口数据")
+    @PostMapping("/deleteByPortId")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult deleteByPortId(Integer id) {
+        log.info("删除端口数据入参 "+id);
+        if(id == null || id == 0){
+            return AjaxResult.error("端口id不应为空");
+        }
+        int i = uploadService.deleteByPortId(id);
+        if(i>0){
+            return AjaxResult.successOBD(i);
+        }else {
+            return  AjaxResult.error("操作失败");
+        }
+    }
+
 
     /**
      * desc: 图片显示

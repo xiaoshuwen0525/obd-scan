@@ -700,4 +700,13 @@
        where  box_unique_id =  #{boxUniqueId,jdbcType=VARCHAR}
     </select>
 
+    <delete id="deleteByPortId" parameterType="java.lang.Integer">
+        delete from obd_port_info
+        <where>
+            <if test="id != null ">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+        </where>
+    </delete>
+
 </mapper>

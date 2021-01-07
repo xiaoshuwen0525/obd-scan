@@ -152,5 +152,13 @@ public interface IUploadService
      */
     ObdBoxVO selectPcObdByCode(String  boxCode);
 
+    /**
+     * 通过端口id删除
+     *
+     * @param id id
+     * @return int
+     */
+    int deleteByPortId(Integer id);
+
 
 }

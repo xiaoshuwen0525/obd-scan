@@ -130,7 +130,7 @@ public class WeChatController extends BaseController {
         }
         String regex = "^1[3-9]\\d{9}$";
         Pattern pattern = Pattern.compile(regex);
-        if (!pattern.matcher(phone).matches()) {
+        if (!pattern.matcher(newPhone).matches()) {
             return AjaxResult.warn("手机号格式不正确");
         }
         int phoneNumberExist = obdDeviceService.isPhoneNumberExist(newPhone);

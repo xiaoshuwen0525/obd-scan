@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.system.service.impl;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.controller.employee.domain.EmployeeUser;
 import com.ruoyi.web.controller.employee.domain.ImportUser;
 import com.ruoyi.web.controller.system.controller.LoginController;
@@ -37,9 +38,11 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public AjaxResult selectOpenId(String openId ){
         WxUser wxUser = loginMapper.selectOpenId(openId);
-        if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && wxUser.getPhone() != null ){ ;
+        if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && StringUtils.isBlank(wxUser.getPhone())) {
+            return AjaxResult.warn("此工号手机号已解绑，请联系管理员重新绑定手机号");
+        }else if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && wxUser.getPhone() != null ){
             return AjaxResult.successOBD(wxUser);
-        }else{
+        }else {
             return AjaxResult.success("104","未绑定",openId);
         }
     }
@@ -58,7 +61,7 @@ public class LoginServiceImpl implements LoginService {
 
 
         EmployeeUser employeeUser = loginMapper.selectEmployee(jobNumber, phone);
-        if(employeeUser==null || (!employeeUser.getPhone().equals(phone) && !employeeUser.getJobNumber().equals(jobNumber))){
+        if(employeeUser==null){
             return AjaxResult.success("104","资料库没有此工号或手机号",null);
         }
 
@@ -66,7 +69,7 @@ public class LoginServiceImpl implements LoginService {
         //判断手机号是否存在
         WxUser wxUser1 = loginMapper.selectPhone(phone);
         if(wxUser1!=null && wxUser1.getPhone().equals(phone)){
-            return AjaxResult.success("104","手机号已绑定,不能重复绑定",null);
+
         }
 
         //判断工号是否存在

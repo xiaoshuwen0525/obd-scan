@@ -57,13 +57,9 @@ public interface LoginMapper {
      */
     public WxUser selectJobNumber(String jobNumber);
 
-    /**
-     * 解绑
-     * @return
-     */
-    public int updateUnbind(@Param("openId") String openId, @Param("phone") String phone);
 
-    public int unbind(String openId);
+    public int updateBinding(WxUser wxUser);
+
 
     EmployeeUser selectEmployee(@Param("jobNumber") String jobNumber,@Param("phone") String phone);
 

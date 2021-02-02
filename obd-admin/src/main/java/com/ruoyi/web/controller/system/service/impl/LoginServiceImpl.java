@@ -39,7 +39,8 @@ public class LoginServiceImpl implements LoginService {
     public AjaxResult selectOpenId(String openId ){
         WxUser wxUser = loginMapper.selectOpenId(openId);
         if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && StringUtils.isBlank(wxUser.getPhone())) {
-            return AjaxResult.warn("此工号手机号已解绑，请联系管理员重新绑定手机号");
+            //return AjaxResult.warn("此工号手机号已解绑，请联系管理员重新绑定手机号");
+            return AjaxResult.success("104","此工号手机号已解绑，请联系管理员重新绑定手机号",openId);
         }else if(wxUser!=null && wxUser.getWxOpenId().equals(openId) && wxUser.getPhone() != null ){
             return AjaxResult.successOBD(wxUser);
         }else {
@@ -59,21 +60,29 @@ public class LoginServiceImpl implements LoginService {
     @Transactional
     public AjaxResult insertUser(String jobNumber,String phone,String wxOpenId,Integer authCode) throws ParseException {
 
+        WxUser wxUser2 = loginMapper.selectJobNumber(jobNumber);
+        //解绑后 ，重新绑定更新 openid和手机号
+        if(wxUser2!=null && wxUser2.getJobNumber().equals(jobNumber) && StringUtils.isBlank(wxUser2.getPhone())){
+            WxUser wxUser = new WxUser();
+            wxUser.setJobNumber(jobNumber);
+            wxUser.setPhone(phone);
+            wxUser.setWxOpenId(wxOpenId);
+            loginMapper.updateBinding(wxUser);
+            return AjaxResult.successOBD(wxUser);
+        }
 
         EmployeeUser employeeUser = loginMapper.selectEmployee(jobNumber, phone);
         if(employeeUser==null){
             return AjaxResult.success("104","资料库没有此工号或手机号",null);
         }
 
-
         //判断手机号是否存在
         WxUser wxUser1 = loginMapper.selectPhone(phone);
         if(wxUser1!=null && wxUser1.getPhone().equals(phone)){
-
+            return AjaxResult.success("104","手机号已绑定,不能重复绑定",null);
         }
 
         //判断工号是否存在
-        WxUser wxUser2 = loginMapper.selectJobNumber(jobNumber);
         if(wxUser2!=null && wxUser2.getJobNumber().equals(jobNumber)){
             return AjaxResult.success("104","此工号已存在",null);
         }
@@ -126,61 +135,7 @@ public class LoginServiceImpl implements LoginService {
         return AjaxResult.successOBD(authCode);
     }
 
-    /**
-     * 解绑
-     * @return
-     */
-    @Override
-    @Transactional
-    public AjaxResult updateUnbind(String jobNumber,String openId, String phone, Integer authCode) throws ParseException {
 
-        //判断手机号是否存在
-        WxUser wxUser1 = loginMapper.selectPhone(phone);
-
-        if(wxUser1!=null && wxUser1.getPhone().equals(phone)){
-            return AjaxResult.success("104","手机号已绑定,不能重复绑定",null);
-        }
-
-        //判断工号是否存在
-        WxUser wxUser2 = loginMapper.selectJobNumber(jobNumber);
-        if(wxUser2!=null && wxUser2.getJobNumber().equals(jobNumber)){
-            return AjaxResult.success("104","此工号已存在",null);
-        }
-
-        //判断验证码是否超时  超过5分钟
-        PhoneCode phoneCode = loginMapper.selectAuthCode(phone);
-        SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-        Date createTime = phoneCode.getCreateTime();
-        String startTimeStr = sdf.format(createTime.getTime());
-        String endTimeStr = sdf.format(createTime.getTime() + 1000*60*8);
-
-        Date nowDate = new Date();
-        String now = sdf.format(nowDate.getTime()+ 1000*60*3);
-        Date startTime= sdf.parse(startTimeStr);
-        Date endTime= sdf.parse(endTimeStr);
-        Date nowTime= sdf.parse(now);
-
-        boolean effectiveDate = isEffectiveDate(nowTime, startTime, endTime);
-        if (!effectiveDate) {
-            //System.out.println("当前时间不在范围内");
-            return AjaxResult.success("104","验证码已超时",null);
-        }
-
-        //判断验证码是否正确
-        if(phoneCode != null && phoneCode.getAuthCode().equals(authCode)){
-            int unbind = loginMapper.updateUnbind(openId, phone);
-            return AjaxResult.successOBD(unbind);
-        }else{
-            return AjaxResult.success("104","验证码错误",null);
-        }
-    }
-
-    @Override
-    @Transactional
-    public int unbind(String openId) {
-        int unbind = loginMapper.unbind(openId);
-        return unbind;
-    }
 
 
     /**

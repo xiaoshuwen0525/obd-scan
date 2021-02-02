@@ -71,21 +71,17 @@
 
     <!-- 判断工号是否存在 -->
     <select id="selectJobNumber" resultMap="wxUserMap">
-        select job_number from wx_user  where job_number=#{jobNumber}
+        select wx_open_id,job_number,phone from wx_user  where job_number=#{jobNumber}
     </select>
 
-    <!-- 解绑 修改手机号 -->
-    <update id="updateUnbind" parameterType="java.lang.String">
+    <!--  -->
+    <update id="updateBinding" parameterType="com.ruoyi.web.controller.system.domain.WxUser">
         update wx_user
-        set phone=#{phone}
-        where wx_open_id=#{openId}
+        set phone=#{phone},wx_open_id=#{wxOpenId}
+        where job_number=#{jobNumber}
     </update>
 
-    <update id="unbind" parameterType="java.lang.String">
-        update wx_user
-        set phone=null
-        where wx_open_id=#{openId}
-    </update>
+
 
 
     <select id="selectEmployee" resultMap="employeeUserMap">

@@ -35,12 +35,6 @@ public interface LoginService {
      */
     public AjaxResult insertPhoneAuthCode(PhoneCode phoneCode);
 
-    /**
-     * 解绑
-     * @return
-     */
-    public AjaxResult updateUnbind(String jobNumber,String openId,String phone,Integer authCode) throws ParseException;
 
-    public int unbind(String openId);
 
 }

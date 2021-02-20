@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.employee.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
@@ -59,6 +60,10 @@ public class EmployeeServiceImpl implements IEmployeeService {
         if(employeeUser3!=null && employeeUser3.getPhone().equals(employeeUser.getPhone())){
             return 303;
         }
+
+        String trim = StrUtil.trim(employeeUser.getJobNumber());
+        employeeUser.setJobNumber(trim);
+
         return employeeMapper.insertEmployee(employeeUser);
     }
 
@@ -86,6 +91,8 @@ public class EmployeeServiceImpl implements IEmployeeService {
             }
 
         }
+        String trim = StrUtil.trim(employeeUser.getJobNumber());
+        employeeUser.setJobNumber(trim);
         return employeeMapper.updateEmployee(employeeUser);
     }
 
@@ -119,8 +126,10 @@ public class EmployeeServiceImpl implements IEmployeeService {
         try {
             if (userList != null && userList.size() != 0) {
                 for (ImportUser importUser : userList) {
+
+                    String trim = StrUtil.trim(importUser.getJobNumber());
                     EmployeeUser employeeUser = new EmployeeUser();
-                    employeeUser.setJobNumber(importUser.getJobNumber());
+                    employeeUser.setJobNumber(trim);
                     employeeUser.setUserName(importUser.getUserName());
                     employeeUser.setPhone(importUser.getPhone());
 

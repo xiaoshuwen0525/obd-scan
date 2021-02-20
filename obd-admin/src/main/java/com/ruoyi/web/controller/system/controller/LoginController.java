@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.system.controller;
 
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
@@ -94,7 +95,8 @@ public class LoginController extends BaseController {
 
         AjaxResult ajaxResult = null;
         try {
-            ajaxResult = loginService.insertUser(jobNumber, phone, openId, authCode);
+            String trim = StrUtil.trim(jobNumber);
+            ajaxResult = loginService.insertUser(trim, phone, openId, authCode);
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -4,6 +4,7 @@ package com.ruoyi.web.controller.upload.service.impl;
 import cn.hutool.core.io.FileUtil;
 
 import cn.hutool.core.util.PageUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -641,7 +642,8 @@ public class UploadServiceImpl implements IUploadService {
         log.info("上传图片入参工号"+jobNumber+",图片"+multipartFile+",图片转换成名称"+multipartFile.getOriginalFilename());
         String path = "";
         String uploadPaths = uploadfile.replace("/", "\\");
-        String folder = uploadPaths + File.separator + jobNumber + File.separator;
+        String jobNumbers = StrUtil.trim(jobNumber);
+        String folder = uploadPaths + File.separator + jobNumbers + File.separator;
         if (!FileUtil.exist(folder)) {
             FileUtil.mkdir(folder);
         }
@@ -649,7 +651,7 @@ public class UploadServiceImpl implements IUploadService {
             String fileName = multipartFile.getOriginalFilename();
             File upload = FileUtil.writeBytes(multipartFile.getBytes(), folder + fileName);
             if (upload.length() > 0) {
-                path = "static" + File.separator + "obdImg" + File.separator + jobNumber + File.separator+ fileName;
+                path = "static" + File.separator + "obdImg" + File.separator + jobNumbers + File.separator+ fileName;
             }
             log.info("图片上传成功"+path);
         } catch (Exception e) {

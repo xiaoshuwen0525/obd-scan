@@ -122,9 +122,10 @@ public class UploadController extends BaseController {
         }
         String s = "保存图片成功";
         int i = uploadService.uploadObdPicture(obdPicture, file, boxCode);
-        if (i > 0) {
+        if (i <= 0) {
             return AjaxResult.error("图片上传失败，请重试");
         }
+
         return AjaxResult.success("200", "操作成功", s);
     }
 

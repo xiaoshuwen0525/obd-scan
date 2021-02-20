@@ -120,9 +120,9 @@ public class UploadServiceImpl implements IUploadService {
                             uploadMapper.insertBoxHistory(box);
                             uploadMapper.deleteByObdBox(box);
                         }
-                        uploadMapper.insertObdBox(obdBox);
-                        obdBoxVO.setId(obdBox.getId());
                     }
+                    uploadMapper.insertObdBox(obdBox);
+                    obdBoxVO.setId(obdBox.getId());
                 }catch (Exception e ){
                     e.printStackTrace();
                     lockFlag = -1;

@@ -121,13 +121,9 @@ public class UploadController extends BaseController {
             return AjaxResult.warn("工号不应为空");
         }
         String s = "保存图片成功";
-        try {
-            int i = uploadService.uploadObdPicture(obdPicture, file, boxCode);
-            if (i <= 0) {
-                throw new Exception("保存图片失败");
-            }
-        } catch (Exception e) {
-            return AjaxResult.error("保存图片失败，请重试");
+        int i = uploadService.uploadObdPicture(obdPicture, file, boxCode);
+        if (i > 0) {
+            return AjaxResult.error("图片上传失败，请重试");
         }
         return AjaxResult.success("200", "操作成功", s);
     }

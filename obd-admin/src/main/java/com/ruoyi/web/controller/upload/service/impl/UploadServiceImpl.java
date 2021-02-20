@@ -4,7 +4,6 @@ package com.ruoyi.web.controller.upload.service.impl;
 import cn.hutool.core.io.FileUtil;
 
 import cn.hutool.core.util.PageUtil;
-import cn.hutool.http.HttpStatus;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -120,6 +119,8 @@ public class UploadServiceImpl implements IUploadService {
                             uploadMapper.insertBoxHistory(box);
                             uploadMapper.deleteByObdBox(box);
                         }
+                        uploadMapper.insertObdBox(obdBox);
+                        obdBoxVO.setId(obdBox.getId());
                     }
                 }catch (Exception e ){
                     e.printStackTrace();
@@ -130,9 +131,6 @@ public class UploadServiceImpl implements IUploadService {
                 if(lockFlag == -1){
                     throw new RuntimeException();
                 }
-
-                uploadMapper.insertObdBox(obdBox);
-                obdBoxVO.setId(obdBox.getId());
             }
             int infoCount = 1;
             for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
@@ -655,6 +653,7 @@ public class UploadServiceImpl implements IUploadService {
             }
             log.info("图片上传成功"+path);
         } catch (Exception e) {
+            e.printStackTrace();
             log.info("图片上传失败");
             return null;
         }

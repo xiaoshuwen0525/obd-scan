@@ -9,6 +9,7 @@ import com.ruoyi.web.controller.data.domain.BaseDataVo;
 import com.ruoyi.web.controller.obd.service.impl.ObdDeviceServiceImpl;
 import com.ruoyi.web.controller.system.domain.WxUser;
 import com.ruoyi.web.controller.upload.domain.ObdBoxVO;
+import com.ruoyi.web.controller.upload.domain.ObdInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -57,7 +58,7 @@ public class WeChatController extends BaseController {
         if (obdBoxVO == null) {
             return AjaxResult.warn("该串码未能查询到对应数据");
         }
-        return AjaxResult.success("200","查询成功",obdBoxVO);
+        return AjaxResult.success("200", "查询成功", obdBoxVO);
     }
 
     /**
@@ -73,7 +74,7 @@ public class WeChatController extends BaseController {
         if (obdBoxVO == null) {
             return AjaxResult.warn("该串码未能查询到对应数据");
         }
-        return AjaxResult.success("200","查询成功",obdBoxVO);
+        return AjaxResult.success("200", "查询成功", obdBoxVO);
     }
 
 
@@ -155,6 +156,34 @@ public class WeChatController extends BaseController {
         return getDataTable(wxUsers);
     }
 
+    /**
+     * 根据机箱唯一ID查询端口列表
+     */
+    @PostMapping("/obd/list")
+    @ResponseBody
+    public TableDataInfo queryObdList(String id) {
+        List<ObdInfoVO> obdInfoVOS = new ArrayList<>();
+        try {
+            startPage();
+            obdInfoVOS = obdDeviceService.infoByBoxId(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return getDataTable(obdInfoVOS);
+    }
+
+    /**
+     * 根据OBD自增ID查询备注对应信息
+     */
+    @GetMapping("/obd/obdRemarksById")
+    @ResponseBody
+    public AjaxResult obdRemarksById(String id) {
+        ObdInfoVO obdInfoVO = obdDeviceService.ObdRemarksById(id);
+        if (obdInfoVO == null || "".equals(obdInfoVO.getRemarks())) {
+            return AjaxResult.error("无备注信息");
+        }
+        return AjaxResult.success(obdInfoVO);
+    }
 
 
 }

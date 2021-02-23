@@ -69,15 +69,20 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
         }
         int count = obdInfoVOS.size();
         int yes = 0;
+        int empty = 0;
         for (ObdInfoVO obdInfoVO : obdInfoVOS) {
             if (("1").equals(obdInfoVO.getCheckState())) {
                 yes += 1;
+            } else if (obdInfoVO.getCheckState() == null) {
+                empty += 1;
             }
         }
-        int state = 0;
+        Integer state = 0;
         //全部合格
         if (yes == count) {
             state = 1;
+        } else if (yes > 0 && empty > 0) {
+            state = null;
         }
         return obdDeviceMapper.updateBoxCheckState(boxId, state);
     }
@@ -266,7 +271,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             } else if ("0".equals(obdBox.getCheckState())) {
                 obdBox.setCheckState("不合格");
             } else {
-                obdBox.setCheckState("-");
+                obdBox.setCheckState("无");
             }
         }
         ////根据状态码转换为字符
@@ -305,7 +310,7 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
             } else if ("0".equals(obdInfoVO.getCheckState())) {
                 obdInfoVO.setCheckState("不合格");
             } else {
-                obdInfoVO.setCheckState("-");
+                obdInfoVO.setCheckState("无");
             }
         }
         return list;

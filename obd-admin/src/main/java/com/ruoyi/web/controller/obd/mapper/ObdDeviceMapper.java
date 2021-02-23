@@ -139,9 +139,9 @@ public interface ObdDeviceMapper {
      * 更新机箱检查状态
      *
      * @param boxId 机箱id
-     * @return int
+     * @return Integer
      */
-    int updateBoxCheckState(String boxId, int state);
+    int updateBoxCheckState(String boxId, Integer state);
 
     /**
      * 批量修改OBD审核状态

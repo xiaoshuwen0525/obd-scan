@@ -336,6 +336,9 @@
             <if test="phone != null and phone != ''">
                 and t1.job_number = (select job_number from wx_user where phone = #{phone})
             </if>
+            <if test="boxName != null and boxName != ''">
+                and t2.box_name like concat('%', #{boxName},'%')
+            </if>
             <if test="code != null and code != ''">
                 and t1.box_code like concat('%', #{code},'%') or t1.label_code like concat('%', #{code},'%')
             </if>

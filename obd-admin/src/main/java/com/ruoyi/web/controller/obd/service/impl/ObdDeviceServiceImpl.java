@@ -257,11 +257,11 @@ public class ObdDeviceServiceImpl implements IObdDeviceService {
      * @return {@link List<ObdBoxVO>}
      */
     @Override
-    public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String code, String checkState) {
+    public List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String boxName, String code, String checkState) {
         //查询机箱信息
         List<ObdBoxVO> obdBoxVOS = new ArrayList<>();
         try {
-            obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, code, checkState);
+            obdBoxVOS = obdDeviceMapper.searchByCondition(jobNumber, phone, boxName, code, checkState);
         } catch (Exception e) {
             return obdBoxVOS;
         }

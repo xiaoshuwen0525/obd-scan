@@ -94,7 +94,7 @@ public interface ObdDeviceMapper {
     /**
      * 查询所有机箱信息
      */
-    List<ObdBoxVO> searchByCondition(@Param("jobNumber") String jobNumber, @Param("phone") String phone, @Param("code") String code, @Param("checkState") String checkState);
+    List<ObdBoxVO> searchByCondition(@Param("jobNumber") String jobNumber, @Param("phone") String phone, @Param("boxName") String boxName,@Param("code") String code, @Param("checkState") String checkState);
 
     /**
      * 查询微信用户相关信息

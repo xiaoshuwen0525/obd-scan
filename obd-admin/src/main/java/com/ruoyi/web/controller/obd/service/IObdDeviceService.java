@@ -89,7 +89,7 @@ public interface IObdDeviceService {
     /**
      * 查询所有机箱信息
      * */
-    List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String code,String status);
+    List<ObdBoxVO> searchByCondition(String jobNumber, String phone, String boxName, String code,String status);
 
     /**
      * 根据obdid查询端口信息

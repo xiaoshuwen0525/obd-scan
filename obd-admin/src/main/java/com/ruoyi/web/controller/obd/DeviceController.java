@@ -227,14 +227,14 @@ public class DeviceController extends BaseController {
      */
     @PostMapping("/searchByCondition")
     @ResponseBody
-    public TableDataInfo searchByCondition(String jobNumber, String phone, String code, String checkState) {
+    public TableDataInfo searchByCondition(String jobNumber, String phone, String boxName, String code, String checkState) {
         List<ObdBoxVO> obdBoxVOS = new ArrayList<>();
         if ("undefined".equals(code)) {
             return getDataTable(obdBoxVOS);
         }
         try {
             startPage();
-            obdBoxVOS = obdDeviceService.searchByCondition(jobNumber, phone, code, checkState);
+            obdBoxVOS = obdDeviceService.searchByCondition(jobNumber, phone, boxName, code, checkState);
         } catch (Exception e) {
             return getDataTable(obdBoxVOS);
         }

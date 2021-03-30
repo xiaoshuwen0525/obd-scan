@@ -63,6 +63,7 @@ public class UploadServiceImpl implements IUploadService {
         String labelCode = null;
         try {
             if (StringUtils.isNotBlank(obdBoxVO.getJobNumber())) {
+                //拼装机箱数据
                 ObdBoxVO boxVO = uploadMapper.selectPcObdByCode(obdBoxVO.getBoxUniqueId());
                 ObdBox obdBox = new ObdBox();
                 obdBox.setBoxCode(boxVO.getBoxCode());
@@ -98,6 +99,7 @@ public class UploadServiceImpl implements IUploadService {
                     return AjaxResult.error("请至少扫描一个obd端口二维码");
                 }
 
+                //查看是否已经存在，存在则把数据迁移到另三个表上上，并删除原表数据
                 int lockFlag = 0;
                 lock.lock();
                 try {
@@ -133,6 +135,7 @@ public class UploadServiceImpl implements IUploadService {
                     throw new RuntimeException();
                 }
             }
+            //插入obd和端口
             int infoCount = 1;
             for (ObdInfoVO obdInfoVO : obdBoxVO.getObdInfoVOList()) {
                 ObdInfo info = new ObdInfo();
@@ -146,6 +149,7 @@ public class UploadServiceImpl implements IUploadService {
                 uploadMapper.insertObdInfo(info);
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     if (!"".equals(obdPortInfo.getPortCode())) {
+                        //判断数据是否正确,错误准确提示那个端口数据有误，没有报错事务不生效，手动删除之前数据
                         if (!isNumber(obdPortInfo.getPortCode())) {
                             uploadMapper.deleteByBox(obdBoxVO);
                             List<ObdInfoHistory> obdInfoHistories = obdInfoHistoryMapper.selectByBoxId(obdBoxVO.getId());
@@ -184,6 +188,7 @@ public class UploadServiceImpl implements IUploadService {
             ObdBox obdBox1 = new ObdBox();
             obdBox1.setBoxCode(boxCode);
             obdBox1.setLabelCode(labelCode);
+            //清空无效图片数据
             obdPictureList = uploadMapper.selectObdPicture(obdBox1);
             if(obdPictureList.size()!=0){
                 for (ObdPicture picture:obdPictureList){
@@ -370,12 +375,18 @@ public class UploadServiceImpl implements IUploadService {
         return null;
     }
 
+    /**
+     * 更新obd
+     *
+     * @param obdBoxVO obd盒签证官
+     * @return {@link AjaxResult}
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult updateObd(ObdBoxVO obdBoxVO) {
-        //lock.lock();
         try {
             List<ObdPicture> obdPictureList = new ArrayList<>();
+            //更新箱子
             if (!"".equals(obdBoxVO.getBoxCode()) && obdBoxVO.getBoxCode() != null && obdBoxVO.getId() > 0) {
                 ObdBox obdBox = new ObdBox();
                 obdBox.setId(obdBoxVO.getId());
@@ -403,9 +414,12 @@ public class UploadServiceImpl implements IUploadService {
                 info.setBoxBelong(obdBoxVO.getBoxName());
                 info.setBoxUniqueId(obdBoxVO.getBoxUniqueId());
                 uploadMapper.updateObdInfo(info);
+                //修改端口
                 for (ObdPortInfoVO obdPortInfo : obdInfoVO.getObdPortInfoVOList()) {
                     ObdPortInfoVO obdPort = obdPortInfo;
+                    //存在id 且 串码有值
                     if (!"".equals(obdPort.getPortCode()) && obdPort.getId() != null) {
+                        //id 大于0 即存在，更新操作
                         if (obdPort.getId() > 0) {
                             if (obdPort.getPortCode() != null) {
                                 if (isNumber(obdPort.getPortCode())) {
@@ -425,6 +439,7 @@ public class UploadServiceImpl implements IUploadService {
                                 uploadMapper.updateObdPort(portInfo);
                             }
                         }
+                        //id 等于0 即原来没有此数据，需要插入
                         if (obdPort.getId() == 0) {
                             if (obdPort.getPortCode() != null) {
                                 if (isNumber(obdPort.getPortCode())) {
@@ -449,36 +464,10 @@ public class UploadServiceImpl implements IUploadService {
                             }
                         }
                     }
-                    if (obdPort.getObdId() != null) {
-                        if (uploadMapper.countByPortStatus(obdPort.getObdId()) > 0) {
-                            ObdInfo obdInfo = new ObdInfo();
-                            obdInfo.setId(obdPort.getObdId());
-                            obdInfo.setStatus(1);
-                            uploadMapper.updateObdInfo(obdInfo);
-                            ObdBox obdBox1 = new ObdBox();
-                            obdBox1.setId((obdBoxVO.getId()));
-                            obdBox1.setExceptionType(2);
-                            if (StringUtils.isNoneBlank(obdBoxVO.getExceptionInfo())) {
-                                obdBox1.setExceptionInfo(obdBoxVO.getExceptionInfo() + ",且存在端口识别异常");
-                            } else {
-                                obdBox1.setExceptionInfo("存在端口识别异常");
-                            }
-                            uploadMapper.updateObdBox(obdBox1);
-                        } else {
-                            ObdInfo obdInfo1 = new ObdInfo();
-                            obdInfo1.setId(obdPort.getObdId());
-                            obdInfo1.setStatus(0);
-                            uploadMapper.updateObdInfo(obdInfo1);
-                            ObdBox obdBox1 = new ObdBox();
-                            obdBox1.setId((obdBoxVO.getId()));
-                            obdBox1.setExceptionType(0);
-                            obdBox1.setExceptionInfo("");
-                            uploadMapper.updateObdBox(obdBox1);
-                        }
-                    }
                 }
                 infoCount++;
             }
+            //清空无效图片数据
             if(obdPictureList.size()!=0){
                 for (ObdPicture picture:obdPictureList){
                     uploadMapper.deleteByPicture(picture);
@@ -486,9 +475,7 @@ public class UploadServiceImpl implements IUploadService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }/*finally {
-      lock.unlock();
-    }*/
+        }
         return AjaxResult.successOBD("操作成功");
     }
 
@@ -624,6 +611,10 @@ public class UploadServiceImpl implements IUploadService {
     }
 
 
+    /** 判断是否为空端口
+     * @param list
+     * @return boolean
+     */
     private  boolean isNullPort(List<ObdInfoVO> list){
         boolean flag = false;
         for (ObdInfoVO obdInfo:list){

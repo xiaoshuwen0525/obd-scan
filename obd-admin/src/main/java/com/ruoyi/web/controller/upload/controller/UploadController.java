@@ -86,7 +86,7 @@ public class UploadController extends BaseController {
         obdBoxVO.setLabelCode(labelCode);
         obdBoxVO.setBoxUniqueId(boxVO.getBoxUniqueId());
         obdBoxVO.setBoxName(boxVO.getBoxName());
- obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
+        obdBoxVO.setObdInfoVOList(obdInfoListVO.getObdInfoVOList());
         log.info("参数 obdInfoListVO:" + obdInfoListVO.toString());
         AjaxResult ajaxResult;
         try {
